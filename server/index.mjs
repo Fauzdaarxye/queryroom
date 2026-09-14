@@ -7,17 +7,10 @@ import { problems, publicProblem } from './problems/index.mjs';
 import { runQuery } from './runner.mjs';
 import { ensureEngines, engineStatus, stopEngines } from './engines.mjs';
 import { createAccess } from './access.mjs';
-import { createFileStateStore, createPostgresStateStore } from './state-store.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const dataDir = process.env.QUERYROOM_DATA_DIR || path.join(root, '.data');
 const access=await createAccess();
-const stateMode=process.env.QUERYROOM_STATE_STORE || (access.deployed?'postgres':'file');
-if(!['file','postgres'].includes(stateMode)) throw new Error('QUERYROOM_STATE_STORE must be file or postgres.');
-if(access.deployed && stateMode!=='postgres') throw new Error('Deployed workspaces require QUERYROOM_STATE_STORE=postgres so progress survives container restarts.');
 await ensureEngines();
-const progressStore=stateMode==='postgres' ? await createPostgresStateStore() : await createFileStateStore(dataDir);
-const emptyState = () => ({ draft: null, notes: '', bookmarked: false, solved: false, submissions: [] });
 async function body(req) {
   let size = 0; const chunks = [];
   for await (const chunk of req) { size += chunk.length; if (size > 1_000_000) throw new Error('Request is too large.'); chunks.push(chunk); }
@@ -36,18 +29,8 @@ const server = http.createServer(async (req, res) => {
       if(req.method==='GET' && url.pathname==='/api/session') return json(res,{required:false,authenticated:true,hosted:access.deployed});
       if (req.method === 'GET' && url.pathname === '/api/problems') return json(res, [...problems.values()].map(publicProblem));
       if (req.method === 'GET' && url.pathname === '/api/engines') return json(res, await engineStatus());
-      if (req.method === 'GET' && url.pathname === '/api/state') {
-        const state=await progressStore.read();
-        return json(res, Object.fromEntries([...problems.keys()].map(slug => [slug, { ...emptyState(), ...state[slug] }])));
-      }
-      if (req.method === 'PUT' && url.pathname.startsWith('/api/state/')) {
-        const slug = url.pathname.split('/').at(-1);
-        if (!problems.has(slug)) return json(res, { error: 'Problem not found.' }, 404);
-        const patch = await body(req);
-        const update={};
-        for (const key of ['draft', 'notes']) if (typeof patch[key] === 'string') { if (patch[key].length > 20000) throw new Error('Drafts and notes are limited to 20,000 characters.'); update[key] = patch[key]; }
-        if (typeof patch.bookmarked === 'boolean') update.bookmarked = patch.bookmarked;
-        await progressStore.patch(slug,update); return json(res, { saved: true });
+      if (url.pathname === '/api/state' || url.pathname.startsWith('/api/state/')) {
+        return json(res, { error: 'Progress is now stored in your browser. Refresh the page to load the updated app.' }, 410);
       }
       if (req.method === 'POST' && url.pathname === '/api/query') {
         const request = await body(req);
@@ -55,8 +38,7 @@ const server = http.createServer(async (req, res) => {
         const result = await runQuery(request);
         if (request.mode === 'submit') {
           const submission = { id: randomUUID(), date: new Date().toISOString(), sql: request.sql, engine: result.engine, verdict: result.verdict, passed: result.passed, total: result.total, runtime: result.runtime };
-          const saved=await progressStore.recordSubmission(request.slug,submission);
-          result.submission = submission; result.solved = saved.solved;
+          result.submission = submission;
         }
         return json(res, result);
       }
@@ -79,6 +61,6 @@ if (process.argv.includes('--dev')) {
   const { createServer } = await import('vite');
   vite = await createServer({ root, server: { middlewareMode: true, hmr: { server } }, appType: 'spa' });
 }
-server.listen(port, access.host, () => console.log(`\n  Queryroom is ready on port ${port}\n  MySQL and PostgreSQL are ready. Progress storage: ${stateMode}.\n`));
-for (const signal of ['SIGTERM','SIGINT']) process.once(signal,async()=>{await new Promise(resolve=>server.close(resolve));await progressStore.close();await stopEngines();process.exit();});
+server.listen(port, access.host, () => console.log(`\n  Queryroom is ready on port ${port}\n  MySQL and PostgreSQL are ready. Progress is stored only in each visitor’s browser.\n`));
+for (const signal of ['SIGTERM','SIGINT']) process.once(signal,async()=>{await new Promise(resolve=>server.close(resolve));await stopEngines();process.exit();});
 server.on('error', e => { console.error(e.code === 'EADDRINUSE' ? `Port ${port} is already in use. Set PORT to choose another port.` : e.message); process.exit(1); });

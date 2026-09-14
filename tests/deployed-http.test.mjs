@@ -7,6 +7,7 @@ import os from 'node:os';
 import { spawn, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import mysql from 'mysql2/promise';
+import pg from 'pg';
 import { randomBytes } from 'node:crypto';
 import { once } from 'node:events';
 import { engineConfig, adminConnection } from '../server/engines.mjs';
@@ -75,15 +76,24 @@ async function proxy(socketPath) {
   };
 }
 
-test('hosted workspace runs both engines without login and retains progress after restart', {skip: engineMode() !== 'local', timeout: 60000}, async () => {
+test('hosted workspace runs both engines without login and never exposes or updates server progress', {skip: engineMode() !== 'local', timeout: 60000}, async () => {
   const config = await engineConfig();
   const database = `qr_deploy_${randomBytes(10).toString('hex')}`;
   const admin = await adminConnection('postgresql');
   const proxies = [];
-  let child, mysqlServer, secretDirectory;
+  let child, mysqlServer, secretDirectory, legacyClient;
   const stop = () => stopProcess(child);
   try {
     await admin.query(`CREATE DATABASE "${database}"`);
+    legacyClient = new pg.Client({...config.postgresql, database});
+    await legacyClient.connect();
+    assert.equal((await legacyClient.query("SELECT 1 FROM pg_namespace WHERE nspname='queryroom_state'")).rowCount, 0);
+    // An upgrade must leave old shared records untouched and inaccessible to visitors.
+    await legacyClient.query('CREATE SCHEMA queryroom_state');
+    await legacyClient.query('REVOKE ALL ON SCHEMA queryroom_state FROM PUBLIC');
+    await legacyClient.query('CREATE TABLE queryroom_state.progress (slug TEXT PRIMARY KEY, data JSONB NOT NULL)');
+    const original = {draft:'previous shared draft', notes:'private legacy note', solved:true, submissions:[]};
+    await legacyClient.query('INSERT INTO queryroom_state.progress VALUES ($1,$2)', ['rectangles-area', original]);
     // A real TCP listener is necessary: MySQL treats wildcard grants differently on Unix sockets.
     mysqlServer = await temporaryMySQL();
     proxies.push(await proxy(path.join(config.postgresql.host, `.s.PGSQL.${config.postgresql.port}`)));
@@ -125,7 +135,7 @@ test('hosted workspace runs both engines without login and retains progress afte
     await start();
     assert.equal((await fetch(`${origin}/api/health`, {headers: {Host: '203.0.113.25'}})).status, 200);
     assert.deepEqual(await (await fetch(`${origin}/api/session`)).json(), {required: false, authenticated: true, hosted: true});
-    assert.equal((await fetch(`${origin}/api/state`)).status, 200);
+    assert.equal((await fetch(`${origin}/api/state`)).status, 410);
     assert.equal((await fetch(`${origin}/api/problems`)).status, 200);
     assert.equal((await fetch(`${origin}/api/login`, {method:'POST'})).status, 404);
     const headers = {'Content-Type': 'application/json'};
@@ -137,21 +147,23 @@ test('hosted workspace runs both engines without login and retains progress afte
       const result = await response.json();
       assert.equal(result.verdict, 'Accepted', result.results?.find(r => r.error)?.error || result.error);
       assert.equal(result.passed, 36);
+      assert.equal(result.submission.verdict, 'Accepted');
+      assert.equal(result.submission.sql, sql);
+      assert.equal(result.solved, undefined);
+      assert.equal(result.submissions, undefined);
     }
     const forbidden = await (await fetch(`${origin}/api/query`, {method: 'POST', headers, body: JSON.stringify({slug, engine: 'postgresql', sql: 'SELECT * FROM queryroom_state.progress'})})).json();
     assert.match(forbidden.results[0].error, /permission denied/i);
-    assert.equal((await fetch(`${origin}/api/state/${slug}`, {method: 'PUT', headers, body: JSON.stringify({draft: 'my saved draft', notes: 'my saved notes'})})).status, 200);
+    assert.equal((await fetch(`${origin}/api/state/${slug}`, {method: 'PUT', headers, body: JSON.stringify({draft: 'my saved draft', notes: 'my saved notes'})})).status, 410);
     await stop();
     await start();
-    const saved = (await (await fetch(`${origin}/api/state`, {headers})).json())[slug];
-    assert.equal(saved.draft, 'my saved draft');
-    assert.equal(saved.notes, 'my saved notes');
-    assert.equal(saved.solved, true);
-    assert.deepEqual(saved.submissions.map(s => s.engine).sort(), ['mysql', 'postgresql']);
+    assert.equal((await fetch(`${origin}/api/state`)).status, 410);
+    assert.deepEqual((await legacyClient.query('SELECT slug,data FROM queryroom_state.progress')).rows, [{slug, data:original}]);
   } finally {
     await stop();
     await mysqlServer?.close();
     for (const item of proxies) await item.close();
+    await legacyClient?.end();
     await admin.query(`DROP DATABASE IF EXISTS "${database}" WITH (FORCE)`);
     await admin.end();
     if (secretDirectory) await fs.rm(secretDirectory, {recursive:true,force:true});

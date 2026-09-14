@@ -6,8 +6,6 @@ import path from 'node:path';
 import {randomBytes} from 'node:crypto';
 import {createAccess} from '../server/access.mjs';
 import {engineMode,externalEngineConfig} from '../server/engine-settings.mjs';
-import {createFileStateStore,createPostgresStateStore} from '../server/state-store.mjs';
-import {adminConnection} from '../server/engines.mjs';
 import {initializeCredentials} from '../scripts/docker-init.mjs';
 
 const password=randomBytes(24).toString('hex');
@@ -46,6 +44,19 @@ test('Compose accepts its HTTP address without login while rejecting cross-origi
   }
   for(const host of ['', 'user@example.com', 'example.com/path', 'example.com#fragment']) assert.equal(access.accepts({headers:{host}}),false);
 });
+test('Caddy HTTPS origins are accepted only when proxy trust is explicitly enabled',async()=>{
+  const env={HOST:'0.0.0.0',QUERYROOM_AUTO_ORIGIN:'true'};
+  const proxied=await createAccess({...env,QUERYROOM_TRUST_PROXY:'true'});
+  const direct=await createAccess(env);
+  const headers={host:'queryroom.example.com',origin:'https://queryroom.example.com','x-forwarded-proto':'https'};
+  assert.equal(proxied.accepts({headers}),true);
+  assert.equal(direct.accepts({headers}),false);
+  assert.equal(proxied.accepts({headers:{...headers,origin:'https://another.example'}}),false);
+  assert.equal(proxied.accepts({headers:{...headers,origin:'http://queryroom.example.com'}}),false);
+  assert.equal(proxied.accepts({headers:{...headers,'x-forwarded-proto':'https,http'}}),false);
+  assert.equal(proxied.accepts({headers:{host:'localhost:4317'}}),true);
+  assert.equal(proxied.accepts({headers:{host:'queryroom.example.com',origin:'http://queryroom.example.com','x-forwarded-proto':'http'}}),true);
+});
 test('Compose generates separate passwords once and reuses them after restart',async()=>{
   const dir=await fs.mkdtemp(path.join(os.tmpdir(),'queryroom-credentials-test-'));
   try {
@@ -71,33 +82,4 @@ test('Compose preserves passwords supplied for an existing database on first ini
     assert.equal(saved.postgres_password,'existing-postgres');
     assert.equal(saved.workspace_password,undefined);
   } finally {await fs.rm(dir,{recursive:true,force:true});}
-});
-test('file progress is retained and concurrent draft/submission saves merge safely',async()=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'queryroom-state-test-'));
-  const original={example:{draft:'existing query',notes:'existing notes',solved:true,bookmarked:true,submissions:[]}};
-  await fs.writeFile(path.join(dir,'progress.json'),JSON.stringify(original));
-  const store=await createFileStateStore(dir);
-  assert.deepEqual(await store.read(),original);
-  await Promise.all([store.patch('example',{draft:'new query'}),store.recordSubmission('example',{id:'test',verdict:'Wrong Answer',sql:'submitted query'})]);
-  await store.close();
-  const reloaded=await createFileStateStore(dir),saved=(await reloaded.read()).example;
-  assert.equal(saved.draft,'new query');
-  assert.equal(saved.notes,'existing notes');
-  assert.equal(saved.solved,true);
-  assert.equal(saved.submissions[0].id,'test');
-  await reloaded.close();await fs.rm(dir,{recursive:true});
-});
-test('PostgreSQL progress survives new instances without losing concurrent updates',async()=>{
-  const slug=`deployment-test-${randomBytes(12).toString('hex')}`;
-  const [first,second]=await Promise.all([createPostgresStateStore(),createPostgresStateStore()]);
-  try {
-    await Promise.all([first.patch(slug,{draft:'saved query'}),second.patch(slug,{notes:'saved notes'}),first.recordSubmission(slug,{id:'one',verdict:'Accepted'}),second.recordSubmission(slug,{id:'two',verdict:'Wrong Answer'})]);
-    const fresh=await createPostgresStateStore(),saved=(await fresh.read())[slug];
-    assert.equal(saved.draft,'saved query');assert.equal(saved.notes,'saved notes');assert.equal(saved.solved,true);assert.equal(saved.submissions.length,2);
-    await fresh.close();
-  } finally {
-    const admin=await adminConnection('postgresql');
-    try {await admin.query('DELETE FROM queryroom_state.progress WHERE slug=$1',[slug]);}finally{await admin.end();}
-    await first.close();await second.close();
-  }
 });
