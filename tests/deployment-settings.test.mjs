@@ -24,54 +24,34 @@ test('external databases use supplied TCP credentials with certificate verificat
   await assert.rejects(externalEngineConfig({...env,MYSQL_PORT:'invalid'}),/ports/);
   assert.throws(()=>engineMode({QUERYROOM_ENGINE_MODE:'unexpected'}),/local or external/);
 });
-test('deployed access requires a password, exact origins and HTTPS for public domains',async()=>{
-  await assert.rejects(createAccess({HOST:'0.0.0.0'}),/PASSWORD/);
-  await assert.rejects(createAccess({HOST:'0.0.0.0',QUERYROOM_ACCESS_PASSWORD:password}),/ORIGINS/);
-  await assert.rejects(createAccess({HOST:'0.0.0.0',QUERYROOM_ACCESS_PASSWORD:password,QUERYROOM_ALLOWED_ORIGINS:'http://app.example.test'}),/HTTPS/);
-  const access=await createAccess({HOST:'0.0.0.0',QUERYROOM_ACCESS_PASSWORD:password,QUERYROOM_ALLOWED_ORIGINS:'https://app.example.test'});
+test('configured origins remain restricted without requiring a workspace password',async()=>{
+  await assert.rejects(createAccess({HOST:'0.0.0.0'}),/ORIGINS/);
+  await assert.rejects(createAccess({HOST:'0.0.0.0',QUERYROOM_ALLOWED_ORIGINS:'http://app.example.test'}),/HTTPS/);
+  const access=await createAccess({HOST:'0.0.0.0',QUERYROOM_ALLOWED_ORIGINS:'https://app.example.test',QUERYROOM_ACCESS_PASSWORD_FILE:'/nonexistent/old-workspace-password'});
   assert.equal(access.accepts({headers:{host:'app.example.test',origin:'https://app.example.test'}}),true);
   assert.equal(access.accepts({headers:{host:'app.example.test',origin:'https://attacker.example'}}),false);
   assert.equal(access.accepts({headers:{host:'attacker.example'}}),false);
-  assert.equal(access.authenticated({headers:{}}),false);
-  assert.equal(access.login('wrong').status,401);
-  const login=access.login(password);
-  assert.match(login.cookie,/HttpOnly; SameSite=Lax/);
-  assert.match(login.cookie,/Secure/);
-  assert.equal(access.authenticated({headers:{cookie:login.cookie.split(';')[0]}}),true);
-  const secondInstance=await createAccess({HOST:'0.0.0.0',QUERYROOM_ACCESS_PASSWORD:password,QUERYROOM_ALLOWED_ORIGINS:'https://app.example.test'});
-  assert.equal(secondInstance.authenticated({headers:{cookie:login.cookie.split(';')[0]}}),true);
-  const tampered=login.cookie.split(';')[0].slice(0,-1)+'z';
-  assert.equal(access.authenticated({headers:{cookie:tampered}}),false);
-  for(let n=0;n<10;n++) access.login('incorrect');
-  assert.equal(access.login('incorrect').status,429);
 });
-test('local startup retains the existing no-login behavior',async()=>{
+test('local startup retains the existing address restrictions',async()=>{
   const access=await createAccess({});
-  assert.equal(access.required,false);
   assert.equal(access.host,'127.0.0.1');
-  assert.equal(access.authenticated({headers:{}}),true);
+  assert.equal(access.accepts({headers:{host:'localhost:4317'}}),true);
 });
-test('Compose accepts its HTTP address automatically and still requires login and same-origin requests',async()=>{
-  const env={HOST:'0.0.0.0',QUERYROOM_AUTO_ORIGIN:'true',QUERYROOM_ACCESS_PASSWORD:password};
-  await assert.rejects(createAccess({...env,QUERYROOM_ACCESS_PASSWORD:''}),/PASSWORD/);
-  const access=await createAccess(env);
-  assert.equal(access.required,true);
-  assert.equal(access.authenticated({headers:{}}),false);
+test('Compose accepts its HTTP address without login while rejecting cross-origin requests',async()=>{
+  const access=await createAccess({HOST:'0.0.0.0',QUERYROOM_AUTO_ORIGIN:'true'});
   for(const host of ['203.0.113.25','ec2-example.compute.amazonaws.com','localhost:8080']) {
     assert.equal(access.accepts({headers:{host,origin:`http://${host}`}}),true);
     assert.equal(access.accepts({headers:{host,origin:'http://another.example'}}),false);
     assert.equal(access.accepts({headers:{host,origin:'null'}}),false);
   }
   for(const host of ['', 'user@example.com', 'example.com/path', 'example.com#fragment']) assert.equal(access.accepts({headers:{host}}),false);
-  const cookie=access.login(password).cookie;
-  assert.doesNotMatch(cookie,/; Secure/);
-  assert.equal(access.authenticated({headers:{cookie:cookie.split(';')[0]}}),true);
 });
 test('Compose generates separate passwords once and reuses them after restart',async()=>{
   const dir=await fs.mkdtemp(path.join(os.tmpdir(),'queryroom-credentials-test-'));
   try {
     const first=await initializeCredentials(dir,{});
-    assert.equal(new Set(Object.values(first)).size,3);
+    assert.equal(new Set(Object.values(first)).size,2);
+    assert.equal(first.workspace_password,undefined);
     for(const [file,value] of Object.entries(first)) {
       assert.ok(value.length>=32);
       assert.equal((await fs.stat(path.join(dir,file))).mode & 0o777,0o444);
@@ -89,7 +69,7 @@ test('Compose preserves passwords supplied for an existing database on first ini
     const saved=await initializeCredentials(dir,{MYSQL_PASSWORD:'existing-mysql',POSTGRES_PASSWORD:'existing-postgres',QUERYROOM_ACCESS_PASSWORD:password});
     assert.equal(saved.mysql_password,'existing-mysql');
     assert.equal(saved.postgres_password,'existing-postgres');
-    assert.equal(saved.workspace_password,password);
+    assert.equal(saved.workspace_password,undefined);
   } finally {await fs.rm(dir,{recursive:true,force:true});}
 });
 test('file progress is retained and concurrent draft/submission saves merge safely',async()=>{

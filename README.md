@@ -8,10 +8,9 @@ From the project folder on EC2 or another Docker host:
 
 ```sh
 docker compose up --build -d
-docker compose logs setup
 ```
 
-Open **http://YOUR_EC2_PUBLIC_IP** (or **http://localhost** locally). The setup log contains your workspace password. Allow inbound TCP port 80 in your EC2 security group; restrict it to your own IP for this HTTP setup. Use `sudo docker compose` if required on Ubuntu.
+Open **http://YOUR_EC2_PUBLIC_IP** (or **http://localhost** locally). The workspace opens directly without signing in. Anyone who can reach the website can use the shared workspace. Allow inbound TCP port 80 in your EC2 security group; restrict it to your own IP for this HTTP setup. Use `sudo docker compose` if required on Ubuntu.
 
 One `Dockerfile` builds the app. One `compose.yaml` starts the app, official MySQL 8.4 and PostgreSQL 17 images, and automatic credential setup. The database ports stay private. The setup service exiting successfully is normal.
 
@@ -19,7 +18,7 @@ Suggested EC2 size: **Ubuntu 24.04 LTS x86_64, t3.medium, 4 GiB RAM, 30 GiB gp3 
 
 ## Configuration
 
-`.env` contains `HTTP_PORT` (default `80`) and optional first-run values for `QUERYROOM_ACCESS_PASSWORD`, `MYSQL_PASSWORD`, and `POSTGRES_PASSWORD`. Existing passwords are preserved. Without `.env`, Compose generates passwords automatically.
+`.env` contains `HTTP_PORT` (default `80`) and optional first-run values for `MYSQL_PASSWORD` and `POSTGRES_PASSWORD`. Existing passwords are preserved. Without `.env`, Compose generates passwords automatically.
 
 After initialization, the credentials volume keeps the passwords across restarts; editing `.env` does not rotate initialized database credentials. `.env` is private and ignored by Git. `.env.example` is a safe template to commit.
 

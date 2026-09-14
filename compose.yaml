@@ -15,7 +15,6 @@ services:
     environment:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
-      QUERYROOM_ACCESS_PASSWORD: ${QUERYROOM_ACCESS_PASSWORD:-}
     volumes:
       - "./scripts/docker-init.mjs:/docker-init.mjs:ro"
       - "credentials:/run/queryroom"
@@ -34,7 +33,6 @@ services:
       QUERYROOM_ENGINE_MODE: external
       QUERYROOM_STATE_STORE: postgres
       QUERYROOM_AUTO_ORIGIN: "true"
-      QUERYROOM_ACCESS_PASSWORD_FILE: /run/queryroom/workspace_password
       MYSQL_HOST: mysql
       MYSQL_PORT: "3306"
       MYSQL_USER: root

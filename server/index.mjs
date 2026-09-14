@@ -33,15 +33,7 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname.startsWith('/api/')) {
     try {
       if(req.method==='GET' && url.pathname==='/api/health') return json(res,{ready:true});
-      if(req.method==='GET' && url.pathname==='/api/session') return json(res,{required:access.required,authenticated:access.authenticated(req),hosted:access.deployed});
-      if(req.method==='POST' && url.pathname==='/api/login') {
-        const result=access.login((await body(req)).password);
-        if(result.error) return json(res,{error:result.error},result.status);
-        res.setHeader('Set-Cookie',result.cookie);
-        return json(res,{authenticated:true});
-      }
-      if(req.method==='POST' && url.pathname==='/api/logout') {res.setHeader('Set-Cookie',access.logoutCookie);return json(res,{authenticated:false});}
-      if(!access.authenticated(req)) return json(res,{error:'Unlock your workspace to continue.'},401);
+      if(req.method==='GET' && url.pathname==='/api/session') return json(res,{required:false,authenticated:true,hosted:access.deployed});
       if (req.method === 'GET' && url.pathname === '/api/problems') return json(res, [...problems.values()].map(publicProblem));
       if (req.method === 'GET' && url.pathname === '/api/engines') return json(res, await engineStatus());
       if (req.method === 'GET' && url.pathname === '/api/state') {

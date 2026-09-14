@@ -122,10 +122,3 @@ body { color:var(--text); background:var(--bg); }
   .editor-focused .right-workspace { height:calc(100dvh - 124px); }
 }
 .drawer-filters { flex-wrap:wrap; row-gap:5px; }
-.workspace-login { width:min(360px,calc(100vw - 40px)); display:flex; flex-direction:column; align-items:stretch; gap:14px; border:1px solid var(--border); border-radius:12px; padding:28px; background:var(--surface); }
-.workspace-login>svg { color:var(--accent); align-self:center; }
-.workspace-login h2 { font-size:18px; text-align:center; }
-.workspace-login p { line-height:1.7; text-align:center; }
-.workspace-login label { font-size:12px; color:var(--secondary); margin-top:5px; }
-.workspace-login input { min-width:0; height:40px; padding:8px 11px; color:var(--text); background:var(--surface-alt); border:1px solid var(--border); border-radius:6px; }
-.workspace-login button { height:38px; }

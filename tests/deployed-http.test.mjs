@@ -75,7 +75,7 @@ async function proxy(socketPath) {
   };
 }
 
-test('hosted HTTP flow runs both engines over TCP and retains private progress after restart', {skip: engineMode() !== 'local', timeout: 60000}, async () => {
+test('hosted workspace runs both engines without login and retains progress after restart', {skip: engineMode() !== 'local', timeout: 60000}, async () => {
   const config = await engineConfig();
   const database = `qr_deploy_${randomBytes(10).toString('hex')}`;
   const admin = await adminConnection('postgresql');
@@ -91,7 +91,9 @@ test('hosted HTTP flow runs both engines over TCP and retains private progress a
     const origin = `http://127.0.0.1:${port}`;
     const password = randomBytes(24).toString('hex');
     secretDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'qr-http-credentials-'));
-    await initializeCredentials(secretDirectory, {MYSQL_PASSWORD:mysqlServer.config.password, POSTGRES_PASSWORD:config.postgresql.password, QUERYROOM_ACCESS_PASSWORD:password});
+    await initializeCredentials(secretDirectory, {MYSQL_PASSWORD:mysqlServer.config.password, POSTGRES_PASSWORD:config.postgresql.password});
+    // Old deployed volumes and environment settings must not restore the login gate.
+    await fs.writeFile(path.join(secretDirectory, 'workspace_password'), password);
     const env = {
       ...process.env, HOST: '127.0.0.1', PORT: String(port),
       QUERYROOM_ENGINE_MODE: 'external', QUERYROOM_STATE_STORE: 'postgres',
@@ -122,13 +124,11 @@ test('hosted HTTP flow runs both engines over TCP and retains private progress a
     }
     await start();
     assert.equal((await fetch(`${origin}/api/health`, {headers: {Host: '203.0.113.25'}})).status, 200);
-    assert.deepEqual(await (await fetch(`${origin}/api/session`)).json(), {required: true, authenticated: false, hosted: true});
-    assert.equal((await fetch(`${origin}/api/state`)).status, 401);
-    assert.equal((await fetch(`${origin}/api/query`, {method: 'POST'})).status, 401);
-    const login = await fetch(`${origin}/api/login`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({password})});
-    assert.equal(login.status, 200);
-    const cookie = login.headers.get('set-cookie').split(';')[0];
-    const headers = {Cookie: cookie, 'Content-Type': 'application/json'};
+    assert.deepEqual(await (await fetch(`${origin}/api/session`)).json(), {required: false, authenticated: true, hosted: true});
+    assert.equal((await fetch(`${origin}/api/state`)).status, 200);
+    assert.equal((await fetch(`${origin}/api/problems`)).status, 200);
+    assert.equal((await fetch(`${origin}/api/login`, {method:'POST'})).status, 404);
+    const headers = {'Content-Type': 'application/json'};
     assert.equal((await fetch(`${origin}/api/state`, {headers: {...headers, Origin: 'https://unrelated.example'}})).status, 403);
     const slug = 'rectangles-area';
     const sql = 'SELECT a.id AS p1,b.id AS p2,ABS((a.x_value-b.x_value)*(a.y_value-b.y_value)) AS area FROM Points a JOIN Points b ON a.id<b.id WHERE a.x_value<>b.x_value AND a.y_value<>b.y_value ORDER BY area DESC,p1,p2';
@@ -148,8 +148,6 @@ test('hosted HTTP flow runs both engines over TCP and retains private progress a
     assert.equal(saved.notes, 'my saved notes');
     assert.equal(saved.solved, true);
     assert.deepEqual(saved.submissions.map(s => s.engine).sort(), ['mysql', 'postgresql']);
-    const logout = await fetch(`${origin}/api/logout`, {method: 'POST', headers});
-    assert.match(logout.headers.get('set-cookie'), /Max-Age=0/);
   } finally {
     await stop();
     await mysqlServer?.close();
