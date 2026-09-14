@@ -15,8 +15,6 @@ services:
       - "80:80"
       - "443:443"
       - "443:443/udp"
-    environment:
-      CADDY_SITE: ${CADDY_SITE:-:80}
     volumes:
       - "./Caddyfile:/etc/caddy/Caddyfile:ro"
       - "caddy_data:/data"
