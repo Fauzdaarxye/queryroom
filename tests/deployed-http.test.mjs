@@ -1,0 +1,161 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import net from 'node:net';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import { spawn, execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import mysql from 'mysql2/promise';
+import { randomBytes } from 'node:crypto';
+import { once } from 'node:events';
+import { engineConfig, adminConnection } from '../server/engines.mjs';
+import { engineMode } from '../server/engine-settings.mjs';
+import { initializeCredentials } from '../scripts/docker-init.mjs';
+
+async function availablePort() {
+  const server = net.createServer().listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  const port = server.address().port;
+  await new Promise(resolve => server.close(resolve));
+  return port;
+}
+async function stopProcess(child) {
+  if (!child || child.exitCode !== null || child.signalCode !== null) return;
+  const exited = once(child, 'exit');
+  child.kill('SIGTERM');
+  const timer = setTimeout(() => child.kill('SIGKILL'), 10000);
+  try { await exited; } finally { clearTimeout(timer); }
+}
+async function temporaryMySQL() {
+  const candidates = ['/opt/homebrew/bin/mysqld', '/usr/local/bin/mysqld', ...process.env.PATH.split(path.delimiter).map(p => path.join(p, 'mysqld'))];
+  let binary;
+  for (const item of candidates) { try { await fs.access(item); binary = item; break; } catch {} }
+  if (!binary) throw new Error('The hosted TCP test requires a local mysqld binary.');
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'qr-tcp-'));
+  const password = randomBytes(24).toString('hex');
+  const port = await availablePort();
+  let child;
+  async function close() { await stopProcess(child); await fs.rm(directory, {recursive: true, force: true}); }
+  try {
+    const data = path.join(directory, 'data');
+    await promisify(execFile)(binary, ['--no-defaults', '--initialize-insecure', `--datadir=${data}`, '--lower-case-table-names=1'], {timeout: 30000});
+    const initFile = path.join(directory, 'init.sql');
+    await fs.writeFile(initFile, `ALTER USER 'root'@'localhost' IDENTIFIED BY '${password}';\n`, {mode: 0o600});
+    child = spawn(binary, ['--no-defaults', `--datadir=${data}`, `--socket=${path.join(directory, 'mysql.sock')}`, '--bind-address=127.0.0.1', `--port=${port}`, '--lower-case-table-names=1', `--init-file=${initFile}`, '--mysqlx=0', '--local-infile=OFF', '--secure-file-priv=NULL', '--innodb-buffer-pool-size=64M', '--max-connections=30', '--performance-schema=OFF'], {stdio: 'ignore'});
+    const config = {host: '127.0.0.1', port, user: 'root', password, connectTimeout: 500};
+    for (let attempt = 0; attempt < 100; attempt++) {
+      if (child.exitCode !== null) throw new Error('Temporary MySQL did not start.');
+      try { const client = await mysql.createConnection(config); await client.end(); return {config, close}; } catch {}
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    throw new Error('Temporary MySQL did not become ready.');
+  } catch (error) { await close(); throw error; }
+}
+
+async function proxy(socketPath) {
+  const sockets = new Set();
+  const server = net.createServer(incoming => {
+    const outgoing = net.connect(socketPath);
+    for (const socket of [incoming, outgoing]) {
+      sockets.add(socket);
+      socket.on('close', () => sockets.delete(socket));
+      socket.on('error', () => { incoming.destroy(); outgoing.destroy(); });
+    }
+    incoming.pipe(outgoing).pipe(incoming);
+  });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  return {
+    port: server.address().port,
+    async close() {
+      for (const socket of sockets) socket.destroy();
+      await new Promise(resolve => server.close(resolve));
+    },
+  };
+}
+
+test('hosted HTTP flow runs both engines over TCP and retains private progress after restart', {skip: engineMode() !== 'local', timeout: 60000}, async () => {
+  const config = await engineConfig();
+  const database = `qr_deploy_${randomBytes(10).toString('hex')}`;
+  const admin = await adminConnection('postgresql');
+  const proxies = [];
+  let child, mysqlServer, secretDirectory;
+  const stop = () => stopProcess(child);
+  try {
+    await admin.query(`CREATE DATABASE "${database}"`);
+    // A real TCP listener is necessary: MySQL treats wildcard grants differently on Unix sockets.
+    mysqlServer = await temporaryMySQL();
+    proxies.push(await proxy(path.join(config.postgresql.host, `.s.PGSQL.${config.postgresql.port}`)));
+    const port = await availablePort();
+    const origin = `http://127.0.0.1:${port}`;
+    const password = randomBytes(24).toString('hex');
+    secretDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'qr-http-credentials-'));
+    await initializeCredentials(secretDirectory, {MYSQL_PASSWORD:mysqlServer.config.password, POSTGRES_PASSWORD:config.postgresql.password, QUERYROOM_ACCESS_PASSWORD:password});
+    const env = {
+      ...process.env, HOST: '127.0.0.1', PORT: String(port),
+      QUERYROOM_ENGINE_MODE: 'external', QUERYROOM_STATE_STORE: 'postgres',
+      QUERYROOM_ACCESS_PASSWORD: '', QUERYROOM_ALLOWED_ORIGINS: '', QUERYROOM_AUTO_ORIGIN: 'true',
+      MYSQL_HOST: '127.0.0.1', MYSQL_PORT: String(mysqlServer.config.port),
+      MYSQL_USER: mysqlServer.config.user, MYSQL_PASSWORD: '', MYSQL_SSL: 'false',
+      POSTGRES_HOST: '127.0.0.1', POSTGRES_PORT: String(proxies[0].port),
+      POSTGRES_USER: config.postgresql.user, POSTGRES_PASSWORD: '',
+      POSTGRES_DB: database, POSTGRES_SSL: 'false',
+    };
+    // Parent machine secrets must not override this test's isolated settings.
+    for (const key of Object.keys(env)) if (key.endsWith('_FILE')) delete env[key];
+    env.QUERYROOM_ACCESS_PASSWORD_FILE = path.join(secretDirectory, 'workspace_password');
+    env.MYSQL_PASSWORD_FILE = path.join(secretDirectory, 'mysql_password');
+    env.POSTGRES_PASSWORD_FILE = path.join(secretDirectory, 'postgres_password');
+    async function start() {
+      let output = '';
+      child = spawn(process.execPath, ['server/index.mjs'], {env, stdio: ['ignore', 'pipe', 'pipe']});
+      child.stdout.on('data', chunk => { output += chunk; });
+      child.stderr.on('data', chunk => { output += chunk; });
+      child.on('error', error => { output += error.message; });
+      for (let attempt = 0; attempt < 100; attempt++) {
+        if (child.exitCode !== null) throw new Error(`Hosted test server exited: ${output}`);
+        try { if ((await fetch(`${origin}/api/health`)).ok) return; } catch {}
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      throw new Error(`Hosted test server did not become ready: ${output}`);
+    }
+    await start();
+    assert.equal((await fetch(`${origin}/api/health`, {headers: {Host: '203.0.113.25'}})).status, 200);
+    assert.deepEqual(await (await fetch(`${origin}/api/session`)).json(), {required: true, authenticated: false, hosted: true});
+    assert.equal((await fetch(`${origin}/api/state`)).status, 401);
+    assert.equal((await fetch(`${origin}/api/query`, {method: 'POST'})).status, 401);
+    const login = await fetch(`${origin}/api/login`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({password})});
+    assert.equal(login.status, 200);
+    const cookie = login.headers.get('set-cookie').split(';')[0];
+    const headers = {Cookie: cookie, 'Content-Type': 'application/json'};
+    assert.equal((await fetch(`${origin}/api/state`, {headers: {...headers, Origin: 'https://unrelated.example'}})).status, 403);
+    const slug = 'rectangles-area';
+    const sql = 'SELECT a.id AS p1,b.id AS p2,ABS((a.x_value-b.x_value)*(a.y_value-b.y_value)) AS area FROM Points a JOIN Points b ON a.id<b.id WHERE a.x_value<>b.x_value AND a.y_value<>b.y_value ORDER BY area DESC,p1,p2';
+    for (const engine of ['mysql', 'postgresql']) {
+      const response = await fetch(`${origin}/api/query`, {method: 'POST', headers, body: JSON.stringify({slug, sql, engine, mode: 'submit'})});
+      const result = await response.json();
+      assert.equal(result.verdict, 'Accepted', result.results?.find(r => r.error)?.error || result.error);
+      assert.equal(result.passed, 36);
+    }
+    const forbidden = await (await fetch(`${origin}/api/query`, {method: 'POST', headers, body: JSON.stringify({slug, engine: 'postgresql', sql: 'SELECT * FROM queryroom_state.progress'})})).json();
+    assert.match(forbidden.results[0].error, /permission denied/i);
+    assert.equal((await fetch(`${origin}/api/state/${slug}`, {method: 'PUT', headers, body: JSON.stringify({draft: 'my saved draft', notes: 'my saved notes'})})).status, 200);
+    await stop();
+    await start();
+    const saved = (await (await fetch(`${origin}/api/state`, {headers})).json())[slug];
+    assert.equal(saved.draft, 'my saved draft');
+    assert.equal(saved.notes, 'my saved notes');
+    assert.equal(saved.solved, true);
+    assert.deepEqual(saved.submissions.map(s => s.engine).sort(), ['mysql', 'postgresql']);
+    const logout = await fetch(`${origin}/api/logout`, {method: 'POST', headers});
+    assert.match(logout.headers.get('set-cookie'), /Max-Age=0/);
+  } finally {
+    await stop();
+    await mysqlServer?.close();
+    for (const item of proxies) await item.close();
+    await admin.query(`DROP DATABASE IF EXISTS "${database}" WITH (FORCE)`);
+    await admin.end();
+    if (secretDirectory) await fs.rm(secretDirectory, {recursive:true,force:true});
+  }
+});

@@ -1,0 +1,34 @@
+# Dependencies, builds, and test output
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Local progress, databases, and backups
+.data/
+backups/
+*.dump
+*.sqlite
+*.sqlite3
+*.sql.gz
+
+# Private environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Generated caches and logs
+__pycache__/
+*.py[cod]
+*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.vercel/

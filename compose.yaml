@@ -1,0 +1,119 @@
+name: queryroom
+
+x-logging: &logs
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  setup:
+    image: node:24-bookworm-slim
+    command: ["node", "/docker-init.mjs"]
+    network_mode: none
+    read_only: true
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+      QUERYROOM_ACCESS_PASSWORD: ${QUERYROOM_ACCESS_PASSWORD:-}
+    volumes:
+      - "./scripts/docker-init.mjs:/docker-init.mjs:ro"
+      - "credentials:/run/queryroom"
+    logging: *logs
+
+  app:
+    build: .
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 90s
+    ports:
+      - "${HTTP_PORT:-80}:4317"
+    environment:
+      PORT: "4317"
+      HOST: "0.0.0.0"
+      QUERYROOM_ENGINE_MODE: external
+      QUERYROOM_STATE_STORE: postgres
+      QUERYROOM_AUTO_ORIGIN: "true"
+      QUERYROOM_ACCESS_PASSWORD_FILE: /run/queryroom/workspace_password
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_USER: root
+      MYSQL_PASSWORD_FILE: /run/queryroom/mysql_password
+      MYSQL_SSL: "false"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: queryroom_admin
+      POSTGRES_PASSWORD_FILE: /run/queryroom/postgres_password
+      POSTGRES_DB: queryroom
+      POSTGRES_SSL: "false"
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+      mysql:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes: ["credentials:/run/queryroom:ro"]
+    networks: [web, databases]
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    logging: *logs
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    stop_grace_period: 1m
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/queryroom/mysql_password
+      MYSQL_ROOT_HOST: "%"
+    command: ["--lower-case-table-names=1", "--local-infile=OFF", "--secure-file-priv=NULL", "--mysqlx=0", "--innodb-buffer-pool-size=128M", "--max-connections=60"]
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    volumes:
+      - "mysql_data:/var/lib/mysql"
+      - "credentials:/run/queryroom:ro"
+    networks: [databases]
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$(cat /run/queryroom/mysql_password)\" mysql --protocol=TCP -h 127.0.0.1 -uroot -e 'SELECT 1' >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+    logging: *logs
+
+  postgres:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    stop_grace_period: 1m
+    environment:
+      POSTGRES_USER: queryroom_admin
+      POSTGRES_PASSWORD_FILE: /run/queryroom/postgres_password
+      POSTGRES_DB: queryroom
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    command: ["postgres", "-c", "max_connections=60", "-c", "shared_buffers=64MB", "-c", "work_mem=4MB"]
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    volumes:
+      - "postgres_data:/var/lib/postgresql/data"
+      - "credentials:/run/queryroom:ro"
+    networks: [databases]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+    logging: *logs
+
+networks:
+  web:
+  databases:
+    internal: true
+volumes:
+  credentials:
+  mysql_data:
+  postgres_data:
