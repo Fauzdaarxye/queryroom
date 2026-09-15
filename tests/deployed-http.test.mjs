@@ -146,7 +146,7 @@ test('hosted workspace runs both engines without login and never exposes or upda
       const response = await fetch(`${origin}/api/query`, {method: 'POST', headers, body: JSON.stringify({slug, sql, engine, mode: 'submit'})});
       const result = await response.json();
       assert.equal(result.verdict, 'Accepted', result.results?.find(r => r.error)?.error || result.error);
-      assert.equal(result.passed, 36);
+      assert.equal(result.passed, 44);
       assert.equal(result.submission.verdict, 'Accepted');
       assert.equal(result.submission.sql, sql);
       assert.equal(result.solved, undefined);

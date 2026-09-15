@@ -8,14 +8,14 @@ import { compareResult } from '../server/compare.mjs';
 
 const requested = ['apples-oranges','drop-type-1-orders-for-customers-with-type-0-orders','capital-gainloss','grand-slam-titles','running-total-for-different-genders','find-the-start-and-end-number-of-continuous-ranges','all-people-report-to-the-given-manager','number-of-calls-between-two-persons','account-balance','the-most-frequently-ordered-products-for-each-customer','maximum-transaction-each-day','calculate-salaries','game-play-analysis-iii','customers-who-bought-products-a-and-b-but-not-c','count-apples-and-oranges','accepted-candidates-from-the-interviews','confirmation-rate','orders-with-maximum-quantity-above-average','project-employees-iii','number-of-times-a-driver-was-a-passenger','activity-participants','biggest-window-between-visits','last-person-to-fit-in-the-bus','highest-grade-for-each-student','the-most-recent-three-orders'];
 
-test('all 25 added URLs have complete questions, examples and six selectable tests',()=>{
+test('all 25 added URLs have complete questions, examples and fourteen selectable tests',()=>{
   assert.deepEqual(additionalProblems.map(p=>p.slug),requested);
   assert.equal(problems.size,79);
-  assert.equal([...problems.values()].reduce((sum,p)=>sum+p.submissionCases.length,0),400);
+  assert.equal([...problems.values()].reduce((sum,p)=>sum+p.submissionCases.length,0),1032);
   for(const p of additionalProblems){
     assert.equal(p.source,`https://leetcode.com/problems/${p.slug}/description/`);
     assert.equal(p.difficulty,'Medium');
-    assert.equal(p.practiceCases.length,6);
+    assert.equal(p.practiceCases.length,14);
     assert.equal(p.collection,'Added questions');
     assert.ok(p.statementHtml.includes('Example 1:'));
     assert.equal(p.videos,undefined);
@@ -36,7 +36,7 @@ for(const p of additionalProblems) for(const engine of ['mysql','postgresql','sq
   test(`#${p.number}: ${engine} passes the example and all edge cases`,async()=>{
     const result=await runQuery({slug:p.slug,engine,sql:typeof additionalQueries[p.number]==='string'?additionalQueries[p.number]:additionalQueries[p.number][engine],mode:'submit'});
     assert.equal(result.verdict,'Accepted',JSON.stringify(result));
-    assert.equal(result.passed,6);
+    assert.equal(result.passed,p.submissionCases.length);
   });
 }
 

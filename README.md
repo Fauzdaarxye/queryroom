@@ -1,6 +1,8 @@
 # Queryroom
 
-A personal SQL practice app with **79 questions and 400 test cases**, supporting MySQL and PostgreSQL.
+A personal SQL practice app with **79 questions and 1,032 test cases**, supporting MySQL and PostgreSQL.
+
+Every question includes eight additional, selectable edge cases covering its specific rules: ties, exact thresholds, missing matches, duplicate records, calendar boundaries, and larger inputs. Submit runs the full suite. Expected answers are calculated by independent JavaScript checkers and verified against SQL solutions on both database engines. These are local practice tests, not LeetCode’s private tests; passing them improves confidence but cannot prove correctness for every possible input.
 
 ## Run with Docker
 

@@ -22,7 +22,7 @@ test('published sample has the exact expected rows', () => {
 test('a correct query passes the entire local suite', async () => {
   const result = await runQuery({ slug, sql: solution, mode: 'submit' });
   assert.equal(result.verdict, 'Accepted', JSON.stringify(result.results.filter(r => !r.passed)));
-  assert.equal(result.passed, 36);
+  assert.equal(result.passed, problem.submissionCases.length);
 });
 test('a CTE solution is accepted', async () => {
   const result = await runQuery({ slug, sql: `WITH rectangles AS (${solution.trim().slice(0, -1)}) SELECT * FROM rectangles ORDER BY area DESC, p1, p2;` });

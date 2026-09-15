@@ -1,3 +1,5 @@
+import { expandEdgeCases } from './edge-cases.mjs';
+
 const input = (rows) => ({ Points: rows });
 const practiceCases = [
   { id: 'example', name: 'Example 1', kind: 'Published example', description: 'The example from the question.', input: input([[1, 2, 7], [2, 4, 8], [3, 2, 10]]) },
@@ -38,7 +40,7 @@ function generatedCases() {
   });
 }
 
-export default {
+export default expandEdgeCases({
   slug: 'rectangles-area', number: 1459, title: 'Rectangles Area', difficulty: 'Medium', category: 'Database',
   source: 'https://leetcode.com/problems/rectangles-area/description/',
   reference: 'https://github.com/doocs/leetcode/blob/main/solution/1400-1499/1459.Rectangles%20Area/README_EN.md',
@@ -52,4 +54,4 @@ export default {
   starter: '-- Write your SQL query below\n\n',
   example: { input: practiceCases[0].input, output: expected(practiceCases[0].input), explanation: 'Points 2 and 3 form a rectangle with area 4. Points 1 and 2 form a rectangle with area 2. Points 1 and 3 share an x-coordinate, so their area is zero and they are excluded.' },
   practiceCases, submissionCases: [...practiceCases, ...generatedCases()], expected,
-};
+});
