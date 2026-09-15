@@ -87,6 +87,18 @@ for (const engine of ['mysql','postgresql']) {
       assert.equal(result.length,0);
     } finally {await admin.end();}
   });
+  test(`${engine}: oversized values and cumulative submission output are bounded`, async () => {
+    const huge = await runQuery({ slug, engine, sql: "SELECT REPEAT('x', 1100000) AS value", mode: 'submit' });
+    assert.equal(huge.verdict, 'Runtime Error');
+    assert.equal(huge.results.length, 1, 'stop submitting after an output limit');
+    assert.match(huge.results[0].error, /1 MB/);
+    const cumulative = await runQuery({ slug, engine, sql: "SELECT REPEAT('x', 300000) AS value", mode: 'submit' });
+    assert.equal(cumulative.verdict, 'Runtime Error');
+    assert.ok(cumulative.results.length < cumulative.total);
+    assert.match(cumulative.results.at(-1).error, /4 MB/);
+    assert.deepEqual(cumulative.results.at(-1).actual.rows, []);
+    assert.equal((await runQuery({ slug, engine, sql: solution })).verdict, 'Accepted');
+  });
   test(`${engine}: result size is limited without crashing the runner`,async()=>{
     const sql=engine==='mysql'?'SELECT a.id FROM Points a CROSS JOIN Points b CROSS JOIN Points c CROSS JOIN Points d CROSS JOIN Points e CROSS JOIN Points f CROSS JOIN Points g CROSS JOIN Points h':'SELECT generate_series(1,6000) AS id';
     const result=await runQuery({slug,engine,sql});

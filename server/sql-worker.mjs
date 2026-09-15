@@ -8,6 +8,7 @@ import { createNativeWorkspace } from './native-database.mjs';
 const { slug, sql, cases, engine, workspace, password } = await new Promise(resolve => process.once('message', resolve));
 const problem = problems.get(slug);
 const results = [];
+let outputBytes = 0;
 const started = performance.now();
 let native;
 try {
@@ -24,10 +25,15 @@ try {
       else actual = execute(db, sql);
     } catch (err) { error = err.message; }
     finally { db?.close(); }
+    outputBytes += Buffer.byteLength(JSON.stringify(actual));
+    if (outputBytes > 4 * 1024 * 1024) {
+      error = 'Output is limited to 4 MB across all tests. Select fewer or smaller values.';
+      actual = { columns: [], rows: [] };
+    }
     const comparison = error ? { passed: false, reason: error } : compareResult(problem, actual, expected);
     const { passed, reason } = comparison;
     results.push({ ...test, expected, actual, passed, error, reason, runtime: Math.round((performance.now() - start) * 100) / 100 });
-    if (error && /timeout|time.*limit|canceling statement|maximum statement execution time|interrupted/i.test(error)) break;
+    if (error && /timeout|time.*limit|canceling statement|maximum statement execution time|interrupted|Output is limited/i.test(error)) break;
   }
   const passed = results.filter(r => r.passed).length;
   const timeout = results.some(r=>r.error && /timeout|time.*limit|canceling statement|maximum statement execution time|interrupted/i.test(r.error));

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import net from 'node:net';
+import http from 'node:http';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import os from 'node:os';
@@ -10,9 +11,10 @@ import mysql from 'mysql2/promise';
 import pg from 'pg';
 import { randomBytes } from 'node:crypto';
 import { once } from 'node:events';
-import { engineConfig, adminConnection } from '../server/engines.mjs';
+import { engineConfig, adminConnection, databaseBinary } from '../server/engines.mjs';
 import { engineMode } from '../server/engine-settings.mjs';
 import { initializeCredentials } from '../scripts/docker-init.mjs';
+import { createAccountStore } from '../server/account-store.mjs';
 
 async function availablePort() {
   const server = net.createServer().listen(0, '127.0.0.1');
@@ -29,10 +31,7 @@ async function stopProcess(child) {
   try { await exited; } finally { clearTimeout(timer); }
 }
 async function temporaryMySQL() {
-  const candidates = ['/opt/homebrew/bin/mysqld', '/usr/local/bin/mysqld', ...process.env.PATH.split(path.delimiter).map(p => path.join(p, 'mysqld'))];
-  let binary;
-  for (const item of candidates) { try { await fs.access(item); binary = item; break; } catch {} }
-  if (!binary) throw new Error('The hosted TCP test requires a local mysqld binary.');
+  const binary = await databaseBinary('mysqld');
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'qr-tcp-'));
   const password = randomBytes(24).toString('hex');
   const port = await availablePort();
@@ -76,12 +75,12 @@ async function proxy(socketPath) {
   };
 }
 
-test('hosted workspace runs both engines without login and never exposes or updates server progress', {skip: engineMode() !== 'local', timeout: 60000}, async () => {
+test('hosted workspace supports guests and private account submissions while preserving legacy data', {skip: engineMode() !== 'local', timeout: 60000}, async () => {
   const config = await engineConfig();
   const database = `qr_deploy_${randomBytes(10).toString('hex')}`;
   const admin = await adminConnection('postgresql');
   const proxies = [];
-  let child, mysqlServer, secretDirectory, legacyClient;
+  let child, mysqlServer, secretDirectory, legacyClient, accountStore;
   const stop = () => stopProcess(child);
   try {
     await admin.query(`CREATE DATABASE "${database}"`);
@@ -107,7 +106,7 @@ test('hosted workspace runs both engines without login and never exposes or upda
     const env = {
       ...process.env, HOST: '127.0.0.1', PORT: String(port),
       QUERYROOM_ENGINE_MODE: 'external', QUERYROOM_STATE_STORE: 'postgres',
-      QUERYROOM_ACCESS_PASSWORD: '', QUERYROOM_ALLOWED_ORIGINS: '', QUERYROOM_AUTO_ORIGIN: 'true',
+      GOOGLE_CLIENT_ID: '', GOOGLE_CLIENT_SECRET: '', GOOGLE_REDIRECT_URI: `${origin}/api/auth/google/callback`, QUERYROOM_ACCESS_PASSWORD: '', QUERYROOM_ALLOWED_ORIGINS: '', QUERYROOM_AUTO_ORIGIN: 'true',
       MYSQL_HOST: '127.0.0.1', MYSQL_PORT: String(mysqlServer.config.port),
       MYSQL_USER: mysqlServer.config.user, MYSQL_PASSWORD: '', MYSQL_SSL: 'false',
       POSTGRES_HOST: '127.0.0.1', POSTGRES_PORT: String(proxies[0].port),
@@ -133,8 +132,21 @@ test('hosted workspace runs both engines without login and never exposes or upda
       throw new Error(`Hosted test server did not become ready: ${output}`);
     }
     await start();
+    for (const target of ['//[', '//other.example/api/session', '/\\other.example/']) {
+      const status = await new Promise((resolve, reject) => {
+        http.get(`${origin}`, { path: target }, response => { response.resume(); resolve(response.statusCode); }).on('error', reject);
+      });
+      assert.equal(status, 400);
+      assert.equal((await fetch(`${origin}/api/health`)).status, 200, 'bad URLs must not terminate the server');
+    }
+    for (const route of ['/api/health', '/api/session', '/api/leaderboard', '/missing.png']) {
+      const response = await fetch(`${origin}${route}`);
+      assert.equal(response.headers.get('x-frame-options'), 'DENY');
+      assert.match(response.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+      assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+    }
     assert.equal((await fetch(`${origin}/api/health`, {headers: {Host: '203.0.113.25'}})).status, 200);
-    assert.deepEqual(await (await fetch(`${origin}/api/session`)).json(), {required: false, authenticated: true, hosted: true});
+    assert.deepEqual(await (await fetch(`${origin}/api/session`)).json(), {required: false, authenticated: false, hosted: true, googleConfigured: false, user: null, csrfToken: null});
     assert.equal((await fetch(`${origin}/api/state`)).status, 410);
     assert.equal((await fetch(`${origin}/api/problems`)).status, 200);
     assert.equal((await fetch(`${origin}/api/login`, {method:'POST'})).status, 404);
@@ -152,6 +164,22 @@ test('hosted workspace runs both engines without login and never exposes or upda
       assert.equal(result.solved, undefined);
       assert.equal(result.submissions, undefined);
     }
+    accountStore = await createAccountStore({config: {...config.postgresql, database}});
+    const user = await accountStore.upsertGoogleUser({sub: 'http-test-user', email: 'learner@example.com', name: 'HTTP Learner'});
+    await accountStore.saveProfile(user.id, {username:'http_learner',fullName:'HTTP Learner',age:25,profession:'Developer'});
+    const session = await accountStore.createSession(user.id);
+    const accountHeaders = {...headers, Origin: origin, Cookie: `queryroom_session=${session.token}`, 'X-Queryroom-Account': user.id, 'X-Queryroom-CSRF': session.csrfToken};
+    const submit = customHeaders => fetch(`${origin}/api/query`, {method: 'POST', headers: customHeaders, body: JSON.stringify({slug, sql, engine: 'postgresql', mode: 'submit'})});
+    const signedIn = await (await submit(accountHeaders)).json();
+    assert.equal(signedIn.verdict, 'Accepted');
+    assert.equal(signedIn.progress.solved, true);
+    assert.equal(signedIn.progress.submissions[0].sql, sql);
+    assert.equal((await accountStore.readProgress(user.id, [slug]))[slug].solved, true);
+    await accountStore.deleteSession(session.token);
+    assert.equal((await submit(accountHeaders)).status, 401, 'expired account tab must not silently submit as a guest');
+    const freshGuest = await (await submit({...headers, Cookie: accountHeaders.Cookie})).json();
+    assert.equal(freshGuest.verdict, 'Accepted', 'new guest view can practise despite an expired cookie');
+    assert.equal(freshGuest.progress, undefined);
     const forbidden = await (await fetch(`${origin}/api/query`, {method: 'POST', headers, body: JSON.stringify({slug, engine: 'postgresql', sql: 'SELECT * FROM queryroom_state.progress'})})).json();
     assert.match(forbidden.results[0].error, /permission denied/i);
     assert.equal((await fetch(`${origin}/api/state/${slug}`, {method: 'PUT', headers, body: JSON.stringify({draft: 'my saved draft', notes: 'my saved notes'})})).status, 410);
@@ -164,6 +192,7 @@ test('hosted workspace runs both engines without login and never exposes or upda
     await mysqlServer?.close();
     for (const item of proxies) await item.close();
     await legacyClient?.end();
+    await accountStore?.close();
     await admin.query(`DROP DATABASE IF EXISTS "${database}" WITH (FORCE)`);
     await admin.end();
     if (secretDirectory) await fs.rm(secretDirectory, {recursive:true,force:true});
