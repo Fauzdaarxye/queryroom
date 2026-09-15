@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { basicSetup } from 'codemirror';
 import { EditorView, keymap, placeholder } from '@codemirror/view';
@@ -27,6 +27,44 @@ async function api(path, options) {
 function localRead(key, fallback) { try { const value = localStorage.getItem(key); return value === null ? fallback : JSON.parse(value); } catch { return fallback; } }
 function localWrite(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
 function IconButton({ label, children, className, ...props }) { return <button className={cx('icon-button', className)} aria-label={label} title={label} {...props}>{children}</button>; }
+function RememberedProblemList({ viewKey, activeSlug, position, children }) {
+  const list = useRef(null);
+  const remember = useCallback(node => {
+    const saved = { viewKey, activeSlug, top: node.scrollTop };
+    position.current = saved;
+    localWrite('queryroom-problem-list-position', saved);
+  }, [viewKey, activeSlug, position]);
+  useLayoutEffect(() => {
+    const node = list.current;
+    const saved = position.current || localRead('queryroom-problem-list-position', null);
+    // Restore before paint, so reopening the drawer doesn't flash its first row.
+    node.scrollTop = saved?.viewKey === viewKey && Number.isFinite(saved.top) ? Math.max(0, saved.top) : 0;
+    // A fresh visit or navigation with Previous/Next should reveal the current question.
+    // Otherwise preserve the exact place where the user was browsing.
+    if (!saved || saved.activeSlug !== activeSlug) {
+      const active = node.querySelector('[aria-current="true"]');
+      if (active) {
+        const viewport = node.getBoundingClientRect(), card = active.getBoundingClientRect();
+        if (card.top < viewport.top || card.bottom > viewport.bottom) {
+          node.scrollTop += card.top - viewport.top - Math.max(0, (node.clientHeight - card.height) / 2);
+        }
+      }
+    }
+    remember(node);
+    return () => remember(node);
+  }, [viewKey, activeSlug, position, remember]);
+  return <div className="drawer-problems" ref={list} onScroll={event => remember(event.currentTarget)}>{children}</div>;
+}
+function DifficultyFilters({ value, onChange, problems }) {
+  return <div className="difficulty-filters" role="group" aria-label="Question difficulty">
+    {['all', 'Easy', 'Medium', 'Hard'].map(level => {
+      const count = level === 'all' ? problems.length : problems.filter(p => p.difficulty === level).length;
+      return <button key={level} className={cx('difficulty-filter', level.toLowerCase(), value === level && 'selected')} aria-pressed={value === level} aria-label={level === 'all' ? 'Show all difficulties' : `Show ${level.toLowerCase()} questions`} onClick={() => onChange(level)}>
+        {level === 'all' ? 'All levels' : level}<span className="difficulty-count">{count}</span>
+      </button>;
+    })}
+  </div>;
+}
 function DataTable({ columns, rows, compact = false }) {
   return <div className={cx('data-table-wrap', compact && 'compact')}><table className="data-table"><thead><tr>{columns.map((col, i) => <th key={i}>{col}</th>)}</tr></thead><tbody>{rows.map((row, i) => <tr key={i}>{row.map((value, j) => <td key={j}>{value === null ? <em>NULL</em> : String(value)}</td>)}</tr>)}</tbody></table>{rows.length === 0 && <div className="empty-rows">No rows</div>}</div>;
 }
@@ -137,10 +175,12 @@ function App() {
   const [caseId, setCaseId] = useState('example'), [custom, setCustom] = useState(null), [customDraft, setCustomDraft] = useState(''), [customError, setCustomError] = useState('');
   const [busy, setBusy] = useState(false), [result, setResult] = useState(null), [modal, setModal] = useState(null);
   const [drawer, setDrawer] = useState(false), [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
+  const [difficulty, setDifficulty] = useState('all');
   const [focused, setFocused] = useState(false), [bottomCollapsed, setBottomCollapsed] = useState(false), [cursor, setCursor] = useState({ line: 1, col: 1 });
   const [timerRunning, setTimerRunning] = useState(false), [elapsed, setElapsed] = useState(() => localRead('queryroom-timer', 0));
   const [leftWidth, setLeftWidth] = useState(45), [editorHeight, setEditorHeight] = useState(49), [toast, setToast] = useState('');
   const hydrated = useRef(false), workspaceRef = useRef(null), rightRef = useRef(null), executing = useRef(false);
+  const problemListPosition = useRef(null);
   const savedSnapshots = useRef({}), draftValues = useRef({}), activeSlug = useRef(slug);
   activeSlug.current = slug;
   const persistDraft = (key, draft, draftNotes) => {
@@ -241,7 +281,8 @@ function App() {
     window.history.replaceState(null,'',`?problem=${encodeURIComponent(p.slug)}`);
   }
   const matchesQuestion=p=>`${p.title} ${p.number}`.toLowerCase().includes(search.toLowerCase()) && (filter==='all' || (filter==='playlist' ? Boolean(p.playlist) : filter==='added' ? p.collection==='Added questions' : filter==='unsolved' ? !progress[p.slug]?.solved : filter==='solved' ? progress[p.slug]?.solved : progress[p.slug]?.bookmarked));
-  const visibleProblems=problems.filter(matchesQuestion);
+  const matchingProblems=problems.filter(matchesQuestion);
+  const visibleProblems=matchingProblems.filter(p=>difficulty==='all' || p.difficulty===difficulty);
   const solvedCount = problems.filter(p => progress[p.slug]?.solved).length;
   const activeCase = caseId === 'custom' ? { name: 'Custom case', description: 'Your own input data.', kind: 'Your test case', input: custom } : problem?.practiceCases.find(c => c.id === caseId);
   if (loading || loadError) return <div className="loading-screen"><div className="brand-mark"><Braces size={25}/></div><h1>queryroom<span>.</span></h1>{loadError ? <><p>{loadError}</p><button className="primary-button" onClick={() => window.location.reload()}>Try again</button></> : <><LoaderCircle className="spin" size={22}/><p>Getting your workspace ready…</p></>}</div>;
@@ -259,7 +300,7 @@ function App() {
     </main>
     <footer className="app-footer"><span><span className="footer-dot"/> Your SQL workspace <span className="footer-separator">·</span> Progress stays in this browser</span><span>Made for your next “aha.” <Sparkles size={12}/></span></footer>
     {toast && <div className="toast" role="status"><Check size={15}/>{toast}</div>}
-    {drawer && <div className="drawer-backdrop" onClick={() => setDrawer(false)}><aside className="problem-drawer" aria-label="Problem list" onClick={e => e.stopPropagation()}><div className="drawer-title"><span className="brand-mark"><Braces size={20}/></span><h2>Your practice list</h2><IconButton label="Close problem list" onClick={() => setDrawer(false)}><X size={18}/></IconButton></div><div className="progress-card"><div><span>Small steps. Real progress.</span><strong>{solvedCount} <span>/ {problems.length}</span></strong></div><div className="progress-track"><span style={{ width: `${solvedCount / problems.length * 100}%` }}/></div><p>{solvedCount ? 'Keep the momentum going.' : 'Your first solved question is waiting.'}</p></div><label className="problem-search"><Search size={16}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search your questions"/></label><div className="drawer-filters">{['all', 'playlist', 'added', 'unsolved', 'solved', 'starred'].map(f => <button className={cx(filter === f && 'selected')} onClick={() => setFilter(f)} key={f}>{f === 'all' ? 'All' : f === 'playlist' ? 'Playlist' : f === 'added' ? 'Added' : f === 'unsolved' ? 'Unsolved' : f === 'solved' ? 'Solved' : 'Starred'}</button>)}</div><div className="collection-summary">{visibleProblems.length} {visibleProblems.length === 1 ? 'question' : 'questions'}<span>{filter==='playlist' ? 'Playlist order' : 'Practice order'}</span></div><div className="drawer-problems">{visibleProblems.map(p => <button className={cx('problem-card', p.slug === slug && 'current')} onClick={() => switchProblem(p)} key={p.slug}><span className="problem-card-check">{progress[p.slug]?.solved ? <CircleCheck size={17}/> : <Circle size={16}/>}</span><span><small>#{p.number} · {p.playlist ? `Lesson ${p.playlistIndex}` : p.collection==='Added questions' ? 'Added question' : 'Your first question'}</small><strong>{p.title}</strong><span className={`badge ${p.difficulty.toLowerCase()}`}>{p.difficulty}</span></span><ChevronRight size={16}/></button>)}{visibleProblems.length===0 && <p className="drawer-empty">No questions here yet.</p>}</div><div className="playlist-drawer-footer"><Play size={15}/><div><strong>Leetcode SQL Hard</strong><span>53 questions · 54 video lessons</span></div><a href="https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA" target="_blank" rel="noreferrer" aria-label="Open the source playlist"><ArrowUpRight size={15}/></a></div></aside></div>}
+    {drawer && <div className="drawer-backdrop" onClick={() => setDrawer(false)}><aside className="problem-drawer" aria-label="Problem list" onClick={e => e.stopPropagation()}><div className="drawer-title"><span className="brand-mark"><Braces size={20}/></span><h2>Your practice list</h2><IconButton label="Close problem list" onClick={() => setDrawer(false)}><X size={18}/></IconButton></div><div className="progress-card"><div><span>Small steps. Real progress.</span><strong>{solvedCount} <span>/ {problems.length}</span></strong></div><div className="progress-track"><span style={{ width: `${solvedCount / problems.length * 100}%` }}/></div><p>{solvedCount ? 'Keep the momentum going.' : 'Your first solved question is waiting.'}</p></div><label className="problem-search"><Search size={16}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search your questions"/></label><div className="drawer-filters">{['all', 'playlist', 'added', 'unsolved', 'solved', 'starred'].map(f => <button className={cx(filter === f && 'selected')} onClick={() => setFilter(f)} key={f}>{f === 'all' ? 'All' : f === 'playlist' ? 'Playlist' : f === 'added' ? 'Added' : f === 'unsolved' ? 'Unsolved' : f === 'solved' ? 'Solved' : 'Starred'}</button>)}</div><DifficultyFilters value={difficulty} onChange={setDifficulty} problems={matchingProblems}/><div className="collection-summary">{visibleProblems.length} {visibleProblems.length === 1 ? 'question' : 'questions'}<span>{filter==='playlist' ? 'Playlist order' : 'Practice order'}</span></div><RememberedProblemList viewKey={JSON.stringify([filter, difficulty, search])} activeSlug={slug} position={problemListPosition}>{visibleProblems.map(p => <button aria-current={p.slug === slug ? 'true' : undefined} className={cx('problem-card', p.slug === slug && 'current')} onClick={() => switchProblem(p)} key={p.slug}><span className="problem-card-check">{progress[p.slug]?.solved ? <CircleCheck size={17}/> : <Circle size={16}/>}</span><span><small>#{p.number} · {p.playlist ? `Lesson ${p.playlistIndex}` : p.collection==='Added questions' ? 'Added question' : 'Your first question'}</small><strong>{p.title}</strong><span className={`badge ${p.difficulty.toLowerCase()}`}>{p.difficulty}</span></span><ChevronRight size={16}/></button>)}{visibleProblems.length===0 && <p className="drawer-empty">{difficulty === 'all' ? 'No questions match these filters.' : `No ${difficulty.toLowerCase()} questions match these filters.`}</p>}</RememberedProblemList><div className="playlist-drawer-footer"><Play size={15}/><div><strong>Leetcode SQL Hard</strong><span>53 questions · 54 video lessons</span></div><a href="https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA" target="_blank" rel="noreferrer" aria-label="Open the source playlist"><ArrowUpRight size={15}/></a></div></aside></div>}
     {modal === 'reset' && <Modal title="Start with a clean editor?" onClose={() => setModal(null)}><p>This replaces your current draft with the starter. Submitted queries stay in your history.</p><div className="modal-actions"><button className="secondary-button" onClick={() => setModal(null)}>Keep my draft</button><button className="primary-button" onClick={() => { setQuery(problem.starter); setModal(null); setToast('Editor reset. You can undo with ⌘ Z.'); }}>Reset editor</button></div></Modal>}
     {modal === 'dialect' && <Modal title="Choose your SQL engine" onClose={() => setModal(null)}><div className="engine-cards">{engines.map(item=><button key={item.id} className={cx('engine-card',engine===item.id&&'selected')} disabled={!item.available || Boolean(busy)} onClick={()=>{chooseEngine(item.id);setModal(null);}}><Database size={23}/><span><strong>{item.name}</strong><small>{item.version || 'Unavailable'}</small></span>{engine===item.id&&<CircleCheck size={19}/>}</button>)}</div><p>Your query runs directly on the selected database. Choose MySQL for the playlist's MySQL syntax, or PostgreSQL to practice its date functions, casts, and SQL features.</p><p>Switching engines keeps your current query. Each submission records which engine you used.</p><div className="modal-note"><ShieldCheck size={16}/> Each test uses fresh tables with read-only access and a 3-second query limit.</div></Modal>}
     {modal === 'help' && <Modal title="Make yourself at home" onClose={() => setModal(null)}><p>A little less setup. A little more SQL.</p><div className="shortcut-list"><div><span>Run the selected test</span><span><kbd>⌘ / Ctrl</kbd> <kbd>Enter</kbd></span></div><div><span>Submit against all tests</span><span><kbd>⌘ / Ctrl</kbd> <kbd>Shift</kbd> <kbd>Enter</kbd></span></div><div><span>Editor autocomplete</span><span><kbd>Ctrl</kbd> <kbd>Space</kbd></span></div><div><span>Find in your query</span><span><kbd>⌘ / Ctrl</kbd> <kbd>F</kbd></span></div><div><span>Undo an editor change</span><span><kbd>⌘ / Ctrl</kbd> <kbd>Z</kbd></span></div></div><p className="modal-note">Drag the dividers to resize your workspace. Solved status, drafts, notes, bookmarks, and submissions save automatically in this browser. They do not sync to other browsers or devices. Clearing site data removes your progress; private browsing keeps it only until the private session ends.</p></Modal>}

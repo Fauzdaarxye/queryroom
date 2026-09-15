@@ -1,6 +1,6 @@
 # Queryroom
 
-A personal SQL practice app with **64 questions and 310 test cases**, supporting MySQL and PostgreSQL.
+A personal SQL practice app with **79 questions and 400 test cases**, supporting MySQL and PostgreSQL.
 
 ## Run with Docker
 
