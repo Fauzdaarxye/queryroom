@@ -4,7 +4,7 @@ import { ArrowUpRight, Circle, CircleCheck, Database, Play, ShieldCheck, Star } 
 
 export default function PlaylistDescription({ problem, progress, onBookmark, fontSize, onFontSize }) {
   return <div className="description-content playlist-description">
-    <div className="problem-eyebrow"><span>DATABASE</span><span className="eyebrow-dot">/</span><span>#{problem.number}</span><ProblemTextControls value={fontSize} onChange={onFontSize}/><button className={`bookmark ${progress.bookmarked ? 'is-bookmarked' : ''}`} onClick={onBookmark} aria-label={progress.bookmarked ? 'Remove bookmark' : 'Bookmark question'}><Star size={17} fill={progress.bookmarked ? 'currentColor' : 'none'}/></button></div>
+    <div className="problem-eyebrow"><span>DATABASE</span><span className="eyebrow-dot">/</span><span title="Queryroom question ID">{problem.id}</span><ProblemTextControls value={fontSize} onChange={onFontSize}/><button className={`bookmark ${progress.bookmarked ? 'is-bookmarked' : ''}`} onClick={onBookmark} aria-label={progress.bookmarked ? 'Remove bookmark' : 'Bookmark question'}><Star size={17} fill={progress.bookmarked ? 'currentColor' : 'none'}/></button></div>
     <h1>{problem.title}</h1>
     <div className="problem-badges"><span className={`badge ${problem.difficulty.toLowerCase()}`}>{problem.difficulty}</span><span className="badge tag"><Database size={12}/> SQL</span><span className={`problem-status ${progress.solved ? 'solved' : ''}`}>{progress.solved ? <CircleCheck size={14}/> : <Circle size={13}/>} {progress.solved ? 'Solved' : 'Unsolved'}</span></div>
     {problem.playlist && <div className="playlist-context"><Play size={12}/><span>{problem.playlist}</span><span>Lesson {problem.videos.map(v=>v.playlistIndex).join(' & ')}</span></div>}

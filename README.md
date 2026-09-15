@@ -2,6 +2,8 @@
 
 A personal SQL practice app with **79 questions and 1,032 test cases**, supporting MySQL and PostgreSQL.
 
+Each question has a stable Queryroom ID using `qr` plus its LeetCode number, such as `qr1459` for Rectangles Area. IDs appear in the question header and practice list, work in search, and can open a question directly with `?problem=qr1459`. Existing saved links and browser progress continue to work.
+
 Every question includes eight additional, selectable edge cases covering its specific rules: ties, exact thresholds, missing matches, duplicate records, calendar boundaries, and larger inputs. Submit runs the full suite. Expected answers are calculated by independent JavaScript checkers and verified against SQL solutions on both database engines. These are local practice tests, not LeetCode’s private tests; passing them improves confidence but cannot prove correctness for every possible input.
 
 ## Run with Docker
