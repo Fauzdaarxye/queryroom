@@ -10,6 +10,8 @@ services:
   caddy:
     image: caddy:2
     container_name: caddy
+    environment:
+      CADDY_SITE: ${CADDY_SITE:-:80}
     restart: unless-stopped
     ports:
       - "80:80"
@@ -52,6 +54,9 @@ services:
       QUERYROOM_ENGINE_MODE: external
       QUERYROOM_AUTO_ORIGIN: "true"
       QUERYROOM_TRUST_PROXY: "true"
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-https://queryroom.duckdns.org/api/auth/google/callback}
       MYSQL_HOST: mysql
       MYSQL_PORT: "3306"
       MYSQL_USER: root

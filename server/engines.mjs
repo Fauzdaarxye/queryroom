@@ -35,16 +35,26 @@ export async function adminConnection(engine) {
 }
 
 async function exists(file) { try { await fs.access(file); return true; } catch { return false; } }
-async function binary(name) {
-  for (const folder of ['/opt/homebrew/bin', '/usr/local/bin', ...process.env.PATH.split(path.delimiter)]) {
+export async function databaseBinary(name) {
+  // Homebrew's global mysqld link may belong to MariaDB; prefer real MySQL.
+  const formulae = name === 'mysqld' ? ['mysql@8.4', 'mysql'] : ['postgresql@18', 'postgresql@17', 'postgresql'];
+  const homebrewFolders = ['/opt/homebrew', '/usr/local'].flatMap(prefix => formulae.map(formula => path.join(prefix, 'opt', formula, 'bin')));
+  for (const folder of [...new Set([...homebrewFolders, '/opt/homebrew/bin', '/usr/local/bin', ...(process.env.PATH || '').split(path.delimiter)])]) {
     const candidate = path.join(folder, name);
-    if (await exists(candidate)) return candidate;
+    if (!(await exists(candidate))) continue;
+    if (name === 'mysqld') {
+      const { stdout } = await exec(candidate, ['--version'], { timeout: 5000 });
+      if (/MariaDB/i.test(stdout)) continue;
+    }
+    return candidate;
   }
-  throw new Error(`${name} is required. Install MySQL and PostgreSQL, then restart Queryroom.`);
+  throw new Error(name === 'mysqld'
+    ? 'MySQL is required; MariaDB is not supported. On macOS, run brew install mysql@8.4, then restart Queryroom.'
+    : `${name} is required. Install PostgreSQL, then restart Queryroom.`);
 }
 async function launch(name, args) {
   const log = await fs.open(path.join(directory, `${name}.log`), 'a', 0o600);
-  const child = spawn(await binary(name), args, { stdio: ['ignore', log.fd, log.fd] });
+  const child = spawn(await databaseBinary(name), args, { stdio: ['ignore', log.fd, log.fd] });
   await log.close();
   child.on('error', () => {});
   owned.push(child);
@@ -79,7 +89,7 @@ export function ensureEngines() {
       const fresh = !(await exists(path.join(data, 'mysql')));
       if (fresh) {
         await fs.mkdir(data, { recursive: true, mode: 0o700 });
-        await exec(await binary('mysqld'), ['--no-defaults', '--initialize-insecure', `--datadir=${data}`], { timeout: 60000 });
+        await exec(await databaseBinary('mysqld'), ['--no-defaults', '--initialize-insecure', `--datadir=${data}`], { timeout: 60000 });
       }
       const child = await launch('mysqld', ['--no-defaults', `--datadir=${data}`, `--socket=${config.mysql.socketPath}`, `--pid-file=${path.join(data, 'queryroom.pid')}`, '--skip-networking', '--mysqlx=0', '--local-infile=OFF', '--secure-file-priv=NULL', '--innodb-buffer-pool-size=64M', '--max-connections=30', '--performance-schema=OFF']);
       // A newly initialized server has an empty root password and is reachable only through our private socket.
@@ -103,15 +113,20 @@ export function ensureEngines() {
       if (!(await exists(path.join(data, 'PG_VERSION')))) {
         const passwordFile = path.join(directory, 'init-password');
         await fs.writeFile(passwordFile, config.postgresql.password, {mode: 0o600});
-        try { await exec(await binary('initdb'), ['-D', data, '-U', 'queryroom_admin', '--auth-local=scram-sha-256', '--auth-host=reject', `--pwfile=${passwordFile}`, '--encoding=UTF8', '--locale=C'], { timeout: 60000 }); }
+        try { await exec(await databaseBinary('initdb'), ['-D', data, '-U', 'queryroom_admin', '--auth-local=scram-sha-256', '--auth-host=reject', `--pwfile=${passwordFile}`, '--encoding=UTF8', '--locale=C'], { timeout: 60000 }); }
         finally { await fs.unlink(passwordFile); }
       }
       const child = await launch('postgres', ['-D', data, '-k', socketDir, '-p', '55437', '-c', 'listen_addresses=', '-c', 'max_connections=30', '-c', 'shared_buffers=32MB', '-c', 'work_mem=4MB', '-c', 'unix_socket_permissions=0700']);
       await waitFor('postgresql', child);
     };
-    await Promise.all([startMysql(), startPostgres()]);
+    const results = await Promise.allSettled([startMysql(), startPostgres()]);
+    const failure = results.find(result => result.status === 'rejected');
+    if (failure) {
+      await stopEngines();
+      throw failure.reason;
+    }
     return engineStatus();
-  })().catch(error => { starting = undefined; throw error; });
+  })().finally(() => { starting = undefined; });
 }
 
 export async function engineStatus() {

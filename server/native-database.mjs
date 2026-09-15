@@ -64,21 +64,22 @@ export async function createNativeWorkspace(engine, name, password) {
     },
     async execute(sql) {
       let reader;
-      if (engine === 'mysql') {
-        reader = await mysql.createConnection({...config, user:name, password, database:name, rowsAsArray:true});
-        await reader.query('SET SESSION max_execution_time = 3000');
-        await reader.query('START TRANSACTION READ ONLY');
-      } else {
-        // Preserve SQL date/timestamp values instead of converting them through the browser's timezone.
-        const types = { getTypeParser(oid, format) { return [1082,1114,1184].includes(oid) ? value=>value : pg.types.getTypeParser(oid,format); } };
-        reader = new pg.Client({...config, user:name, password, types, statement_timeout:3000, application_name:'queryroom-practice'});
-        await reader.connect();
-        await reader.query(`SET search_path TO ${q(engine,name)}, pg_catalog`);
-        await reader.query('BEGIN READ ONLY');
-      }
       try {
+        if (engine === 'mysql') {
+          reader = await mysql.createConnection({...config, user:name, password, database:name, rowsAsArray:true});
+          await reader.query('SET SESSION max_execution_time = 3000');
+          await reader.query('START TRANSACTION READ ONLY');
+        } else {
+          // Preserve SQL date/timestamp values instead of converting them through the browser's timezone.
+          const types = { getTypeParser(oid, format) { return [1082,1114,1184].includes(oid) ? value=>value : pg.types.getTypeParser(oid,format); } };
+          reader = new pg.Client({...config, user:name, password, types, statement_timeout:3000, application_name:'queryroom-practice'});
+          await reader.connect();
+          await reader.query(`SET search_path TO ${q(engine,name)}, pg_catalog`);
+          await reader.query('BEGIN READ ONLY');
+        }
         return await new Promise((resolve,reject)=>{
           const result = {columns:[],rows:[]};
+          let outputBytes = 0;
           const began = performance.now();
           let finished = false;
           const finish = (error) => {
@@ -97,17 +98,20 @@ export async function createNativeWorkspace(engine, name, password) {
           stream.on(engine === 'mysql' ? 'result' : 'row', row=>{
             if (finished) return;
             if (result.rows.length >= 5000) { void cancel(new Error('Output is limited to 5,000 rows. Check for an unintended join.')); return; }
+            outputBytes += Buffer.byteLength(JSON.stringify(row));
+            if (outputBytes > 1024 * 1024) { void cancel(new Error('Output is limited to 1 MB per test. Select fewer or smaller values.')); return; }
             result.rows.push(row);
           });
           if (engine === 'mysql') stream.on('fields', fields=>{result.columns=fields.map(f=>f.name);});
           stream.on('error', finish);
           stream.on('end', data=>{
+            if (finished) return;
             if(engine==='postgresql') result.columns=data.fields.map(f=>f.name);
             // MySQL SLEEP() returns 1 when the server interrupts it instead of raising an error.
             finish(performance.now()-began >= 3000 ? new Error('Your query exceeded the 3-second time limit.') : null);
           });
         });
-      } finally { await reader.end().catch(()=>{}); }
+      } finally { await reader?.end().catch(()=>{}); }
     },
     async close() { await admin.end(); },
   };

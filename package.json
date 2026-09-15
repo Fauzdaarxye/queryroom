@@ -8,7 +8,8 @@
     "dev": "node server/index.mjs --dev",
     "start": "node server/index.mjs",
     "build": "vite build",
-    "test": "node scripts/test.mjs"
+    "test": "node scripts/test.mjs",
+    "leaderboard:backfill": "node scripts/backfill-leaderboard.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.0",
@@ -21,6 +22,7 @@
     "@fontsource-variable/manrope": "^5.3.0",
     "@lezer/highlight": "^1.2.3",
     "codemirror": "^6.0.2",
+    "jose": "^6.2.12",
     "lucide-react": "^0.577.0",
     "mysql2": "^3.24.4",
     "pg": "^8.23.0",
