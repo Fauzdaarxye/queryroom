@@ -5,6 +5,8 @@ import { runQuery } from '../server/runner.mjs';
 import { problems } from '../server/problems/index.mjs';
 import { createNativeWorkspace, cleanupNative } from '../server/native-database.mjs';
 import { adminConnection, engineStatus } from '../server/engines.mjs';
+import { playlistQuery } from './playlist-queries.mjs';
+import { compareResult } from '../server/compare.mjs';
 
 const solution = `SELECT a.id AS p1,b.id AS p2,ABS((a.x_value-b.x_value)*(a.y_value-b.y_value)) AS area FROM Points a JOIN Points b ON a.id<b.id WHERE a.x_value<>b.x_value AND a.y_value<>b.y_value ORDER BY area DESC,p1,p2`;
 const slug = 'rectangles-area';
@@ -15,10 +17,10 @@ test('both real database servers are available', async()=>{
 });
 
 for (const engine of ['mysql','postgresql']) {
-  test(`${engine}: a correct solution passes all 36 tests, including large areas`,async()=>{
+  test(`${engine}: a correct solution passes every rectangle test, including large areas`,async()=>{
     const result = await runQuery({slug,sql:solution,mode:'submit',engine});
     assert.equal(result.verdict,'Accepted',JSON.stringify(result));
-    assert.equal(result.passed,36);
+    assert.equal(result.passed,problems.get(slug).submissionCases.length);
     assert.equal(result.engine,engine);
   });
   test(`${engine}: custom data, wrong answers, and native SQL functions`,async()=>{
@@ -53,16 +55,26 @@ for (const engine of ['mysql','postgresql']) {
       assert.deepEqual(result.rows.map(row=>[row[0],row[1],Number(row[2]),row[3]]),[['2026-09-13','2026-09-13 03:45:00',12.38,null]]);
     } finally {await workspace.close();await cleanupNative(engine,id);}
   });
-  test(`${engine}: all registered fixtures load with native types and readable tables`,async()=>{
+  test(`${engine}: all fixtures load and every hard-question solution matches the independent checker`,async()=>{
     const id=`qr_${randomBytes(12).toString('hex')}`;
     const workspace=await createNativeWorkspace(engine,id,randomBytes(24).toString('hex'));
     try {
+      const failures=new Map();
       for(const p of problems.values()) for(const fixture of p.submissionCases){
         await workspace.seed(p,fixture.input);
         const query=p.schema.map(t=>`SELECT COUNT(*) AS n FROM ${engine==='mysql'?'`'+t.name+'`':'"'+t.name.toLowerCase()+'"'}`).join(' UNION ALL ');
         const result=await workspace.execute(query);
         assert.deepEqual(result.rows.map(row=>Number(row[0])),p.schema.map(t=>fixture.input[t.name].length),`${p.number}/${fixture.id}`);
+        if(p.playlist&&!failures.has(p.number)){
+          try{
+            const actual=await workspace.execute(playlistQuery(p,engine));
+            const expected=p.expected(fixture.input);
+            const checked=compareResult(p,actual,expected);
+            if(!checked.passed)failures.set(p.number,`${p.number}/${fixture.id}: ${checked.reason}\n${JSON.stringify({actual,expected})}`);
+          }catch(error){failures.set(p.number,`${p.number}/${fixture.id}: ${error.message}`);}
+        }
       }
+      assert.equal(failures.size,0,[...failures.values()].join('\n'));
     } finally {await workspace.close();await cleanupNative(engine,id);}
   });
   test(`${engine}: query role blocks writes, stacked statements, and file access`,async()=>{

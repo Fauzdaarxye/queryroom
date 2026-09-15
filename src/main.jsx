@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { basicSetup } from 'codemirror';
 import { EditorView, keymap, placeholder } from '@codemirror/view';
@@ -39,6 +39,44 @@ async function api(path, options) {
 function localRead(key, fallback) { try { const value = localStorage.getItem(key); return value === null ? fallback : JSON.parse(value); } catch { return fallback; } }
 function localWrite(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
 function IconButton({ label, children, className, ...props }) { return <button className={cx('icon-button', className)} aria-label={label} title={label} {...props}>{children}</button>; }
+function RememberedProblemList({ viewKey, activeSlug, position, children }) {
+  const list = useRef(null);
+  const remember = useCallback(node => {
+    const saved = { viewKey, activeSlug, top: node.scrollTop };
+    position.current = saved;
+    localWrite('queryroom-problem-list-position', saved);
+  }, [viewKey, activeSlug, position]);
+  useLayoutEffect(() => {
+    const node = list.current;
+    const saved = position.current || localRead('queryroom-problem-list-position', null);
+    // Restore before paint, so reopening the drawer doesn't flash its first row.
+    node.scrollTop = saved?.viewKey === viewKey && Number.isFinite(saved.top) ? Math.max(0, saved.top) : 0;
+    // A fresh visit or navigation with Previous/Next should reveal the current question.
+    // Otherwise preserve the exact place where the user was browsing.
+    if (!saved || saved.activeSlug !== activeSlug) {
+      const active = node.querySelector('[aria-current="true"]');
+      if (active) {
+        const viewport = node.getBoundingClientRect(), card = active.getBoundingClientRect();
+        if (card.top < viewport.top || card.bottom > viewport.bottom) {
+          node.scrollTop += card.top - viewport.top - Math.max(0, (node.clientHeight - card.height) / 2);
+        }
+      }
+    }
+    remember(node);
+    return () => remember(node);
+  }, [viewKey, activeSlug, position, remember]);
+  return <div className="drawer-problems" ref={list} onScroll={event => remember(event.currentTarget)}>{children}</div>;
+}
+function DifficultyFilters({ value, onChange, problems }) {
+  return <div className="difficulty-filters" role="group" aria-label="Question difficulty">
+    {['all', 'Easy', 'Medium', 'Hard'].map(level => {
+      const count = level === 'all' ? problems.length : problems.filter(p => p.difficulty === level).length;
+      return <button key={level} className={cx('difficulty-filter', level.toLowerCase(), value === level && 'selected')} aria-pressed={value === level} aria-label={level === 'all' ? 'Show all difficulties' : `Show ${level.toLowerCase()} questions`} onClick={() => onChange(level)}>
+        {level === 'all' ? 'All levels' : level}<span className="difficulty-count">{count}</span>
+      </button>;
+    })}
+  </div>;
+}
 function DataTable({ columns, rows, compact = false }) {
   return <div className={cx('data-table-wrap', compact && 'compact')}><table className="data-table"><thead><tr>{columns.map((col, i) => <th key={i}>{col}</th>)}</tr></thead><tbody>{rows.map((row, i) => <tr key={i}>{row.map((value, j) => <td key={j}>{value === null ? <em>NULL</em> : String(value)}</td>)}</tr>)}</tbody></table>{rows.length === 0 && <div className="empty-rows">No rows</div>}</div>;
 }
@@ -60,7 +98,7 @@ function PointDiagram() {
 function Description({ problem, progress, onBookmark, fontSize, onFontSize }) {
   if (problem.statementHtml) return <PlaylistDescription problem={problem} progress={progress} onBookmark={onBookmark} fontSize={fontSize} onFontSize={onFontSize}/>;
   return <div className="description-content">
-    <div className="problem-eyebrow"><span>DATABASE</span><span className="eyebrow-dot">/</span><span>#{problem.number}</span><ProblemTextControls value={fontSize} onChange={onFontSize}/><button className={cx('bookmark', progress.bookmarked && 'is-bookmarked')} onClick={onBookmark} aria-label={progress.bookmarked ? 'Remove bookmark' : 'Bookmark question'} title="Bookmark question"><Star size={17} fill={progress.bookmarked ? 'currentColor' : 'none'} /></button></div>
+    <div className="problem-eyebrow"><span>DATABASE</span><span className="eyebrow-dot">/</span><span title="Queryroom question ID">{problem.id}</span><ProblemTextControls value={fontSize} onChange={onFontSize}/><button className={cx('bookmark', progress.bookmarked && 'is-bookmarked')} onClick={onBookmark} aria-label={progress.bookmarked ? 'Remove bookmark' : 'Bookmark question'} title="Bookmark question"><Star size={17} fill={progress.bookmarked ? 'currentColor' : 'none'} /></button></div>
     <h1>{problem.title}</h1>
     <div className="problem-badges"><span className="badge medium">{problem.difficulty}</span><span className="badge tag"><Database size={12} /> SQL</span><span className={cx('problem-status', progress.solved && 'solved')}>{progress.solved ? <CircleCheck size={14} /> : <Circle size={13} />} {progress.solved ? 'Solved' : 'Unsolved'}</span></div>
     <p className="intro">{problem.summary}</p>
@@ -158,10 +196,12 @@ function App() {
   const [caseId, setCaseId] = useState('example'), [custom, setCustom] = useState(null), [customDraft, setCustomDraft] = useState(''), [customError, setCustomError] = useState('');
   const [busy, setBusy] = useState(false), [result, setResult] = useState(null), [modal, setModal] = useState(null);
   const [drawer, setDrawer] = useState(false), [filter, setFilter] = useState('all'), [search, setSearch] = useState('');
+  const [difficulty, setDifficulty] = useState('all');
   const [focused, setFocused] = useState(false), [bottomCollapsed, setBottomCollapsed] = useState(false), [cursor, setCursor] = useState({ line: 1, col: 1 });
   const [timerRunning, setTimerRunning] = useState(false), [elapsed, setElapsed] = useState(() => localRead('queryroom-timer', 0));
   const [leftWidth, setLeftWidth] = useState(45), [editorHeight, setEditorHeight] = useState(49), [toast, setToast] = useState('');
   const hydrated = useRef(false), workspaceRef = useRef(null), rightRef = useRef(null), executing = useRef(false);
+  const problemListPosition = useRef(null);
   const savedSnapshots = useRef({}), draftValues = useRef({}), activeSlug = useRef(slug);
   activeSlug.current = slug;
   const persistDraft = (key, draft, draftNotes) => {
@@ -399,8 +439,9 @@ function App() {
     setView('practice');
     if (push) window.history.pushState(null, '', `/practice?problem=${encodeURIComponent(p.slug)}`);
   }
-  const matchesQuestion=p=>`${p.title} ${p.number}`.toLowerCase().includes(search.toLowerCase()) && (filter==='all' || (filter==='playlist' ? Boolean(p.playlist) : filter==='added' ? p.collection==='Added questions' : filter==='unsolved' ? !progress[p.slug]?.solved : filter==='solved' ? progress[p.slug]?.solved : progress[p.slug]?.bookmarked));
-  const visibleProblems=problems.filter(matchesQuestion);
+  const matchesQuestion=p=>`${p.title} ${p.number} ${p.id}`.toLowerCase().includes(search.trim().toLowerCase()) && (filter==='all' || (filter==='playlist' ? Boolean(p.playlist) : filter==='added' ? p.collection==='Added questions' : filter==='unsolved' ? !progress[p.slug]?.solved : filter==='solved' ? progress[p.slug]?.solved : progress[p.slug]?.bookmarked));
+  const matchingProblems=problems.filter(matchesQuestion);
+  const visibleProblems=matchingProblems.filter(p=>difficulty==='all' || p.difficulty===difficulty);
   const solvedCount = problems.filter(p => progress[p.slug]?.solved).length;
   const activeCase = caseId === 'custom' ? { name: 'Custom case', description: 'Your own input data.', kind: 'Your test case', input: custom } : problem?.practiceCases.find(c => c.id === caseId);
   if (loading || loadError) return <div className="loading-screen"><div className="brand-mark"><Braces size={25}/></div><h1>queryroom<span>.</span></h1>{loadError ? <><p>{loadError}</p><button className="primary-button" onClick={() => window.location.reload()}>Try again</button></> : <><LoaderCircle className="spin" size={22}/><p>Getting your workspace ready…</p></>}</div>;

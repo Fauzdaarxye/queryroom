@@ -8,7 +8,7 @@ import { referenceResult } from '../server/database.mjs';
 const runQuery = args => internalRunQuery({...args,engine:'sqlite'});
 const playlist=[...problems.values()].filter(p=>p.playlist);
 test('every observed playlist video maps to a complete, unique question',()=>{
-  assert.equal(problems.size,64);
+  assert.equal(problems.size,79);
   assert.equal(playlist.length,53);
   assert.equal(playlist.reduce((n,p)=>n+p.videos.length,0),54);
   assert.equal(playlist.find(p=>p.number===1767).videos.length,2);

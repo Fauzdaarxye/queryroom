@@ -122,3 +122,18 @@ body { color:var(--text); background:var(--bg); }
   .editor-focused .right-workspace { height:calc(100dvh - 124px); }
 }
 .drawer-filters { flex-wrap:wrap; row-gap:5px; }
+
+/* Difficulty colors are shared by filters and question badges in both themes. */
+:root { --easy-text:#2464b5; --easy-bg:#eaf2ff; --medium-text:#846000; --medium-bg:#fff2b8; --hard-text:#b43f43; --hard-bg:#ffedef; }
+:root[data-theme=dark] { --easy-text:#8bbcff; --easy-bg:#21334b; --medium-text:#f2cc60; --medium-bg:#3b331e; --hard-text:#ff969a; --hard-bg:#42292e; }
+.badge.easy { color:var(--easy-text); background:var(--easy-bg); }
+.badge.medium { color:var(--medium-text); background:var(--medium-bg); }
+.badge.hard { color:var(--hard-text); background:var(--hard-bg); }
+.difficulty-filters { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 16px; }
+.difficulty-filter { --difficulty-text:var(--secondary); --difficulty-bg:var(--surface-hover); flex:1; gap:5px; padding:8px 7px; border:1px solid transparent; border-radius:6px; font-size:10px; font-weight:550; white-space:nowrap; color:var(--difficulty-text); background:var(--difficulty-bg); }
+.difficulty-filter.easy { --difficulty-text:var(--easy-text); --difficulty-bg:var(--easy-bg); }
+.difficulty-filter.medium { --difficulty-text:var(--medium-text); --difficulty-bg:var(--medium-bg); }
+.difficulty-filter.hard { --difficulty-text:var(--hard-text); --difficulty-bg:var(--hard-bg); }
+.difficulty-filter.selected { border-color:currentColor; box-shadow:inset 0 0 0 1px currentColor; }
+.difficulty-filter:hover { border-color:currentColor; }
+.difficulty-count { font-size:9px; font-variant-numeric:tabular-nums; opacity:.85; }
