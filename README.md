@@ -4,6 +4,8 @@ A SQL practice app with **64 questions and 310 test cases**, supporting MySQL an
 
 ## Run with Docker
 
+Make sure `.env` is in the project folder before building. If it does not exist, copy `.env.example` to `.env` and set your deployment values. Keep an existing `.env` when updating the project.
+
 From the project folder on EC2 or another Docker host:
 
 ```sh
@@ -18,7 +20,9 @@ Suggested EC2 size: **Ubuntu 24.04 LTS x86_64, t3.medium, 4 GiB RAM, 30 GiB gp3 
 
 ## Configuration
 
-`.env` contains `CADDY_SITE` (default `:80` for HTTP) and optional first-run values for `MYSQL_PASSWORD` and `POSTGRES_PASSWORD`. Existing passwords are preserved. Without `.env`, Compose generates passwords automatically.
+`.env` contains `CADDY_SITE` (default `:80` for HTTP), optional first-run values for `MYSQL_PASSWORD` and `POSTGRES_PASSWORD`, and optional Google sign-in settings. Leave the password values blank to generate passwords automatically. Existing saved passwords are preserved.
+
+The Dockerfile copies `.env` to `/app/.env` in the server image, readable only by the app user. The server loads it at startup; values supplied through Docker Compose take precedence. Rebuild with `docker compose up --build -d` after changing `.env`. The image contains the file's values, so keep the image private.
 
 After initialization, the credentials volume keeps the passwords across restarts; editing `.env` does not rotate initialized database credentials. `.env` is private and ignored by Git. `.env.example` is a safe template to commit.
 
@@ -29,7 +33,7 @@ After initialization, the credentials volume keeps the passwords across restarts
 3. Allow inbound **TCP 80 and 443** in the EC2 security group and Ubuntu firewall, if enabled. Allow **UDP 443** for HTTP/3. For public domain certificates, ports 80/443 must be reachable from the internet; allow outbound DNS and HTTPS too.
 4. Run `sudo docker compose up --build -d` and open `https://your-real-domain.com`.
 
-Caddy obtains and renews certificates automatically for the configured domain and redirects HTTP to HTTPS. Certificate state and configuration persist in `caddy_data` and `caddy_config`. `Caddyfile` is the mounted proxy configuration. For configuration edits, run `sudo docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile`; after changing `.env`, run `sudo docker compose up -d` to recreate Caddy with the new domain.
+Caddy obtains and renews certificates automatically for the configured domain and redirects HTTP to HTTPS. Certificate state and configuration persist in `caddy_data` and `caddy_config`. `Caddyfile` is the mounted proxy configuration. For configuration edits, run `sudo docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile`; after changing `.env`, run `sudo docker compose up --build -d` to update the app image and recreate Caddy with the new domain.
 
 Ports 80 and 443 must be free on the host. When upgrading an existing Queryroom deployment that used port 80 directly, run `sudo docker compose down` before `sudo docker compose up --build -d` to avoid a port conflict while Caddy takes over. Do not add `-v`; named volumes are preserved. Stop any separate Caddy/Nginx/Apache service already using these ports before starting this stack.
 
@@ -83,7 +87,7 @@ GOOGLE_CLIENT_ID=992227236229-ec3g0vp18kuajbjv6dumlilld5ljtcpq.apps.googleuserco
 GOOGLE_CLIENT_SECRET=your-secret-from-google
 ```
 
-`.env` is ignored by Git and excluded from Docker builds. Node loads it for local development; Docker Compose passes OAuth settings only to the server. `GOOGLE_CLIENT_SECRET_FILE` is also supported when supplying a mounted secret directly to the server. Never place a client secret in a `VITE_` variable or frontend code.
+`.env` is ignored by Git and copied only into the Docker server image, outside the frontend build and public files. Node loads it for local development and container startup; Docker Compose also passes OAuth settings to the server. `GOOGLE_CLIENT_SECRET_FILE` is supported when supplying a mounted secret directly to the server. Never place a client secret in a `VITE_` variable or frontend code.
 
 Local development defaults to the localhost callback on its `PORT` (4317 by default). Compose defaults to the production DuckDNS callback above. For another deployment address, set `GOOGLE_REDIRECT_URI` to its exact HTTPS callback and register it with Google. Restart `npm run dev` after changing local settings; on the server, run `docker compose up --build -d` after changing deployment settings or code.
 
@@ -105,7 +109,7 @@ Old shared `queryroom_state` records and `.data/progress.json` are left untouche
 
 The server runs at most four SQL requests concurrently per app process. Extra requests receive HTTP 429 with `Retry-After: 1`; the slot is released after success or failure. Each query still runs with read-only database credentials and a three-second statement timeout. Results are capped at 5,000 rows and 1 MB of row data per test, with a 4 MB cumulative result budget per submission. Submissions stop after exceeding an output limit.
 
-Malformed request URLs return HTTP 400 without interrupting the server. Pages and API responses block framing and plugins, prevent MIME sniffing, and limit cross-origin referrer information. The account dropdown contains account details and Sign out; the primary navigation remains in the header.
+Malformed request URLs return HTTP 400 without interrupting the server. Pages and API responses block framing and plugins, prevent MIME sniffing, and limit cross-origin referrer information. The account dropdown contains account details, Profile, and Sign out. Dashboard, Questions, and Leaderboard remain in the main header navigation.
 
 ## Development
 

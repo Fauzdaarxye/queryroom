@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { ChevronDown, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut, UserRound } from 'lucide-react';
 
-export default function AccountMenu({ user, open, onOpenChange, onSignOut }) {
+export default function AccountMenu({ user, open, onOpenChange, onProfile, profileActive, onSignOut }) {
   const container = useRef(null);
   const trigger = useRef(null);
 
@@ -34,6 +34,7 @@ export default function AccountMenu({ user, open, onOpenChange, onSignOut }) {
     {open && <div className="account-popover" id="account-popover" role="region" aria-label="Your account">
       <strong>{user.name}</strong>
       <p>{user.email}</p>
+      <button aria-current={profileActive ? 'page' : undefined} onClick={() => { onOpenChange(false); onProfile(); }}><UserRound size={15}/>Profile</button>
       <button onClick={() => { onOpenChange(false); onSignOut(); }}><LogOut size={15}/>Sign out</button>
     </div>}
   </div>;

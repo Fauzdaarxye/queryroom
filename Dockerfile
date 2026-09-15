@@ -17,6 +17,8 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build --chown=node:node /app/dist ./dist
 COPY --chown=node:node server ./server
 COPY --chown=node:node shared ./shared
+# Server configuration is copied only into the runtime stage, after the frontend build.
+COPY --chown=node:node --chmod=0400 .env ./.env
 USER node
 EXPOSE 4317
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
