@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { setImmediate } from 'node:timers/promises';
 import { requestUrl } from '../server/http-security.mjs';
-import { createQueryApi } from '../server/query-api.mjs';
+import { createQueryApi } from '../server/query-api.ts';
 
 test('malformed and authority-changing request targets are rejected safely', () => {
   for (const path of ['//[', '//other.example/api/session', '/\\other.example/', 'http://other.example/', '/', '/api/health?ok=1']) {
@@ -17,7 +17,14 @@ const url = new URL('http://localhost/api/query');
 const request = { slug: 'question', sql: 'SELECT 1', engine: 'postgresql' };
 const auth = { session: async () => null };
 const req = { method: 'POST', headers: {} };
-const base = { auth, store: {}, problems: new Map(), body: async () => request, json: () => {} };
+const base = { auth, store: {}, problems: new Map([['question', {slug: 'question'}]]), body: async () => request, json: () => {} };
+
+test('a stale displayed question cannot silently be graded against changed tests', async () => {
+  let executed = false;
+  const api = createQueryApi({...base, problems: new Map([['question', {slug: 'question', revision: 2}]]), body: async () => ({...request, revision: 1}), execute: async () => {executed = true;}});
+  await assert.rejects(api(req, {}, url), error => error.status === 409);
+  assert.equal(executed, false);
+});
 
 test('query capacity is shared by requests, rejects overload immediately, and releases on success', async () => {
   const pending = [];

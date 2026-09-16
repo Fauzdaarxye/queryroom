@@ -5,7 +5,8 @@ import { validateProfile } from '../shared/profile.mjs';
 import { verifiedPoints, leaderboardPageSize } from '../shared/leaderboard.mjs';
 
 export const hashToken = token => createHash('sha256').update(token).digest('hex');
-const publicUser = row => ({ id: row.id, name: row.full_name || row.name, email: row.email,
+const adminEmails = () => new Set((process.env.QUERYROOM_ADMIN_EMAILS || '').split(',').map(email => email.trim().toLowerCase()).filter(Boolean));
+const publicUser = row => ({ role: adminEmails().has(row.email.toLowerCase()) ? 'admin' : 'user', id: row.id, name: row.full_name || row.name, email: row.email,
   username: row.username || null, fullName: row.full_name || null, age: row.age ?? null,
   profession: row.profession || null, profileComplete: Boolean(row.username && row.full_name && row.age && row.profession),
   joinedAt: row.created_at, guestImportDone: row.guest_import_done });

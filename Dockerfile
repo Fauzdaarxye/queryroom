@@ -2,25 +2,32 @@ FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
-COPY index.html vite.config.js ./
+COPY next.config.ts tsconfig.json ./
+COPY app ./app
 COPY src ./src
 COPY shared ./shared
+COPY server ./server
 COPY public ./public
 RUN npm run build
 
 FROM node:24-bookworm-slim AS runtime
-ENV NODE_ENV=production PORT=4317 HOST=0.0.0.0 \
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=4317 HOST=0.0.0.0 \
     QUERYROOM_ENGINE_MODE=external
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
-COPY --from=build --chown=node:node /app/dist ./dist
+COPY --from=build --chown=node:node /app/.next ./.next
+COPY --chown=node:node public ./public
+COPY --chown=node:node next.config.ts tsconfig.json ./
 COPY --chown=node:node server ./server
 COPY --chown=node:node shared ./shared
+COPY --chown=node:node data ./data
+COPY --chown=node:node migrations ./migrations
+COPY --chown=node:node scripts ./scripts
 # Server configuration is copied only into the runtime stage, after the frontend build.
 COPY --chown=node:node --chmod=0400 .env ./.env
 USER node
 EXPOSE 4317
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s \
   CMD node -e "fetch('http://127.0.0.1:'+process.env.PORT+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["node", "server/index.mjs"]
+CMD ["node", "--import", "tsx", "server/index.ts"]

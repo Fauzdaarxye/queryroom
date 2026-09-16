@@ -120,7 +120,7 @@ test('hosted workspace supports guests and private account submissions while pre
     env.POSTGRES_PASSWORD_FILE = path.join(secretDirectory, 'postgres_password');
     async function start() {
       let output = '';
-      child = spawn(process.execPath, ['server/index.mjs'], {env, stdio: ['ignore', 'pipe', 'pipe']});
+      child = spawn(process.execPath, ['--import', 'tsx', 'server/index.ts'], {env, stdio: ['ignore', 'pipe', 'pipe']});
       child.stdout.on('data', chunk => { output += chunk; });
       child.stderr.on('data', chunk => { output += chunk; });
       child.on('error', error => { output += error.message; });
