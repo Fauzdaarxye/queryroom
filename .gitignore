@@ -32,3 +32,8 @@ Thumbs.db
 .idea/
 .vscode/
 .vercel/
+
+# Next.js and TypeScript
+.next/
+*.tsbuildinfo
+next-env.d.ts

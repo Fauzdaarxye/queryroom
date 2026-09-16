@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { runQuery as internalRunQuery, validateInput } from '../server/runner.mjs';
-import { problems, publicProblem } from '../server/problems/index.mjs';
+import { runQuery as internalRunQuery, validateInput } from '../server/runner.ts';
+import { problems, publicProblem } from './support/catalog.mjs';
 
 const runQuery = args => internalRunQuery({...args,engine:'sqlite'});
 const slug = 'rectangles-area';

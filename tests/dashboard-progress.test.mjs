@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createAccountProgressStore } from '../src/account-progress.mjs';
-import { filterQuestions } from '../shared/questions.mjs';
+import { filterQuestions } from '../shared/questions.ts';
 import { emptyProgress, importedProgress, mergeImportedProgress } from '../shared/progress.mjs';
 
 const questions = [

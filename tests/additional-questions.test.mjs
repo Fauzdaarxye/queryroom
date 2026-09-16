@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { problems, publicProblem } from '../server/problems/index.mjs';
-import { additionalProblems } from '../server/problems/additional.mjs';
-import { additionalQueries } from '../server/problems/additional-checkers.mjs';
-import { runQuery, validateInput } from '../server/runner.mjs';
+import { problems, publicProblem } from './support/catalog.mjs';
+import { additionalProblems } from './support/catalog.mjs';
+import { additionalQueries } from './support/additional-checkers.mjs';
+import { runQuery, validateInput } from '../server/runner.ts';
 import { compareResult } from '../server/compare.mjs';
 
 const requested = ['apples-oranges','drop-type-1-orders-for-customers-with-type-0-orders','capital-gainloss','grand-slam-titles','running-total-for-different-genders','find-the-start-and-end-number-of-continuous-ranges','all-people-report-to-the-given-manager','number-of-calls-between-two-persons','account-balance','the-most-frequently-ordered-products-for-each-customer','maximum-transaction-each-day','calculate-salaries','game-play-analysis-iii','customers-who-bought-products-a-and-b-but-not-c','count-apples-and-oranges','accepted-candidates-from-the-interviews','confirmation-rate','orders-with-maximum-quantity-above-average','project-employees-iii','number-of-times-a-driver-was-a-passenger','activity-participants','biggest-window-between-visits','last-person-to-fit-in-the-bus','highest-grade-for-each-student','the-most-recent-three-orders'];
@@ -76,7 +76,7 @@ test('a custom product tie is evaluated on both engines',async()=>{
   for(const engine of ['mysql','postgresql']){
     const result=await runQuery({slug:p.slug,engine,sql:additionalQueries[p.number],customInput});
     assert.equal(result.verdict,'Accepted',JSON.stringify(result));
-    assert.deepEqual(result.results[0].expected.rows,[[99,8,'Notebook'],[99,12,'Pencil']]);
+    assert.equal(compareResult(p, result.results[0].expected, {columns:['customer_id','product_id','product_name'], rows:[[99,8,'Notebook'],[99,12,'Pencil']]}).passed, true);
   }
 });
 

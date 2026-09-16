@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { defaultLibraryOptions, questionPage, readLibraryOptions, libraryQuery, practiceOverview, hasQuestionWork } from '../shared/questions.mjs';
+import { defaultLibraryOptions, questionPage, readLibraryOptions, libraryQuery, practiceOverview, hasQuestionWork } from '../shared/questions.ts';
 import { resolvePage } from '../shared/navigation.mjs';
 
 const questions=Array.from({length:25},(_,i)=>({slug:`q${i}`,number:100+i,title:`Question ${String(i).padStart(2,'0')}`,difficulty:i<9?'Medium':'Hard',starter:'-- Write your query'}));

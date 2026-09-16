@@ -6,10 +6,10 @@ import { randomBytes, createHash } from 'node:crypto';
 import { generateKeyPair, exportJWK, SignJWT, createLocalJWKSet } from 'jose';
 import { createAccountStore } from '../server/account-store.mjs';
 import { createGoogleAuth, verifyGoogleIdentity, googleConfig } from '../server/google-auth.mjs';
-import { createAccountApi } from '../server/account-api.mjs';
+import { createAccountApi } from '../server/account-api.ts';
 import { adminConnection, engineConfig } from '../server/engines.mjs';
-import { runQuery } from '../server/runner.mjs';
-import { problems } from '../server/problems/index.mjs';
+import { runQuery } from '../server/runner.ts';
+import { problems } from './support/catalog.mjs';
 
 test('Google sign-in, account isolation, progress and sign-out', { timeout: 30000 }, async t => {
   const schema = `qr_auth_${randomBytes(8).toString('hex')}`;
