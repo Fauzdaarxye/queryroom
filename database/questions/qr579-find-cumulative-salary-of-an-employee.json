@@ -1,0 +1,1199 @@
+{
+  "number": 579,
+  "slug": "find-cumulative-salary-of-an-employee",
+  "title": "Find Cumulative Salary of an Employee",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/find-cumulative-salary-of-an-employee/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/0500-0599/0579.Find Cumulative Salary of an Employee/README_EN.md",
+  "schema": [
+    {
+      "name": "Employee",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "salary",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "(id, month) is the primary key (combination of columns with unique values) for this table.\nEach row in the table indicates the salary of an employee in one month during the year 2020.",
+      "primaryKey": [
+        "id",
+        "month"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Employee</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>id</td><td>int</td></tr><tr><td>month</td><td>int</td></tr><tr><td>salary</td><td>int</td></tr></tbody></table></div><p>(id, month) is the primary key (combination of columns with unique values) for this table.<br/>Each row in the table indicates the salary of an employee in one month during the year 2020.</p>\n<p> </p>\n<p>Write a solution to calculate the <strong>cumulative salary summary</strong> for every employee in a single unified table.</p>\n<p>The <strong>cumulative salary summary</strong> for an employee can be calculated as follows:</p>\n<ul>\n<li>For each month that the employee worked, <strong>sum</strong> up the salaries in <strong>that month</strong> and the <strong>previous two months</strong>. This is their <strong>3-month sum</strong> for that month. If an employee did not work for the company in previous months, their effective salary for those months is <code>0</code>.</li>\n<li>Do <strong>not</strong> include the 3-month sum for the <strong>most recent month</strong> that the employee worked for in the summary.</li>\n<li>Do <strong>not</strong> include the 3-month sum for any month the employee <strong>did not work</strong>.</li>\n</ul>\n<p>Return the result table ordered by <code>id</code> in <strong>ascending order</strong>. In case of a tie, order it by <code>month</code> in <strong>descending order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Employee table:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>month</th><th>salary</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>20</td></tr><tr><td>2</td><td>1</td><td>20</td></tr><tr><td>1</td><td>2</td><td>30</td></tr><tr><td>2</td><td>2</td><td>30</td></tr><tr><td>3</td><td>2</td><td>40</td></tr><tr><td>1</td><td>3</td><td>40</td></tr><tr><td>3</td><td>3</td><td>60</td></tr><tr><td>1</td><td>4</td><td>60</td></tr><tr><td>3</td><td>4</td><td>70</td></tr><tr><td>1</td><td>7</td><td>90</td></tr><tr><td>1</td><td>8</td><td>90</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>month</th><th>Salary</th></tr></thead><tbody><tr><td>1</td><td>7</td><td>90</td></tr><tr><td>1</td><td>4</td><td>130</td></tr><tr><td>1</td><td>3</td><td>90</td></tr><tr><td>1</td><td>2</td><td>50</td></tr><tr><td>1</td><td>1</td><td>20</td></tr><tr><td>2</td><td>1</td><td>20</td></tr><tr><td>3</td><td>3</td><td>100</td></tr><tr><td>3</td><td>2</td><td>40</td></tr></tbody></table></div><p>Explanation: <br/>Employee '1' has five salary records excluding their most recent month '8':<br/>- 90 for month '7'.<br/>- 60 for month '4'.<br/>- 40 for month '3'.<br/>- 30 for month '2'.<br/>- 20 for month '1'.<br/>So the cumulative salary summary for this employee is:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>month</th><th>salary</th></tr></thead><tbody><tr><td>1</td><td>7</td><td>90</td><td>(90 + 0 + 0)</td></tr><tr><td>1</td><td>4</td><td>130</td><td>(60 + 40 + 30)</td></tr><tr><td>1</td><td>3</td><td>90</td><td>(40 + 30 + 20)</td></tr><tr><td>1</td><td>2</td><td>50</td><td>(30 + 20 + 0)</td></tr><tr><td>1</td><td>1</td><td>20</td><td>(20 + 0 + 0)</td></tr></tbody></table></div><p>Note that the 3-month sum for month '7' is 90 because they did not work during month '6' or month '5'.<br/><br/>Employee '2' only has one salary record (month '1') excluding their most recent month '2'.</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>month</th><th>salary</th></tr></thead><tbody><tr><td>2</td><td>1</td><td>20</td><td>(20 + 0 + 0)</td></tr></tbody></table></div><p>Employee '3' has two salary records excluding their most recent month '4':<br/>- 60 for month '3'.<br/>- 40 for month '2'.<br/>So the cumulative salary summary for this employee is:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>month</th><th>salary</th></tr></thead><tbody><tr><td>3</td><td>3</td><td>100</td><td>(60 + 40 + 0)</td></tr><tr><td>3</td><td>2</td><td>40</td><td>(40 + 0 + 0)</td></tr></tbody></table></div>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Employee": [
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            1,
+            2,
+            30
+          ],
+          [
+            2,
+            2,
+            30
+          ],
+          [
+            3,
+            2,
+            40
+          ],
+          [
+            1,
+            3,
+            40
+          ],
+          [
+            3,
+            3,
+            60
+          ],
+          [
+            1,
+            4,
+            60
+          ],
+          [
+            3,
+            4,
+            70
+          ],
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            8,
+            90
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            4,
+            130
+          ],
+          [
+            1,
+            3,
+            90
+          ],
+          [
+            1,
+            2,
+            50
+          ],
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            3,
+            3,
+            100
+          ],
+          [
+            3,
+            2,
+            40
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Employee": [
+          [
+            1,
+            8,
+            90
+          ],
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            3,
+            4,
+            70
+          ],
+          [
+            1,
+            4,
+            60
+          ],
+          [
+            3,
+            3,
+            60
+          ],
+          [
+            1,
+            3,
+            40
+          ],
+          [
+            3,
+            2,
+            40
+          ],
+          [
+            2,
+            2,
+            30
+          ],
+          [
+            1,
+            2,
+            30
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            1,
+            1,
+            20
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            4,
+            130
+          ],
+          [
+            1,
+            3,
+            90
+          ],
+          [
+            1,
+            2,
+            50
+          ],
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            3,
+            3,
+            100
+          ],
+          [
+            3,
+            2,
+            40
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Employee": [
+          [
+            101,
+            1,
+            20
+          ],
+          [
+            102,
+            1,
+            20
+          ],
+          [
+            101,
+            2,
+            30
+          ],
+          [
+            102,
+            2,
+            30
+          ],
+          [
+            103,
+            2,
+            40
+          ],
+          [
+            101,
+            3,
+            40
+          ],
+          [
+            103,
+            3,
+            60
+          ],
+          [
+            101,
+            4,
+            60
+          ],
+          [
+            103,
+            4,
+            70
+          ],
+          [
+            101,
+            7,
+            90
+          ],
+          [
+            101,
+            8,
+            90
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            101,
+            7,
+            90
+          ],
+          [
+            101,
+            4,
+            130
+          ],
+          [
+            101,
+            3,
+            90
+          ],
+          [
+            101,
+            2,
+            50
+          ],
+          [
+            101,
+            1,
+            20
+          ],
+          [
+            102,
+            1,
+            20
+          ],
+          [
+            103,
+            3,
+            100
+          ],
+          [
+            103,
+            2,
+            40
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Employee": [
+          [
+            1,
+            1,
+            26
+          ],
+          [
+            2,
+            1,
+            26
+          ],
+          [
+            1,
+            2,
+            39
+          ],
+          [
+            2,
+            2,
+            39
+          ],
+          [
+            3,
+            2,
+            51
+          ],
+          [
+            1,
+            3,
+            51
+          ],
+          [
+            3,
+            3,
+            76
+          ],
+          [
+            1,
+            4,
+            76
+          ],
+          [
+            3,
+            4,
+            89
+          ],
+          [
+            1,
+            7,
+            114
+          ],
+          [
+            1,
+            8,
+            114
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            114
+          ],
+          [
+            1,
+            4,
+            166
+          ],
+          [
+            1,
+            3,
+            116
+          ],
+          [
+            1,
+            2,
+            65
+          ],
+          [
+            1,
+            1,
+            26
+          ],
+          [
+            2,
+            1,
+            26
+          ],
+          [
+            3,
+            3,
+            127
+          ],
+          [
+            3,
+            2,
+            51
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Employee": [
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            1,
+            2,
+            30
+          ],
+          [
+            2,
+            2,
+            30
+          ],
+          [
+            3,
+            2,
+            40
+          ],
+          [
+            1,
+            3,
+            40
+          ],
+          [
+            3,
+            3,
+            60
+          ],
+          [
+            1,
+            4,
+            60
+          ],
+          [
+            3,
+            4,
+            70
+          ],
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            8,
+            90
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            4,
+            130
+          ],
+          [
+            1,
+            3,
+            90
+          ],
+          [
+            1,
+            2,
+            50
+          ],
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            3,
+            3,
+            100
+          ],
+          [
+            3,
+            2,
+            40
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Employee": [
+        [
+          1,
+          1,
+          20
+        ],
+        [
+          2,
+          1,
+          20
+        ],
+        [
+          1,
+          2,
+          30
+        ],
+        [
+          2,
+          2,
+          30
+        ],
+        [
+          3,
+          2,
+          40
+        ],
+        [
+          1,
+          3,
+          40
+        ],
+        [
+          3,
+          3,
+          60
+        ],
+        [
+          1,
+          4,
+          60
+        ],
+        [
+          3,
+          4,
+          70
+        ],
+        [
+          1,
+          7,
+          90
+        ],
+        [
+          1,
+          8,
+          90
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "id",
+        "month",
+        "Salary"
+      ],
+      "rows": [
+        [
+          1,
+          7,
+          90
+        ],
+        [
+          1,
+          4,
+          130
+        ],
+        [
+          1,
+          3,
+          90
+        ],
+        [
+          1,
+          2,
+          50
+        ],
+        [
+          1,
+          1,
+          20
+        ],
+        [
+          2,
+          1,
+          20
+        ],
+        [
+          3,
+          3,
+          100
+        ],
+        [
+          3,
+          2,
+          40
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "/* Write your MySQL query statement below */\nSELECT\n  id,\n  month,\n  SUM(salary) OVER (PARTITION BY id ORDER BY month RANGE BETWEEN 2 PRECEDING AND CURRENT ROW) AS Salary\nFROM employee\nWHERE\n  NOT (id, month) IN (\n    SELECT\n      id,\n      MAX(month)\n    FROM Employee\n    GROUP BY\n      id\n  )\nORDER BY\n  id,\n  month DESC",
+  "playlistIndex": 23,
+  "videos": [
+    {
+      "videoId": "AfV4E7BGy70",
+      "playlistIndex": 23,
+      "url": "https://www.youtube.com/watch?v=AfV4E7BGy70&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=23"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "id",
+      "direction": "asc"
+    },
+    {
+      "column": "month",
+      "direction": "desc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Employee": [
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            1,
+            2,
+            30
+          ],
+          [
+            2,
+            2,
+            30
+          ],
+          [
+            3,
+            2,
+            40
+          ],
+          [
+            1,
+            3,
+            40
+          ],
+          [
+            3,
+            3,
+            60
+          ],
+          [
+            1,
+            4,
+            60
+          ],
+          [
+            3,
+            4,
+            70
+          ],
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            8,
+            90
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            4,
+            130
+          ],
+          [
+            1,
+            3,
+            90
+          ],
+          [
+            1,
+            2,
+            50
+          ],
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            3,
+            3,
+            100
+          ],
+          [
+            3,
+            2,
+            40
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Employee": [
+          [
+            1,
+            8,
+            90
+          ],
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            3,
+            4,
+            70
+          ],
+          [
+            1,
+            4,
+            60
+          ],
+          [
+            3,
+            3,
+            60
+          ],
+          [
+            1,
+            3,
+            40
+          ],
+          [
+            3,
+            2,
+            40
+          ],
+          [
+            2,
+            2,
+            30
+          ],
+          [
+            1,
+            2,
+            30
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            1,
+            1,
+            20
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            90
+          ],
+          [
+            1,
+            4,
+            130
+          ],
+          [
+            1,
+            3,
+            90
+          ],
+          [
+            1,
+            2,
+            50
+          ],
+          [
+            1,
+            1,
+            20
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            3,
+            3,
+            100
+          ],
+          [
+            3,
+            2,
+            40
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Employee": [
+          [
+            101,
+            1,
+            20
+          ],
+          [
+            102,
+            1,
+            20
+          ],
+          [
+            101,
+            2,
+            30
+          ],
+          [
+            102,
+            2,
+            30
+          ],
+          [
+            103,
+            2,
+            40
+          ],
+          [
+            101,
+            3,
+            40
+          ],
+          [
+            103,
+            3,
+            60
+          ],
+          [
+            101,
+            4,
+            60
+          ],
+          [
+            103,
+            4,
+            70
+          ],
+          [
+            101,
+            7,
+            90
+          ],
+          [
+            101,
+            8,
+            90
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            101,
+            7,
+            90
+          ],
+          [
+            101,
+            4,
+            130
+          ],
+          [
+            101,
+            3,
+            90
+          ],
+          [
+            101,
+            2,
+            50
+          ],
+          [
+            101,
+            1,
+            20
+          ],
+          [
+            102,
+            1,
+            20
+          ],
+          [
+            103,
+            3,
+            100
+          ],
+          [
+            103,
+            2,
+            40
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Employee": [
+          [
+            1,
+            1,
+            26
+          ],
+          [
+            2,
+            1,
+            26
+          ],
+          [
+            1,
+            2,
+            39
+          ],
+          [
+            2,
+            2,
+            39
+          ],
+          [
+            3,
+            2,
+            51
+          ],
+          [
+            1,
+            3,
+            51
+          ],
+          [
+            3,
+            3,
+            76
+          ],
+          [
+            1,
+            4,
+            76
+          ],
+          [
+            3,
+            4,
+            89
+          ],
+          [
+            1,
+            7,
+            114
+          ],
+          [
+            1,
+            8,
+            114
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "id",
+          "month",
+          "Salary"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            114
+          ],
+          [
+            1,
+            4,
+            166
+          ],
+          [
+            1,
+            3,
+            116
+          ],
+          [
+            1,
+            2,
+            65
+          ],
+          [
+            1,
+            1,
+            26
+          ],
+          [
+            2,
+            1,
+            26
+          ],
+          [
+            3,
+            3,
+            127
+          ],
+          [
+            3,
+            2,
+            51
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

@@ -5,10 +5,12 @@
   "type": "module",
   "description": "A personal, local SQL practice workspace.",
   "scripts": {
-    "dev": "node server/index.mjs --dev",
-    "start": "node server/index.mjs",
-    "build": "vite build",
+    "dev": "node backend/index.mjs --dev",
+    "start": "node backend/index.mjs",
+    "build": "vite build --config frontend/vite.config.js",
     "test": "node scripts/test.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "leaderboard:backfill": "node scripts/backfill-leaderboard.mjs"
   },
   "dependencies": {
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.0",
     "fake-indexeddb": "^6.2.5",
+    "prettier": "^3.9.7",
     "vite": "^7.3.0"
   }
 }

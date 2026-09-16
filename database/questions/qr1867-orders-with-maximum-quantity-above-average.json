@@ -1,0 +1,951 @@
+{
+  "number": 1867,
+  "slug": "orders-with-maximum-quantity-above-average",
+  "title": "Orders With Maximum Quantity Above Average",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/orders-with-maximum-quantity-above-average/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1800-1899/1867.Orders With Maximum Quantity Above Average/README_EN.md",
+  "schema": [
+    {
+      "name": "OrdersDetails",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "product_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "(order_id, product_id) is the primary key (combination of columns with unique values) for this table.\nA single order is represented as multiple rows, one row for each product in the order.\nEach row of this table contains the quantity ordered of the product product_id in the order order_id.",
+      "primaryKey": [
+        "order_id",
+        "product_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "<p>Table: <code>OrdersDetails</code></p>\n\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>order_id</td><td>int</td></tr><tr><td>product_id</td><td>int</td></tr><tr><td>quantity</td><td>int</td></tr></tbody></table></div><p>(order_id, product_id) is the primary key (combination of columns with unique values) for this table.<br/>A single order is represented as multiple rows, one row for each product in the order.<br/>Each row of this table contains the quantity ordered of the product product_id in the order order_id.</p>\n\n<p> </p>\n\n<p>You are running an e-commerce site that is looking for <strong>imbalanced orders</strong>. An <strong>imbalanced order</strong> is one whose <strong>maximum</strong> quantity is <strong>strictly greater</strong> than the <strong>average</strong> quantity of <strong>every order (including itself)</strong>.</p>\n\n<p>The <strong>average </strong>quantity of an order is calculated as <code>(total quantity of all products in the order) / (number of different products in the order)</code>. The <strong>maximum</strong> quantity of an order is the highest <code>quantity</code> of any single product in the order.</p>\n\n<p>Write a solution to find the <code>order_id</code> of all <strong>imbalanced orders</strong>.</p>\n\n<p>Return the result table in <strong>any order</strong>.</p>\n\n<p>The result format is in the following example.</p>\n\n<p> </p>\n<p><strong>Example 1:</strong></p>\n\n<p>Input: <br/>OrdersDetails table:</p><div class=\"statement-table\"><table><thead><tr><th>order_id</th><th>product_id</th><th>quantity</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>12</td></tr><tr><td>1</td><td>2</td><td>10</td></tr><tr><td>1</td><td>3</td><td>15</td></tr><tr><td>2</td><td>1</td><td>8</td></tr><tr><td>2</td><td>4</td><td>4</td></tr><tr><td>2</td><td>5</td><td>6</td></tr><tr><td>3</td><td>3</td><td>5</td></tr><tr><td>3</td><td>4</td><td>18</td></tr><tr><td>4</td><td>5</td><td>2</td></tr><tr><td>4</td><td>6</td><td>8</td></tr><tr><td>5</td><td>7</td><td>9</td></tr><tr><td>5</td><td>8</td><td>9</td></tr><tr><td>3</td><td>9</td><td>20</td></tr><tr><td>2</td><td>9</td><td>4</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>order_id</th></tr></thead><tbody><tr><td>1</td></tr><tr><td>3</td></tr></tbody></table></div><p>Explanation: <br/>The average quantity of each order is:<br/>- order_id=1: (12+10+15)/3 = 12.3333333<br/>- order_id=2: (8+4+6+4)/4 = 5.5<br/>- order_id=3: (5+18+20)/3 = 14.333333<br/>- order_id=4: (2+8)/2 = 5<br/>- order_id=5: (9+9)/2 = 9<br/><br/>The maximum quantity of each order is:<br/>- order_id=1: max(12, 10, 15) = 15<br/>- order_id=2: max(8, 4, 6, 4) = 8<br/>- order_id=3: max(5, 18, 20) = 20<br/>- order_id=4: max(2, 8) = 8<br/>- order_id=5: max(9, 9) = 9<br/><br/>Orders 1 and 3 are imbalanced because they have a maximum quantity that exceeds the average quantity of every order.</p>",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            12
+          ],
+          [
+            1,
+            2,
+            10
+          ],
+          [
+            1,
+            3,
+            15
+          ],
+          [
+            2,
+            1,
+            8
+          ],
+          [
+            2,
+            4,
+            4
+          ],
+          [
+            2,
+            5,
+            6
+          ],
+          [
+            3,
+            3,
+            5
+          ],
+          [
+            3,
+            4,
+            18
+          ],
+          [
+            4,
+            5,
+            2
+          ],
+          [
+            4,
+            6,
+            8
+          ],
+          [
+            5,
+            7,
+            9
+          ],
+          [
+            5,
+            8,
+            9
+          ],
+          [
+            3,
+            9,
+            20
+          ],
+          [
+            2,
+            9,
+            4
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "OrdersDetails": [
+          [
+            2,
+            9,
+            4
+          ],
+          [
+            3,
+            9,
+            20
+          ],
+          [
+            5,
+            8,
+            9
+          ],
+          [
+            5,
+            7,
+            9
+          ],
+          [
+            4,
+            6,
+            8
+          ],
+          [
+            4,
+            5,
+            2
+          ],
+          [
+            3,
+            4,
+            18
+          ],
+          [
+            3,
+            3,
+            5
+          ],
+          [
+            2,
+            5,
+            6
+          ],
+          [
+            2,
+            4,
+            4
+          ],
+          [
+            2,
+            1,
+            8
+          ],
+          [
+            1,
+            3,
+            15
+          ],
+          [
+            1,
+            2,
+            10
+          ],
+          [
+            1,
+            1,
+            12
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            3
+          ],
+          [
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "global-average",
+      "name": "Compare with every order and exclude equality",
+      "kind": "Local practice case",
+      "description": "Compare with every order and exclude equality.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            8
+          ],
+          [
+            1,
+            2,
+            2
+          ],
+          [
+            2,
+            1,
+            10
+          ],
+          [
+            3,
+            1,
+            10
+          ],
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            4,
+            1,
+            11
+          ],
+          [
+            4,
+            2,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "unequal-sizes",
+      "name": "Use each order average rather than the overall row average",
+      "kind": "Local practice case",
+      "description": "Use each order average rather than the overall row average.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            100
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            2,
+            2,
+            1
+          ],
+          [
+            2,
+            3,
+            1
+          ],
+          [
+            2,
+            4,
+            1
+          ],
+          [
+            2,
+            5,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": []
+      }
+    },
+    {
+      "id": "fractional-averages",
+      "name": "Fractional averages and multiple qualifying orders",
+      "kind": "Local practice case",
+      "description": "Fractional averages and multiple qualifying orders.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            5
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            2,
+            1,
+            4
+          ],
+          [
+            2,
+            2,
+            7
+          ],
+          [
+            3,
+            1,
+            5
+          ],
+          [
+            3,
+            2,
+            5
+          ],
+          [
+            4,
+            1,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No order details",
+      "kind": "Local practice case",
+      "description": "No order details.",
+      "input": {
+        "OrdersDetails": []
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "OrdersDetails": [
+        [
+          1,
+          1,
+          12
+        ],
+        [
+          1,
+          2,
+          10
+        ],
+        [
+          1,
+          3,
+          15
+        ],
+        [
+          2,
+          1,
+          8
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          2,
+          5,
+          6
+        ],
+        [
+          3,
+          3,
+          5
+        ],
+        [
+          3,
+          4,
+          18
+        ],
+        [
+          4,
+          5,
+          2
+        ],
+        [
+          4,
+          6,
+          8
+        ],
+        [
+          5,
+          7,
+          9
+        ],
+        [
+          5,
+          8,
+          9
+        ],
+        [
+          3,
+          9,
+          20
+        ],
+        [
+          2,
+          9,
+          4
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "order_id"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          3
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "orderBy": [],
+  "collection": "Added questions",
+  "testNotes": "The published example is included. Extra cases are created for this workspace; LeetCode’s private tests are not available.",
+  "examples": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            12
+          ],
+          [
+            1,
+            2,
+            10
+          ],
+          [
+            1,
+            3,
+            15
+          ],
+          [
+            2,
+            1,
+            8
+          ],
+          [
+            2,
+            4,
+            4
+          ],
+          [
+            2,
+            5,
+            6
+          ],
+          [
+            3,
+            3,
+            5
+          ],
+          [
+            3,
+            4,
+            18
+          ],
+          [
+            4,
+            5,
+            2
+          ],
+          [
+            4,
+            6,
+            8
+          ],
+          [
+            5,
+            7,
+            9
+          ],
+          [
+            5,
+            8,
+            9
+          ],
+          [
+            3,
+            9,
+            20
+          ],
+          [
+            2,
+            9,
+            4
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            12
+          ],
+          [
+            1,
+            2,
+            10
+          ],
+          [
+            1,
+            3,
+            15
+          ],
+          [
+            2,
+            1,
+            8
+          ],
+          [
+            2,
+            4,
+            4
+          ],
+          [
+            2,
+            5,
+            6
+          ],
+          [
+            3,
+            3,
+            5
+          ],
+          [
+            3,
+            4,
+            18
+          ],
+          [
+            4,
+            5,
+            2
+          ],
+          [
+            4,
+            6,
+            8
+          ],
+          [
+            5,
+            7,
+            9
+          ],
+          [
+            5,
+            8,
+            9
+          ],
+          [
+            3,
+            9,
+            20
+          ],
+          [
+            2,
+            9,
+            4
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "OrdersDetails": [
+          [
+            2,
+            9,
+            4
+          ],
+          [
+            3,
+            9,
+            20
+          ],
+          [
+            5,
+            8,
+            9
+          ],
+          [
+            5,
+            7,
+            9
+          ],
+          [
+            4,
+            6,
+            8
+          ],
+          [
+            4,
+            5,
+            2
+          ],
+          [
+            3,
+            4,
+            18
+          ],
+          [
+            3,
+            3,
+            5
+          ],
+          [
+            2,
+            5,
+            6
+          ],
+          [
+            2,
+            4,
+            4
+          ],
+          [
+            2,
+            1,
+            8
+          ],
+          [
+            1,
+            3,
+            15
+          ],
+          [
+            1,
+            2,
+            10
+          ],
+          [
+            1,
+            1,
+            12
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            3
+          ],
+          [
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "global-average",
+      "name": "Compare with every order and exclude equality",
+      "kind": "Local practice case",
+      "description": "Compare with every order and exclude equality.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            8
+          ],
+          [
+            1,
+            2,
+            2
+          ],
+          [
+            2,
+            1,
+            10
+          ],
+          [
+            3,
+            1,
+            10
+          ],
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            4,
+            1,
+            11
+          ],
+          [
+            4,
+            2,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            4
+          ]
+        ]
+      }
+    },
+    {
+      "id": "unequal-sizes",
+      "name": "Use each order average rather than the overall row average",
+      "kind": "Local practice case",
+      "description": "Use each order average rather than the overall row average.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            100
+          ],
+          [
+            2,
+            1,
+            20
+          ],
+          [
+            2,
+            2,
+            1
+          ],
+          [
+            2,
+            3,
+            1
+          ],
+          [
+            2,
+            4,
+            1
+          ],
+          [
+            2,
+            5,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": []
+      }
+    },
+    {
+      "id": "fractional-averages",
+      "name": "Fractional averages and multiple qualifying orders",
+      "kind": "Local practice case",
+      "description": "Fractional averages and multiple qualifying orders.",
+      "input": {
+        "OrdersDetails": [
+          [
+            1,
+            1,
+            5
+          ],
+          [
+            1,
+            2,
+            6
+          ],
+          [
+            2,
+            1,
+            4
+          ],
+          [
+            2,
+            2,
+            7
+          ],
+          [
+            3,
+            1,
+            5
+          ],
+          [
+            3,
+            2,
+            5
+          ],
+          [
+            4,
+            1,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No order details",
+      "kind": "Local practice case",
+      "description": "No order details.",
+      "input": {
+        "OrdersDetails": []
+      },
+      "expected": {
+        "columns": [
+          "order_id"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "referenceSql": "WITH quantities AS (SELECT order_id,MAX(quantity) AS maximum,AVG(quantity*1.0) AS average FROM OrdersDetails GROUP BY order_id) SELECT order_id FROM quantities WHERE maximum>(SELECT MAX(average) FROM quantities)"
+}

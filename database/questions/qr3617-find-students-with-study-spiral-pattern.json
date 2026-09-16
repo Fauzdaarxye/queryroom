@@ -1,0 +1,2112 @@
+{
+  "number": 3617,
+  "slug": "find-students-with-study-spiral-pattern",
+  "title": "Find Students with Study Spiral Pattern",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/find-students-with-study-spiral-pattern/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/3600-3699/3617.Find Students with Study Spiral Pattern/README_EN.md",
+  "schema": [
+    {
+      "name": "students",
+      "columns": [
+        {
+          "name": "student_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "student_name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "major",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "student_id is the unique identifier for this table.\nEach row contains information about a student and their academic major.",
+      "primaryKey": [
+        "student_id"
+      ]
+    },
+    {
+      "name": "study_sessions",
+      "columns": [
+        {
+          "name": "session_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "student_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "subject",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "session_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "hours_studied",
+          "type": "REAL",
+          "displayType": "decimal"
+        }
+      ],
+      "note": "session_id is the unique identifier for this table.\nEach row represents a study session by a student for a specific subject.",
+      "primaryKey": [
+        "session_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>students</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>student_id</td><td>int</td></tr><tr><td>student_name</td><td>varchar</td></tr><tr><td>major</td><td>varchar</td></tr></tbody></table></div><p>student_id is the unique identifier for this table.<br/>Each row contains information about a student and their academic major.</p>\n<p>Table: <code>study_sessions</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>session_id</td><td>int</td></tr><tr><td>student_id</td><td>int</td></tr><tr><td>subject</td><td>varchar</td></tr><tr><td>session_date</td><td>date</td></tr><tr><td>hours_studied</td><td>decimal</td></tr></tbody></table></div><p>session_id is the unique identifier for this table.<br/>Each row represents a study session by a student for a specific subject.</p>\n<p>Write a solution to find students who follow the <strong>Study Spiral Pattern</strong> - students who consistently study multiple subjects in a rotating cycle.</p>\n<ul>\n<li>A Study Spiral Pattern means a student studies at least <code>3</code><strong> different subjects</strong> in a repeating sequence</li>\n<li>The pattern must repeat for <strong>at least </strong><code>2</code><strong> complete cycles</strong> (minimum <code>6</code> study sessions)</li>\n<li>Sessions must be <strong>consecutive dates</strong> with no gaps longer than <code>2</code> days between sessions</li>\n<li>Calculate the <strong>cycle length</strong> (number of different subjects in the pattern)</li>\n<li>Calculate the <strong>total study hours</strong> across all sessions in the pattern</li>\n<li>Only include students with cycle length of <strong>at least </strong><code>3</code><strong> subjects</strong></li>\n</ul>\n<p>Return <em>the result table ordered by cycle length in <strong>descending</strong> order, then by total study hours in <strong>descending</strong> order</em>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example:</strong></p>\n<div>\n<p><strong>Input:</strong></p>\n<p>students table:</p>\n<div class=\"statement-table\"><table><thead><tr><th>student_id</th><th>student_name</th><th>major</th></tr></thead><tbody><tr><td>1</td><td>Alice Chen</td><td>Computer Science</td></tr><tr><td>2</td><td>Bob Johnson</td><td>Mathematics</td></tr><tr><td>3</td><td>Carol Davis</td><td>Physics</td></tr><tr><td>4</td><td>David Wilson</td><td>Chemistry</td></tr><tr><td>5</td><td>Emma Brown</td><td>Biology</td></tr></tbody></table></div>\n<p>study_sessions table:</p>\n<div class=\"statement-table\"><table><thead><tr><th>session_id</th><th>student_id</th><th>subject</th><th>session_date</th><th>hours_studied</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>Math</td><td>2023-10-01</td><td>2.5</td></tr><tr><td>2</td><td>1</td><td>Physics</td><td>2023-10-02</td><td>3.0</td></tr><tr><td>3</td><td>1</td><td>Chemistry</td><td>2023-10-03</td><td>2.0</td></tr><tr><td>4</td><td>1</td><td>Math</td><td>2023-10-04</td><td>2.5</td></tr><tr><td>5</td><td>1</td><td>Physics</td><td>2023-10-05</td><td>3.0</td></tr><tr><td>6</td><td>1</td><td>Chemistry</td><td>2023-10-06</td><td>2.0</td></tr><tr><td>7</td><td>2</td><td>Algebra</td><td>2023-10-01</td><td>4.0</td></tr><tr><td>8</td><td>2</td><td>Calculus</td><td>2023-10-02</td><td>3.5</td></tr><tr><td>9</td><td>2</td><td>Statistics</td><td>2023-10-03</td><td>2.5</td></tr><tr><td>10</td><td>2</td><td>Geometry</td><td>2023-10-04</td><td>3.0</td></tr><tr><td>11</td><td>2</td><td>Algebra</td><td>2023-10-05</td><td>4.0</td></tr><tr><td>12</td><td>2</td><td>Calculus</td><td>2023-10-06</td><td>3.5</td></tr><tr><td>13</td><td>2</td><td>Statistics</td><td>2023-10-07</td><td>2.5</td></tr><tr><td>14</td><td>2</td><td>Geometry</td><td>2023-10-08</td><td>3.0</td></tr><tr><td>15</td><td>3</td><td>Biology</td><td>2023-10-01</td><td>2.0</td></tr><tr><td>16</td><td>3</td><td>Chemistry</td><td>2023-10-02</td><td>2.5</td></tr><tr><td>17</td><td>3</td><td>Biology</td><td>2023-10-03</td><td>2.0</td></tr><tr><td>18</td><td>3</td><td>Chemistry</td><td>2023-10-04</td><td>2.5</td></tr><tr><td>19</td><td>4</td><td>Organic</td><td>2023-10-01</td><td>3.0</td></tr><tr><td>20</td><td>4</td><td>Physical</td><td>2023-10-05</td><td>2.5</td></tr></tbody></table></div>\n<p><strong>Output:</strong></p>\n<div class=\"statement-table\"><table><thead><tr><th>student_id</th><th>student_name</th><th>major</th><th>cycle_length</th><th>total_study_hours</th></tr></thead><tbody><tr><td>2</td><td>Bob Johnson</td><td>Mathematics</td><td>4</td><td>26.0</td></tr><tr><td>1</td><td>Alice Chen</td><td>Computer Science</td><td>3</td><td>15.0</td></tr></tbody></table></div>\n<p><strong>Explanation:</strong></p>\n<ul>\n<li><strong>Alice Chen (student_id = 1):</strong>\n<ul>\n<li>Study sequence: Math → Physics → Chemistry → Math → Physics → Chemistry</li>\n<li>Pattern: 3 subjects (Math, Physics, Chemistry) repeating for 2 complete cycles</li>\n<li>Consecutive dates: Oct 1-6 with no gaps &gt; 2 days</li>\n<li>Cycle length: 3 subjects</li>\n<li>Total hours: 2.5 + 3.0 + 2.0 + 2.5 + 3.0 + 2.0 = 15.0 hours</li>\n</ul>\n</li>\n<li><strong>Bob Johnson (student_id = 2):</strong>\n<ul>\n<li>Study sequence: Algebra → Calculus → Statistics → Geometry → Algebra → Calculus → Statistics → Geometry</li>\n<li>Pattern: 4 subjects (Algebra, Calculus, Statistics, Geometry) repeating for 2 complete cycles</li>\n<li>Consecutive dates: Oct 1-8 with no gaps &gt; 2 days</li>\n<li>Cycle length: 4 subjects</li>\n<li>Total hours: 4.0 + 3.5 + 2.5 + 3.0 + 4.0 + 3.5 + 2.5 + 3.0 = 26.0 hours</li>\n</ul>\n</li>\n<li><strong>Students not included:</strong>\n<ul>\n<li>Carol Davis (student_id = 3): Only 2 subjects (Biology, Chemistry) - doesn't meet minimum 3 subjects requirement</li>\n<li>David Wilson (student_id = 4): Only 2 study sessions with a 4-day gap - doesn't meet consecutive dates requirement</li>\n<li>Emma Brown (student_id = 5): No study sessions recorded</li>\n</ul>\n</li>\n</ul>\n<p>The result table is ordered by cycle_length in descending order, then by total_study_hours in descending order.</p>\n</div>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice Chen",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics"
+          ],
+          [
+            3,
+            "Carol Davis",
+            "Physics"
+          ],
+          [
+            4,
+            "David Wilson",
+            "Chemistry"
+          ],
+          [
+            5,
+            "Emma Brown",
+            "Biology"
+          ]
+        ],
+        "study_sessions": [
+          [
+            1,
+            1,
+            "Math",
+            "2023-10-01",
+            2.5
+          ],
+          [
+            2,
+            1,
+            "Physics",
+            "2023-10-02",
+            3
+          ],
+          [
+            3,
+            1,
+            "Chemistry",
+            "2023-10-03",
+            2
+          ],
+          [
+            4,
+            1,
+            "Math",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            5,
+            1,
+            "Physics",
+            "2023-10-05",
+            3
+          ],
+          [
+            6,
+            1,
+            "Chemistry",
+            "2023-10-06",
+            2
+          ],
+          [
+            7,
+            2,
+            "Algebra",
+            "2023-10-01",
+            4
+          ],
+          [
+            8,
+            2,
+            "Calculus",
+            "2023-10-02",
+            3.5
+          ],
+          [
+            9,
+            2,
+            "Statistics",
+            "2023-10-03",
+            2.5
+          ],
+          [
+            10,
+            2,
+            "Geometry",
+            "2023-10-04",
+            3
+          ],
+          [
+            11,
+            2,
+            "Algebra",
+            "2023-10-05",
+            4
+          ],
+          [
+            12,
+            2,
+            "Calculus",
+            "2023-10-06",
+            3.5
+          ],
+          [
+            13,
+            2,
+            "Statistics",
+            "2023-10-07",
+            2.5
+          ],
+          [
+            14,
+            2,
+            "Geometry",
+            "2023-10-08",
+            3
+          ],
+          [
+            15,
+            3,
+            "Biology",
+            "2023-10-01",
+            2
+          ],
+          [
+            16,
+            3,
+            "Chemistry",
+            "2023-10-02",
+            2.5
+          ],
+          [
+            17,
+            3,
+            "Biology",
+            "2023-10-03",
+            2
+          ],
+          [
+            18,
+            3,
+            "Chemistry",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            19,
+            4,
+            "Organic",
+            "2023-10-01",
+            3
+          ],
+          [
+            20,
+            4,
+            "Physical",
+            "2023-10-05",
+            2.5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics",
+            4,
+            26
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science",
+            3,
+            15
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "students": [
+          [
+            5,
+            "Emma Brown",
+            "Biology"
+          ],
+          [
+            4,
+            "David Wilson",
+            "Chemistry"
+          ],
+          [
+            3,
+            "Carol Davis",
+            "Physics"
+          ],
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics"
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science"
+          ]
+        ],
+        "study_sessions": [
+          [
+            20,
+            4,
+            "Physical",
+            "2023-10-05",
+            2.5
+          ],
+          [
+            19,
+            4,
+            "Organic",
+            "2023-10-01",
+            3
+          ],
+          [
+            18,
+            3,
+            "Chemistry",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            17,
+            3,
+            "Biology",
+            "2023-10-03",
+            2
+          ],
+          [
+            16,
+            3,
+            "Chemistry",
+            "2023-10-02",
+            2.5
+          ],
+          [
+            15,
+            3,
+            "Biology",
+            "2023-10-01",
+            2
+          ],
+          [
+            14,
+            2,
+            "Geometry",
+            "2023-10-08",
+            3
+          ],
+          [
+            13,
+            2,
+            "Statistics",
+            "2023-10-07",
+            2.5
+          ],
+          [
+            12,
+            2,
+            "Calculus",
+            "2023-10-06",
+            3.5
+          ],
+          [
+            11,
+            2,
+            "Algebra",
+            "2023-10-05",
+            4
+          ],
+          [
+            10,
+            2,
+            "Geometry",
+            "2023-10-04",
+            3
+          ],
+          [
+            9,
+            2,
+            "Statistics",
+            "2023-10-03",
+            2.5
+          ],
+          [
+            8,
+            2,
+            "Calculus",
+            "2023-10-02",
+            3.5
+          ],
+          [
+            7,
+            2,
+            "Algebra",
+            "2023-10-01",
+            4
+          ],
+          [
+            6,
+            1,
+            "Chemistry",
+            "2023-10-06",
+            2
+          ],
+          [
+            5,
+            1,
+            "Physics",
+            "2023-10-05",
+            3
+          ],
+          [
+            4,
+            1,
+            "Math",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            3,
+            1,
+            "Chemistry",
+            "2023-10-03",
+            2
+          ],
+          [
+            2,
+            1,
+            "Physics",
+            "2023-10-02",
+            3
+          ],
+          [
+            1,
+            1,
+            "Math",
+            "2023-10-01",
+            2.5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics",
+            4,
+            26
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science",
+            3,
+            15
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "students": [
+          [
+            101,
+            "Alice Chen Lab",
+            "Computer Science"
+          ],
+          [
+            102,
+            "Bob Johnson Lab",
+            "Mathematics"
+          ],
+          [
+            103,
+            "Carol Davis Lab",
+            "Physics"
+          ],
+          [
+            104,
+            "David Wilson Lab",
+            "Chemistry"
+          ],
+          [
+            105,
+            "Emma Brown Lab",
+            "Biology"
+          ]
+        ],
+        "study_sessions": [
+          [
+            101,
+            101,
+            "Math",
+            "2023-10-01",
+            2.5
+          ],
+          [
+            102,
+            101,
+            "Physics",
+            "2023-10-02",
+            3
+          ],
+          [
+            103,
+            101,
+            "Chemistry",
+            "2023-10-03",
+            2
+          ],
+          [
+            104,
+            101,
+            "Math",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            105,
+            101,
+            "Physics",
+            "2023-10-05",
+            3
+          ],
+          [
+            106,
+            101,
+            "Chemistry",
+            "2023-10-06",
+            2
+          ],
+          [
+            107,
+            102,
+            "Algebra",
+            "2023-10-01",
+            4
+          ],
+          [
+            108,
+            102,
+            "Calculus",
+            "2023-10-02",
+            3.5
+          ],
+          [
+            109,
+            102,
+            "Statistics",
+            "2023-10-03",
+            2.5
+          ],
+          [
+            110,
+            102,
+            "Geometry",
+            "2023-10-04",
+            3
+          ],
+          [
+            111,
+            102,
+            "Algebra",
+            "2023-10-05",
+            4
+          ],
+          [
+            112,
+            102,
+            "Calculus",
+            "2023-10-06",
+            3.5
+          ],
+          [
+            113,
+            102,
+            "Statistics",
+            "2023-10-07",
+            2.5
+          ],
+          [
+            114,
+            102,
+            "Geometry",
+            "2023-10-08",
+            3
+          ],
+          [
+            115,
+            103,
+            "Biology",
+            "2023-10-01",
+            2
+          ],
+          [
+            116,
+            103,
+            "Chemistry",
+            "2023-10-02",
+            2.5
+          ],
+          [
+            117,
+            103,
+            "Biology",
+            "2023-10-03",
+            2
+          ],
+          [
+            118,
+            103,
+            "Chemistry",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            119,
+            104,
+            "Organic",
+            "2023-10-01",
+            3
+          ],
+          [
+            120,
+            104,
+            "Physical",
+            "2023-10-05",
+            2.5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            102,
+            "Bob Johnson Lab",
+            "Mathematics",
+            4,
+            26
+          ],
+          [
+            101,
+            "Alice Chen Lab",
+            "Computer Science",
+            3,
+            15
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice Chen",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics"
+          ],
+          [
+            3,
+            "Carol Davis",
+            "Physics"
+          ],
+          [
+            4,
+            "David Wilson",
+            "Chemistry"
+          ],
+          [
+            5,
+            "Emma Brown",
+            "Biology"
+          ]
+        ],
+        "study_sessions": [
+          [
+            1,
+            1,
+            "Math",
+            "2023-10-01",
+            3.38
+          ],
+          [
+            2,
+            1,
+            "Physics",
+            "2023-10-02",
+            3.95
+          ],
+          [
+            3,
+            1,
+            "Chemistry",
+            "2023-10-03",
+            2.8
+          ],
+          [
+            4,
+            1,
+            "Math",
+            "2023-10-04",
+            3.38
+          ],
+          [
+            5,
+            1,
+            "Physics",
+            "2023-10-05",
+            3.95
+          ],
+          [
+            6,
+            1,
+            "Chemistry",
+            "2023-10-06",
+            2.8
+          ],
+          [
+            7,
+            2,
+            "Algebra",
+            "2023-10-01",
+            5.1
+          ],
+          [
+            8,
+            2,
+            "Calculus",
+            "2023-10-02",
+            4.52
+          ],
+          [
+            9,
+            2,
+            "Statistics",
+            "2023-10-03",
+            3.38
+          ],
+          [
+            10,
+            2,
+            "Geometry",
+            "2023-10-04",
+            3.95
+          ],
+          [
+            11,
+            2,
+            "Algebra",
+            "2023-10-05",
+            5.1
+          ],
+          [
+            12,
+            2,
+            "Calculus",
+            "2023-10-06",
+            4.52
+          ],
+          [
+            13,
+            2,
+            "Statistics",
+            "2023-10-07",
+            3.38
+          ],
+          [
+            14,
+            2,
+            "Geometry",
+            "2023-10-08",
+            3.95
+          ],
+          [
+            15,
+            3,
+            "Biology",
+            "2023-10-01",
+            2.8
+          ],
+          [
+            16,
+            3,
+            "Chemistry",
+            "2023-10-02",
+            3.38
+          ],
+          [
+            17,
+            3,
+            "Biology",
+            "2023-10-03",
+            2.8
+          ],
+          [
+            18,
+            3,
+            "Chemistry",
+            "2023-10-04",
+            3.38
+          ],
+          [
+            19,
+            4,
+            "Organic",
+            "2023-10-01",
+            3.95
+          ],
+          [
+            20,
+            4,
+            "Physical",
+            "2023-10-05",
+            3.38
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics",
+            4,
+            33.9
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science",
+            3,
+            20.259999999999998
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice Chen",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics"
+          ],
+          [
+            3,
+            "Carol Davis",
+            "Physics"
+          ],
+          [
+            4,
+            "David Wilson",
+            "Chemistry"
+          ],
+          [
+            5,
+            "Emma Brown",
+            "Biology"
+          ]
+        ],
+        "study_sessions": [
+          [
+            1,
+            1,
+            "Math",
+            "2023-10-01",
+            2.5
+          ],
+          [
+            2,
+            1,
+            "Physics",
+            "2023-10-02",
+            3
+          ],
+          [
+            3,
+            1,
+            "Chemistry",
+            "2023-10-03",
+            2
+          ],
+          [
+            4,
+            1,
+            "Math",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            5,
+            1,
+            "Physics",
+            "2023-10-05",
+            3
+          ],
+          [
+            6,
+            1,
+            "Chemistry",
+            "2023-10-06",
+            2
+          ],
+          [
+            7,
+            2,
+            "Algebra",
+            "2023-10-01",
+            4
+          ],
+          [
+            8,
+            2,
+            "Calculus",
+            "2023-10-02",
+            3.5
+          ],
+          [
+            9,
+            2,
+            "Statistics",
+            "2023-10-03",
+            2.5
+          ],
+          [
+            10,
+            2,
+            "Geometry",
+            "2023-10-04",
+            3
+          ],
+          [
+            11,
+            2,
+            "Algebra",
+            "2023-10-05",
+            4
+          ],
+          [
+            12,
+            2,
+            "Calculus",
+            "2023-10-06",
+            3.5
+          ],
+          [
+            13,
+            2,
+            "Statistics",
+            "2023-10-07",
+            2.5
+          ],
+          [
+            14,
+            2,
+            "Geometry",
+            "2023-10-08",
+            3
+          ],
+          [
+            15,
+            3,
+            "Biology",
+            "2023-10-01",
+            2
+          ],
+          [
+            16,
+            3,
+            "Chemistry",
+            "2023-10-02",
+            2.5
+          ],
+          [
+            17,
+            3,
+            "Biology",
+            "2023-10-03",
+            2
+          ],
+          [
+            18,
+            3,
+            "Chemistry",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            19,
+            4,
+            "Organic",
+            "2023-10-01",
+            3
+          ],
+          [
+            20,
+            4,
+            "Physical",
+            "2023-10-05",
+            2.5
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics",
+            4,
+            26
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science",
+            3,
+            15
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "students": [
+        [
+          1,
+          "Alice Chen",
+          "Computer Science"
+        ],
+        [
+          2,
+          "Bob Johnson",
+          "Mathematics"
+        ],
+        [
+          3,
+          "Carol Davis",
+          "Physics"
+        ],
+        [
+          4,
+          "David Wilson",
+          "Chemistry"
+        ],
+        [
+          5,
+          "Emma Brown",
+          "Biology"
+        ]
+      ],
+      "study_sessions": [
+        [
+          1,
+          1,
+          "Math",
+          "2023-10-01",
+          2.5
+        ],
+        [
+          2,
+          1,
+          "Physics",
+          "2023-10-02",
+          3
+        ],
+        [
+          3,
+          1,
+          "Chemistry",
+          "2023-10-03",
+          2
+        ],
+        [
+          4,
+          1,
+          "Math",
+          "2023-10-04",
+          2.5
+        ],
+        [
+          5,
+          1,
+          "Physics",
+          "2023-10-05",
+          3
+        ],
+        [
+          6,
+          1,
+          "Chemistry",
+          "2023-10-06",
+          2
+        ],
+        [
+          7,
+          2,
+          "Algebra",
+          "2023-10-01",
+          4
+        ],
+        [
+          8,
+          2,
+          "Calculus",
+          "2023-10-02",
+          3.5
+        ],
+        [
+          9,
+          2,
+          "Statistics",
+          "2023-10-03",
+          2.5
+        ],
+        [
+          10,
+          2,
+          "Geometry",
+          "2023-10-04",
+          3
+        ],
+        [
+          11,
+          2,
+          "Algebra",
+          "2023-10-05",
+          4
+        ],
+        [
+          12,
+          2,
+          "Calculus",
+          "2023-10-06",
+          3.5
+        ],
+        [
+          13,
+          2,
+          "Statistics",
+          "2023-10-07",
+          2.5
+        ],
+        [
+          14,
+          2,
+          "Geometry",
+          "2023-10-08",
+          3
+        ],
+        [
+          15,
+          3,
+          "Biology",
+          "2023-10-01",
+          2
+        ],
+        [
+          16,
+          3,
+          "Chemistry",
+          "2023-10-02",
+          2.5
+        ],
+        [
+          17,
+          3,
+          "Biology",
+          "2023-10-03",
+          2
+        ],
+        [
+          18,
+          3,
+          "Chemistry",
+          "2023-10-04",
+          2.5
+        ],
+        [
+          19,
+          4,
+          "Organic",
+          "2023-10-01",
+          3
+        ],
+        [
+          20,
+          4,
+          "Physical",
+          "2023-10-05",
+          2.5
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "student_id",
+        "student_name",
+        "major",
+        "cycle_length",
+        "total_study_hours"
+      ],
+      "rows": [
+        [
+          2,
+          "Bob Johnson",
+          "Mathematics",
+          4,
+          26
+        ],
+        [
+          1,
+          "Alice Chen",
+          "Computer Science",
+          3,
+          15
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "WITH ordered AS (\n SELECT *,LAG(session_date) OVER(PARTITION BY student_id ORDER BY session_date,session_id) AS previous_date FROM study_sessions\n), grouped AS (\n SELECT *,SUM(CASE WHEN previous_date IS NULL OR julianday(session_date)-julianday(previous_date)>2 THEN 1 ELSE 0 END)\n OVER(PARTITION BY student_id ORDER BY session_date,session_id) AS grp FROM ordered\n), positions AS (\n SELECT *,ROW_NUMBER() OVER(PARTITION BY student_id,grp ORDER BY session_date,session_id) AS rn FROM grouped\n), summaries AS (\n SELECT student_id,grp,COUNT(DISTINCT subject) AS cycle_length,COUNT(*) AS n,SUM(hours_studied) AS hours FROM positions GROUP BY student_id,grp\n), valid AS (\n SELECT *,ROW_NUMBER() OVER(PARTITION BY student_id ORDER BY cycle_length DESC,hours DESC,grp) AS choice FROM summaries g\n WHERE cycle_length>=3 AND n>=2*cycle_length AND NOT EXISTS (\n SELECT 1 FROM positions a JOIN positions b ON a.student_id=b.student_id AND a.grp=b.grp\n AND b.rn=((a.rn-1)%g.cycle_length)+1\n WHERE a.student_id=g.student_id AND a.grp=g.grp AND a.subject<>b.subject\n )\n)\nSELECT s.student_id,s.student_name,s.major,v.cycle_length,v.hours AS total_study_hours\nFROM valid v JOIN students s USING(student_id) WHERE choice=1 ORDER BY cycle_length DESC,total_study_hours DESC",
+  "playlistIndex": 51,
+  "videos": [
+    {
+      "videoId": "Ad1jF5PcMLo",
+      "playlistIndex": 51,
+      "url": "https://www.youtube.com/watch?v=Ad1jF5PcMLo&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=51"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "cycle_length",
+      "direction": "desc"
+    },
+    {
+      "column": "total_study_hours",
+      "direction": "desc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice Chen",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics"
+          ],
+          [
+            3,
+            "Carol Davis",
+            "Physics"
+          ],
+          [
+            4,
+            "David Wilson",
+            "Chemistry"
+          ],
+          [
+            5,
+            "Emma Brown",
+            "Biology"
+          ]
+        ],
+        "study_sessions": [
+          [
+            1,
+            1,
+            "Math",
+            "2023-10-01",
+            2.5
+          ],
+          [
+            2,
+            1,
+            "Physics",
+            "2023-10-02",
+            3
+          ],
+          [
+            3,
+            1,
+            "Chemistry",
+            "2023-10-03",
+            2
+          ],
+          [
+            4,
+            1,
+            "Math",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            5,
+            1,
+            "Physics",
+            "2023-10-05",
+            3
+          ],
+          [
+            6,
+            1,
+            "Chemistry",
+            "2023-10-06",
+            2
+          ],
+          [
+            7,
+            2,
+            "Algebra",
+            "2023-10-01",
+            4
+          ],
+          [
+            8,
+            2,
+            "Calculus",
+            "2023-10-02",
+            3.5
+          ],
+          [
+            9,
+            2,
+            "Statistics",
+            "2023-10-03",
+            2.5
+          ],
+          [
+            10,
+            2,
+            "Geometry",
+            "2023-10-04",
+            3
+          ],
+          [
+            11,
+            2,
+            "Algebra",
+            "2023-10-05",
+            4
+          ],
+          [
+            12,
+            2,
+            "Calculus",
+            "2023-10-06",
+            3.5
+          ],
+          [
+            13,
+            2,
+            "Statistics",
+            "2023-10-07",
+            2.5
+          ],
+          [
+            14,
+            2,
+            "Geometry",
+            "2023-10-08",
+            3
+          ],
+          [
+            15,
+            3,
+            "Biology",
+            "2023-10-01",
+            2
+          ],
+          [
+            16,
+            3,
+            "Chemistry",
+            "2023-10-02",
+            2.5
+          ],
+          [
+            17,
+            3,
+            "Biology",
+            "2023-10-03",
+            2
+          ],
+          [
+            18,
+            3,
+            "Chemistry",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            19,
+            4,
+            "Organic",
+            "2023-10-01",
+            3
+          ],
+          [
+            20,
+            4,
+            "Physical",
+            "2023-10-05",
+            2.5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics",
+            4,
+            26
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science",
+            3,
+            15
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "students": [
+          [
+            5,
+            "Emma Brown",
+            "Biology"
+          ],
+          [
+            4,
+            "David Wilson",
+            "Chemistry"
+          ],
+          [
+            3,
+            "Carol Davis",
+            "Physics"
+          ],
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics"
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science"
+          ]
+        ],
+        "study_sessions": [
+          [
+            20,
+            4,
+            "Physical",
+            "2023-10-05",
+            2.5
+          ],
+          [
+            19,
+            4,
+            "Organic",
+            "2023-10-01",
+            3
+          ],
+          [
+            18,
+            3,
+            "Chemistry",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            17,
+            3,
+            "Biology",
+            "2023-10-03",
+            2
+          ],
+          [
+            16,
+            3,
+            "Chemistry",
+            "2023-10-02",
+            2.5
+          ],
+          [
+            15,
+            3,
+            "Biology",
+            "2023-10-01",
+            2
+          ],
+          [
+            14,
+            2,
+            "Geometry",
+            "2023-10-08",
+            3
+          ],
+          [
+            13,
+            2,
+            "Statistics",
+            "2023-10-07",
+            2.5
+          ],
+          [
+            12,
+            2,
+            "Calculus",
+            "2023-10-06",
+            3.5
+          ],
+          [
+            11,
+            2,
+            "Algebra",
+            "2023-10-05",
+            4
+          ],
+          [
+            10,
+            2,
+            "Geometry",
+            "2023-10-04",
+            3
+          ],
+          [
+            9,
+            2,
+            "Statistics",
+            "2023-10-03",
+            2.5
+          ],
+          [
+            8,
+            2,
+            "Calculus",
+            "2023-10-02",
+            3.5
+          ],
+          [
+            7,
+            2,
+            "Algebra",
+            "2023-10-01",
+            4
+          ],
+          [
+            6,
+            1,
+            "Chemistry",
+            "2023-10-06",
+            2
+          ],
+          [
+            5,
+            1,
+            "Physics",
+            "2023-10-05",
+            3
+          ],
+          [
+            4,
+            1,
+            "Math",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            3,
+            1,
+            "Chemistry",
+            "2023-10-03",
+            2
+          ],
+          [
+            2,
+            1,
+            "Physics",
+            "2023-10-02",
+            3
+          ],
+          [
+            1,
+            1,
+            "Math",
+            "2023-10-01",
+            2.5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics",
+            4,
+            26
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science",
+            3,
+            15
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "students": [
+          [
+            101,
+            "Alice Chen Lab",
+            "Computer Science"
+          ],
+          [
+            102,
+            "Bob Johnson Lab",
+            "Mathematics"
+          ],
+          [
+            103,
+            "Carol Davis Lab",
+            "Physics"
+          ],
+          [
+            104,
+            "David Wilson Lab",
+            "Chemistry"
+          ],
+          [
+            105,
+            "Emma Brown Lab",
+            "Biology"
+          ]
+        ],
+        "study_sessions": [
+          [
+            101,
+            101,
+            "Math",
+            "2023-10-01",
+            2.5
+          ],
+          [
+            102,
+            101,
+            "Physics",
+            "2023-10-02",
+            3
+          ],
+          [
+            103,
+            101,
+            "Chemistry",
+            "2023-10-03",
+            2
+          ],
+          [
+            104,
+            101,
+            "Math",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            105,
+            101,
+            "Physics",
+            "2023-10-05",
+            3
+          ],
+          [
+            106,
+            101,
+            "Chemistry",
+            "2023-10-06",
+            2
+          ],
+          [
+            107,
+            102,
+            "Algebra",
+            "2023-10-01",
+            4
+          ],
+          [
+            108,
+            102,
+            "Calculus",
+            "2023-10-02",
+            3.5
+          ],
+          [
+            109,
+            102,
+            "Statistics",
+            "2023-10-03",
+            2.5
+          ],
+          [
+            110,
+            102,
+            "Geometry",
+            "2023-10-04",
+            3
+          ],
+          [
+            111,
+            102,
+            "Algebra",
+            "2023-10-05",
+            4
+          ],
+          [
+            112,
+            102,
+            "Calculus",
+            "2023-10-06",
+            3.5
+          ],
+          [
+            113,
+            102,
+            "Statistics",
+            "2023-10-07",
+            2.5
+          ],
+          [
+            114,
+            102,
+            "Geometry",
+            "2023-10-08",
+            3
+          ],
+          [
+            115,
+            103,
+            "Biology",
+            "2023-10-01",
+            2
+          ],
+          [
+            116,
+            103,
+            "Chemistry",
+            "2023-10-02",
+            2.5
+          ],
+          [
+            117,
+            103,
+            "Biology",
+            "2023-10-03",
+            2
+          ],
+          [
+            118,
+            103,
+            "Chemistry",
+            "2023-10-04",
+            2.5
+          ],
+          [
+            119,
+            104,
+            "Organic",
+            "2023-10-01",
+            3
+          ],
+          [
+            120,
+            104,
+            "Physical",
+            "2023-10-05",
+            2.5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            102,
+            "Bob Johnson Lab",
+            "Mathematics",
+            4,
+            26
+          ],
+          [
+            101,
+            "Alice Chen Lab",
+            "Computer Science",
+            3,
+            15
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice Chen",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics"
+          ],
+          [
+            3,
+            "Carol Davis",
+            "Physics"
+          ],
+          [
+            4,
+            "David Wilson",
+            "Chemistry"
+          ],
+          [
+            5,
+            "Emma Brown",
+            "Biology"
+          ]
+        ],
+        "study_sessions": [
+          [
+            1,
+            1,
+            "Math",
+            "2023-10-01",
+            3.38
+          ],
+          [
+            2,
+            1,
+            "Physics",
+            "2023-10-02",
+            3.95
+          ],
+          [
+            3,
+            1,
+            "Chemistry",
+            "2023-10-03",
+            2.8
+          ],
+          [
+            4,
+            1,
+            "Math",
+            "2023-10-04",
+            3.38
+          ],
+          [
+            5,
+            1,
+            "Physics",
+            "2023-10-05",
+            3.95
+          ],
+          [
+            6,
+            1,
+            "Chemistry",
+            "2023-10-06",
+            2.8
+          ],
+          [
+            7,
+            2,
+            "Algebra",
+            "2023-10-01",
+            5.1
+          ],
+          [
+            8,
+            2,
+            "Calculus",
+            "2023-10-02",
+            4.52
+          ],
+          [
+            9,
+            2,
+            "Statistics",
+            "2023-10-03",
+            3.38
+          ],
+          [
+            10,
+            2,
+            "Geometry",
+            "2023-10-04",
+            3.95
+          ],
+          [
+            11,
+            2,
+            "Algebra",
+            "2023-10-05",
+            5.1
+          ],
+          [
+            12,
+            2,
+            "Calculus",
+            "2023-10-06",
+            4.52
+          ],
+          [
+            13,
+            2,
+            "Statistics",
+            "2023-10-07",
+            3.38
+          ],
+          [
+            14,
+            2,
+            "Geometry",
+            "2023-10-08",
+            3.95
+          ],
+          [
+            15,
+            3,
+            "Biology",
+            "2023-10-01",
+            2.8
+          ],
+          [
+            16,
+            3,
+            "Chemistry",
+            "2023-10-02",
+            3.38
+          ],
+          [
+            17,
+            3,
+            "Biology",
+            "2023-10-03",
+            2.8
+          ],
+          [
+            18,
+            3,
+            "Chemistry",
+            "2023-10-04",
+            3.38
+          ],
+          [
+            19,
+            4,
+            "Organic",
+            "2023-10-01",
+            3.95
+          ],
+          [
+            20,
+            4,
+            "Physical",
+            "2023-10-05",
+            3.38
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id",
+          "student_name",
+          "major",
+          "cycle_length",
+          "total_study_hours"
+        ],
+        "rows": [
+          [
+            2,
+            "Bob Johnson",
+            "Mathematics",
+            4,
+            33.9
+          ],
+          [
+            1,
+            "Alice Chen",
+            "Computer Science",
+            3,
+            20.259999999999998
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

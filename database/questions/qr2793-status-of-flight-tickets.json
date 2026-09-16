@@ -1,0 +1,1017 @@
+{
+  "number": 2793,
+  "slug": "status-of-flight-tickets",
+  "title": "Status of Flight Tickets",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/status-of-flight-tickets/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/2700-2799/2793.Status of Flight Tickets/README_EN.md",
+  "schema": [
+    {
+      "name": "Flights",
+      "columns": [
+        {
+          "name": "flight_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "capacity",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "flight_id column contains distinct values.\nEach row of this table contains flight id and capacity."
+    },
+    {
+      "name": "Passengers",
+      "columns": [
+        {
+          "name": "passenger_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "flight_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "booking_time",
+          "type": "TEXT",
+          "displayType": "datetime"
+        }
+      ],
+      "note": "passenger_id column contains distinct values.\nbooking_time column contains distinct values.\nEach row of this table contains passenger id, booking time, and their flight id."
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Flights</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>flight_id</td><td>int</td></tr><tr><td>capacity</td><td>int</td></tr></tbody></table></div><p>flight_id column contains distinct values.<br/>Each row of this table contains flight id and capacity.</p>\n<p>Table: <code>Passengers</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>passenger_id</td><td>int</td></tr><tr><td>flight_id</td><td>int</td></tr><tr><td>booking_time</td><td>datetime</td></tr></tbody></table></div><p>passenger_id column contains distinct values.<br/>booking_time column contains distinct values.<br/>Each row of this table contains passenger id, booking time, and their flight id.</p>\n<p>Passengers book tickets for flights in advance. If a passenger books a ticket for a flight and there are still empty seats available on the flight, the passenger's ticket will be <strong>confirmed</strong>. However, the passenger will be on a <strong>waitlist</strong> if the flight is already at full capacity.</p>\n<p>Write a solution to determine the current status of flight tickets for each passenger.</p>\n<p>Return the result table ordered by <code>passenger_id</code> <em>in <strong>ascending order</strong>.</em></p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Flights table:</p><div class=\"statement-table\"><table><thead><tr><th>flight_id</th><th>capacity</th></tr></thead><tbody><tr><td>1</td><td>2</td></tr><tr><td>2</td><td>2</td></tr><tr><td>3</td><td>1</td></tr></tbody></table></div><p>Passengers table:</p><div class=\"statement-table\"><table><thead><tr><th>passenger_id</th><th>flight_id</th><th>booking_time</th></tr></thead><tbody><tr><td>101</td><td>1</td><td>2023-07-10 16:30:00</td></tr><tr><td>102</td><td>1</td><td>2023-07-10 17:45:00</td></tr><tr><td>103</td><td>1</td><td>2023-07-10 12:00:00</td></tr><tr><td>104</td><td>2</td><td>2023-07-05 13:23:00</td></tr><tr><td>105</td><td>2</td><td>2023-07-05 09:00:00</td></tr><tr><td>106</td><td>3</td><td>2023-07-08 11:10:00</td></tr><tr><td>107</td><td>3</td><td>2023-07-08 09:10:00</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>passenger_id</th><th>Status</th></tr></thead><tbody><tr><td>101</td><td>Confirmed</td></tr><tr><td>102</td><td>Waitlist</td></tr><tr><td>103</td><td>Confirmed</td></tr><tr><td>104</td><td>Confirmed</td></tr><tr><td>105</td><td>Confirmed</td></tr><tr><td>106</td><td>Waitlist</td></tr><tr><td>107</td><td>Confirmed</td></tr></tbody></table></div><p>Explanation: <br/>- Flight 1 has a capacity of 2 passengers. Passenger 101 and Passenger 103 were the first to book tickets, securing the available seats. Therefore, their bookings are confirmed. However, Passenger 102 was the third person to book a ticket for this flight, which means there are no more available seats. Passenger 102 is now placed on the waitlist, <br/>- Flight 2 has a capacity of 2 passengers, Flight 2 has exactly two passengers who booked tickets,  Passenger 104 and Passenger 105. Since the number of passengers who booked tickets matches the available seats, both bookings are confirmed.<br/>- Flight 3 has a capacity of 1 passenger. Passenger 107 booked earlier and secured the only available seat, confirming their booking. Passenger 106, who booked after Passenger 107, is on the waitlist.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Flights": [
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            1
+          ]
+        ],
+        "Passengers": [
+          [
+            101,
+            1,
+            "2023-07-10 16:30:00"
+          ],
+          [
+            102,
+            1,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            103,
+            1,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            104,
+            2,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            105,
+            2,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            106,
+            3,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            107,
+            3,
+            "2023-07-08 09:10:00"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            101,
+            "Confirmed"
+          ],
+          [
+            102,
+            "Waitlist"
+          ],
+          [
+            103,
+            "Confirmed"
+          ],
+          [
+            104,
+            "Confirmed"
+          ],
+          [
+            105,
+            "Confirmed"
+          ],
+          [
+            106,
+            "Waitlist"
+          ],
+          [
+            107,
+            "Confirmed"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Flights": [
+          [
+            3,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "Passengers": [
+          [
+            107,
+            3,
+            "2023-07-08 09:10:00"
+          ],
+          [
+            106,
+            3,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            105,
+            2,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            104,
+            2,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            103,
+            1,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            102,
+            1,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            101,
+            1,
+            "2023-07-10 16:30:00"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            101,
+            "Confirmed"
+          ],
+          [
+            102,
+            "Waitlist"
+          ],
+          [
+            103,
+            "Confirmed"
+          ],
+          [
+            104,
+            "Confirmed"
+          ],
+          [
+            105,
+            "Confirmed"
+          ],
+          [
+            106,
+            "Waitlist"
+          ],
+          [
+            107,
+            "Confirmed"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Flights": [
+          [
+            101,
+            2
+          ],
+          [
+            102,
+            2
+          ],
+          [
+            103,
+            1
+          ]
+        ],
+        "Passengers": [
+          [
+            201,
+            101,
+            "2023-07-10 16:30:00"
+          ],
+          [
+            202,
+            101,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            203,
+            101,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            204,
+            102,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            205,
+            102,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            206,
+            103,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            207,
+            103,
+            "2023-07-08 09:10:00"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            201,
+            "Confirmed"
+          ],
+          [
+            202,
+            "Waitlist"
+          ],
+          [
+            203,
+            "Confirmed"
+          ],
+          [
+            204,
+            "Confirmed"
+          ],
+          [
+            205,
+            "Confirmed"
+          ],
+          [
+            206,
+            "Waitlist"
+          ],
+          [
+            207,
+            "Confirmed"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Flights": [
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            2
+          ]
+        ],
+        "Passengers": [
+          [
+            101,
+            1,
+            "2023-07-10 16:30:00"
+          ],
+          [
+            102,
+            1,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            103,
+            1,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            104,
+            2,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            105,
+            2,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            106,
+            3,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            107,
+            3,
+            "2023-07-08 09:10:00"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            101,
+            "Confirmed"
+          ],
+          [
+            102,
+            "Confirmed"
+          ],
+          [
+            103,
+            "Confirmed"
+          ],
+          [
+            104,
+            "Confirmed"
+          ],
+          [
+            105,
+            "Confirmed"
+          ],
+          [
+            106,
+            "Confirmed"
+          ],
+          [
+            107,
+            "Confirmed"
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Flights": [
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            1
+          ]
+        ],
+        "Passengers": [
+          [
+            101,
+            1,
+            "2023-07-10 16:30:00"
+          ],
+          [
+            102,
+            1,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            103,
+            1,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            104,
+            2,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            105,
+            2,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            106,
+            3,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            107,
+            3,
+            "2023-07-08 09:10:00"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            101,
+            "Confirmed"
+          ],
+          [
+            102,
+            "Waitlist"
+          ],
+          [
+            103,
+            "Confirmed"
+          ],
+          [
+            104,
+            "Confirmed"
+          ],
+          [
+            105,
+            "Confirmed"
+          ],
+          [
+            106,
+            "Waitlist"
+          ],
+          [
+            107,
+            "Confirmed"
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Flights": [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "Passengers": [
+        [
+          101,
+          1,
+          "2023-07-10 16:30:00"
+        ],
+        [
+          102,
+          1,
+          "2023-07-10 17:45:00"
+        ],
+        [
+          103,
+          1,
+          "2023-07-10 12:00:00"
+        ],
+        [
+          104,
+          2,
+          "2023-07-05 13:23:00"
+        ],
+        [
+          105,
+          2,
+          "2023-07-05 09:00:00"
+        ],
+        [
+          106,
+          3,
+          "2023-07-08 11:10:00"
+        ],
+        [
+          107,
+          3,
+          "2023-07-08 09:10:00"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "passenger_id",
+        "Status"
+      ],
+      "rows": [
+        [
+          101,
+          "Confirmed"
+        ],
+        [
+          102,
+          "Waitlist"
+        ],
+        [
+          103,
+          "Confirmed"
+        ],
+        [
+          104,
+          "Confirmed"
+        ],
+        [
+          105,
+          "Confirmed"
+        ],
+        [
+          106,
+          "Waitlist"
+        ],
+        [
+          107,
+          "Confirmed"
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "/* Write your MySQL query statement below */\nSELECT\n  passenger_id,\n  IIF(\n    (\n      RANK() OVER (PARTITION BY flight_id ORDER BY booking_time)\n    ) <= capacity,\n    'Confirmed',\n    'Waitlist'\n  ) AS Status\nFROM Passengers\nJOIN Flights\n  USING (flight_id)\nORDER BY\n  passenger_id",
+  "playlistIndex": 13,
+  "videos": [
+    {
+      "videoId": "IUHAMq62nJQ",
+      "playlistIndex": 13,
+      "url": "https://www.youtube.com/watch?v=IUHAMq62nJQ&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=13"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "passenger_id",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Flights": [
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            1
+          ]
+        ],
+        "Passengers": [
+          [
+            101,
+            1,
+            "2023-07-10 16:30:00"
+          ],
+          [
+            102,
+            1,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            103,
+            1,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            104,
+            2,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            105,
+            2,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            106,
+            3,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            107,
+            3,
+            "2023-07-08 09:10:00"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            101,
+            "Confirmed"
+          ],
+          [
+            102,
+            "Waitlist"
+          ],
+          [
+            103,
+            "Confirmed"
+          ],
+          [
+            104,
+            "Confirmed"
+          ],
+          [
+            105,
+            "Confirmed"
+          ],
+          [
+            106,
+            "Waitlist"
+          ],
+          [
+            107,
+            "Confirmed"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Flights": [
+          [
+            3,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "Passengers": [
+          [
+            107,
+            3,
+            "2023-07-08 09:10:00"
+          ],
+          [
+            106,
+            3,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            105,
+            2,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            104,
+            2,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            103,
+            1,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            102,
+            1,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            101,
+            1,
+            "2023-07-10 16:30:00"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            101,
+            "Confirmed"
+          ],
+          [
+            102,
+            "Waitlist"
+          ],
+          [
+            103,
+            "Confirmed"
+          ],
+          [
+            104,
+            "Confirmed"
+          ],
+          [
+            105,
+            "Confirmed"
+          ],
+          [
+            106,
+            "Waitlist"
+          ],
+          [
+            107,
+            "Confirmed"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Flights": [
+          [
+            101,
+            2
+          ],
+          [
+            102,
+            2
+          ],
+          [
+            103,
+            1
+          ]
+        ],
+        "Passengers": [
+          [
+            201,
+            101,
+            "2023-07-10 16:30:00"
+          ],
+          [
+            202,
+            101,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            203,
+            101,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            204,
+            102,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            205,
+            102,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            206,
+            103,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            207,
+            103,
+            "2023-07-08 09:10:00"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            201,
+            "Confirmed"
+          ],
+          [
+            202,
+            "Waitlist"
+          ],
+          [
+            203,
+            "Confirmed"
+          ],
+          [
+            204,
+            "Confirmed"
+          ],
+          [
+            205,
+            "Confirmed"
+          ],
+          [
+            206,
+            "Waitlist"
+          ],
+          [
+            207,
+            "Confirmed"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Flights": [
+          [
+            1,
+            4
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            3,
+            2
+          ]
+        ],
+        "Passengers": [
+          [
+            101,
+            1,
+            "2023-07-10 16:30:00"
+          ],
+          [
+            102,
+            1,
+            "2023-07-10 17:45:00"
+          ],
+          [
+            103,
+            1,
+            "2023-07-10 12:00:00"
+          ],
+          [
+            104,
+            2,
+            "2023-07-05 13:23:00"
+          ],
+          [
+            105,
+            2,
+            "2023-07-05 09:00:00"
+          ],
+          [
+            106,
+            3,
+            "2023-07-08 11:10:00"
+          ],
+          [
+            107,
+            3,
+            "2023-07-08 09:10:00"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "passenger_id",
+          "Status"
+        ],
+        "rows": [
+          [
+            101,
+            "Confirmed"
+          ],
+          [
+            102,
+            "Confirmed"
+          ],
+          [
+            103,
+            "Confirmed"
+          ],
+          [
+            104,
+            "Confirmed"
+          ],
+          [
+            105,
+            "Confirmed"
+          ],
+          [
+            106,
+            "Confirmed"
+          ],
+          [
+            107,
+            "Confirmed"
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

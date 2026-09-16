@@ -1,0 +1,952 @@
+{
+  "number": 2084,
+  "slug": "drop-type-1-orders-for-customers-with-type-0-orders",
+  "title": "Drop Type 1 Orders for Customers With Type 0 Orders",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/drop-type-1-orders-for-customers-with-type-0-orders/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/2000-2099/2084.Drop Type 1 Orders for Customers With Type 0 Orders/README_EN.md",
+  "schema": [
+    {
+      "name": "Orders",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "customer_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "order_type",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "order_id is the column with unique values for this table.\nEach row of this table indicates the ID of an order, the ID of the customer who ordered it, and the order type.\nThe orders could be of type 0 or type 1.",
+      "primaryKey": [
+        "order_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Orders</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>order_id</td><td>int</td></tr><tr><td>customer_id</td><td>int</td></tr><tr><td>order_type</td><td>int</td></tr></tbody></table></div><p>order_id is the column with unique values for this table.<br/>Each row of this table indicates the ID of an order, the ID of the customer who ordered it, and the order type.<br/>The orders could be of type 0 or type 1.</p>\n<p> </p>\n<p>Write a solution to report all the orders based on the following criteria:</p>\n<ul>\n<li>If a customer has <strong>at least one</strong> order of type <code>0</code>, do <strong>not</strong> report any order of type <code>1</code> from that customer.</li>\n<li>Otherwise, report all the orders of the customer.</li>\n</ul>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input:<br/>Orders table:</p><div class=\"statement-table\"><table><thead><tr><th>order_id</th><th>customer_id</th><th>order_type</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>0</td></tr><tr><td>2</td><td>1</td><td>0</td></tr><tr><td>11</td><td>2</td><td>0</td></tr><tr><td>12</td><td>2</td><td>1</td></tr><tr><td>21</td><td>3</td><td>1</td></tr><tr><td>22</td><td>3</td><td>0</td></tr><tr><td>31</td><td>4</td><td>1</td></tr><tr><td>32</td><td>4</td><td>1</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>order_id</th><th>customer_id</th><th>order_type</th></tr></thead><tbody><tr><td>31</td><td>4</td><td>1</td></tr><tr><td>32</td><td>4</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr><tr><td>2</td><td>1</td><td>0</td></tr><tr><td>11</td><td>2</td><td>0</td></tr><tr><td>22</td><td>3</td><td>0</td></tr></tbody></table></div><p>Explanation:<br/>Customer 1 has two orders of type 0. We return both of them.<br/>Customer 2 has one order of type 0 and one order of type 1. We only return the order of type 0.<br/>Customer 3 has one order of type 0 and one order of type 1. We only return the order of type 0.<br/>Customer 4 has two orders of type 1. We return both of them.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            12,
+            2,
+            1
+          ],
+          [
+            21,
+            3,
+            1
+          ],
+          [
+            22,
+            3,
+            0
+          ],
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            32,
+            4,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            32,
+            4,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            22,
+            3,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Published rows in a different input order",
+      "input": {
+        "Orders": [
+          [
+            32,
+            4,
+            1
+          ],
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            22,
+            3,
+            0
+          ],
+          [
+            21,
+            3,
+            1
+          ],
+          [
+            12,
+            2,
+            1
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Published rows in a different input order.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            32,
+            4,
+            1
+          ],
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            22,
+            3,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "only-type-one",
+      "name": "Customers with only type 1 orders",
+      "input": {
+        "Orders": [
+          [
+            9,
+            4,
+            1
+          ],
+          [
+            2,
+            4,
+            1
+          ],
+          [
+            8,
+            7,
+            1
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Customers with only type 1 orders.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            9,
+            4,
+            1
+          ],
+          [
+            2,
+            4,
+            1
+          ],
+          [
+            8,
+            7,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "only-type-zero",
+      "name": "Keep every type 0 order",
+      "input": {
+        "Orders": [
+          [
+            4,
+            2,
+            0
+          ],
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            9,
+            0
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Keep every type 0 order.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            4,
+            2,
+            0
+          ],
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            9,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "mixed-customers",
+      "name": "Filter each customer separately",
+      "input": {
+        "Orders": [
+          [
+            7,
+            10,
+            1
+          ],
+          [
+            8,
+            10,
+            0
+          ],
+          [
+            9,
+            10,
+            0
+          ],
+          [
+            10,
+            11,
+            1
+          ],
+          [
+            11,
+            11,
+            1
+          ],
+          [
+            12,
+            12,
+            0
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Filter each customer separately.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            8,
+            10,
+            0
+          ],
+          [
+            9,
+            10,
+            0
+          ],
+          [
+            10,
+            11,
+            1
+          ],
+          [
+            11,
+            11,
+            1
+          ],
+          [
+            12,
+            12,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No orders",
+      "input": {
+        "Orders": []
+      },
+      "kind": "Local practice case",
+      "description": "No orders.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            12,
+            2,
+            1
+          ],
+          [
+            21,
+            3,
+            1
+          ],
+          [
+            22,
+            3,
+            0
+          ],
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            32,
+            4,
+            1
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            32,
+            4,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            22,
+            3,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Orders": [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          11,
+          2,
+          0
+        ],
+        [
+          12,
+          2,
+          1
+        ],
+        [
+          21,
+          3,
+          1
+        ],
+        [
+          22,
+          3,
+          0
+        ],
+        [
+          31,
+          4,
+          1
+        ],
+        [
+          32,
+          4,
+          1
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "order_id",
+        "customer_id",
+        "order_type"
+      ],
+      "rows": [
+        [
+          31,
+          4,
+          1
+        ],
+        [
+          32,
+          4,
+          1
+        ],
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          11,
+          2,
+          0
+        ],
+        [
+          22,
+          3,
+          0
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "SELECT order_id,customer_id,order_type FROM Orders o WHERE order_type=0 OR NOT EXISTS (SELECT 1 FROM Orders preferred WHERE preferred.customer_id=o.customer_id AND preferred.order_type=0)",
+  "collection": "Added questions",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            12,
+            2,
+            1
+          ],
+          [
+            21,
+            3,
+            1
+          ],
+          [
+            22,
+            3,
+            0
+          ],
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            32,
+            4,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            32,
+            4,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            22,
+            3,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Published rows in a different input order",
+      "input": {
+        "Orders": [
+          [
+            32,
+            4,
+            1
+          ],
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            22,
+            3,
+            0
+          ],
+          [
+            21,
+            3,
+            1
+          ],
+          [
+            12,
+            2,
+            1
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Published rows in a different input order.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            32,
+            4,
+            1
+          ],
+          [
+            31,
+            4,
+            1
+          ],
+          [
+            22,
+            3,
+            0
+          ],
+          [
+            11,
+            2,
+            0
+          ],
+          [
+            2,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "only-type-one",
+      "name": "Customers with only type 1 orders",
+      "input": {
+        "Orders": [
+          [
+            9,
+            4,
+            1
+          ],
+          [
+            2,
+            4,
+            1
+          ],
+          [
+            8,
+            7,
+            1
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Customers with only type 1 orders.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            9,
+            4,
+            1
+          ],
+          [
+            2,
+            4,
+            1
+          ],
+          [
+            8,
+            7,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "only-type-zero",
+      "name": "Keep every type 0 order",
+      "input": {
+        "Orders": [
+          [
+            4,
+            2,
+            0
+          ],
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            9,
+            0
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Keep every type 0 order.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            4,
+            2,
+            0
+          ],
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            3,
+            9,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "mixed-customers",
+      "name": "Filter each customer separately",
+      "input": {
+        "Orders": [
+          [
+            7,
+            10,
+            1
+          ],
+          [
+            8,
+            10,
+            0
+          ],
+          [
+            9,
+            10,
+            0
+          ],
+          [
+            10,
+            11,
+            1
+          ],
+          [
+            11,
+            11,
+            1
+          ],
+          [
+            12,
+            12,
+            0
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Filter each customer separately.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": [
+          [
+            8,
+            10,
+            0
+          ],
+          [
+            9,
+            10,
+            0
+          ],
+          [
+            10,
+            11,
+            1
+          ],
+          [
+            11,
+            11,
+            1
+          ],
+          [
+            12,
+            12,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No orders",
+      "input": {
+        "Orders": []
+      },
+      "kind": "Local practice case",
+      "description": "No orders.",
+      "expected": {
+        "columns": [
+          "order_id",
+          "customer_id",
+          "order_type"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "testNotes": "The published example plus local cases for sorting, grouping, ties, and edge conditions. These are practice tests, not LeetCode’s private tests."
+}

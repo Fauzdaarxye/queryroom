@@ -1,0 +1,679 @@
+{
+  "number": 1831,
+  "slug": "maximum-transaction-each-day",
+  "title": "Maximum Transaction Each Day",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/maximum-transaction-each-day/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1800-1899/1831.Maximum Transaction Each Day/README_EN.md",
+  "schema": [
+    {
+      "name": "Transactions",
+      "columns": [
+        {
+          "name": "transaction_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "day",
+          "type": "TEXT",
+          "displayType": "datetime"
+        },
+        {
+          "name": "amount",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "transaction_id is the column with unique values for this table.\nEach row contains information about one transaction.",
+      "primaryKey": [
+        "transaction_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "<p>Table: <code>Transactions</code></p>\n\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>transaction_id</td><td>int</td></tr><tr><td>day</td><td>datetime</td></tr><tr><td>amount</td><td>int</td></tr></tbody></table></div><p>transaction_id is the column with unique values for this table.<br/>Each row contains information about one transaction.</p>\n\n<p> </p>\n\n<p>Write a solution to report the IDs of the transactions with the <strong>maximum</strong> <code>amount</code> on their respective day. If in one day there are multiple such transactions, return all of them.</p>\n\n<p>Return the result table <strong>ordered by</strong> <code>transaction_id</code> <strong> in ascending order</strong>.</p>\n\n<p>The result format is in the following example.</p>\n\n<p> </p>\n<p><strong>Example 1:</strong></p>\n\n<p>Input: <br/>Transactions table:</p><div class=\"statement-table\"><table><thead><tr><th>transaction_id</th><th>day</th><th>amount</th></tr></thead><tbody><tr><td>8</td><td>2021-4-3 15:57:28</td><td>57</td></tr><tr><td>9</td><td>2021-4-28 08:47:25</td><td>21</td></tr><tr><td>1</td><td>2021-4-29 13:28:30</td><td>58</td></tr><tr><td>5</td><td>2021-4-28 16:39:59</td><td>40</td></tr><tr><td>6</td><td>2021-4-29 23:39:28</td><td>58</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>transaction_id</th></tr></thead><tbody><tr><td>1</td></tr><tr><td>5</td></tr><tr><td>6</td></tr><tr><td>8</td></tr></tbody></table></div><p>Explanation: <br/>&quot;2021-4-3&quot;  --&gt; We have one transaction with ID 8, so we add 8 to the result table.<br/>&quot;2021-4-28&quot; --&gt; We have two transactions with IDs 5 and 9. The transaction with ID 5 has an amount of 40, while the transaction with ID 9 has an amount of 21. We only include the transaction with ID 5 as it has the maximum amount this day.<br/>&quot;2021-4-29&quot; --&gt; We have two transactions with IDs 1 and 6. Both transactions have the same amount of 58, so we include both in the result table.<br/>We order the result table by transaction_id after collecting these IDs.</p>\n\n<p> </p>\n<p><strong>Follow up:</strong> Could you solve it without using the <code>MAX()</code> function?</p>",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Transactions": [
+          [
+            8,
+            "2021-04-03 15:57:28",
+            57
+          ],
+          [
+            9,
+            "2021-04-28 08:47:25",
+            21
+          ],
+          [
+            1,
+            "2021-04-29 13:28:30",
+            58
+          ],
+          [
+            5,
+            "2021-04-28 16:39:59",
+            40
+          ],
+          [
+            6,
+            "2021-04-29 23:39:28",
+            58
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Transactions": [
+          [
+            6,
+            "2021-04-29 23:39:28",
+            58
+          ],
+          [
+            5,
+            "2021-04-28 16:39:59",
+            40
+          ],
+          [
+            1,
+            "2021-04-29 13:28:30",
+            58
+          ],
+          [
+            9,
+            "2021-04-28 08:47:25",
+            21
+          ],
+          [
+            8,
+            "2021-04-03 15:57:28",
+            57
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "daily-ties",
+      "name": "Ties across different times of the same day",
+      "kind": "Local practice case",
+      "description": "Ties across different times of the same day.",
+      "input": {
+        "Transactions": [
+          [
+            7,
+            "2024-01-01 23:59:59",
+            100
+          ],
+          [
+            3,
+            "2024-01-01 00:00:00",
+            100
+          ],
+          [
+            8,
+            "2024-01-01 10:00:00",
+            99
+          ],
+          [
+            1,
+            "2024-01-02 00:00:00",
+            5
+          ],
+          [
+            2,
+            "2024-01-02 16:00:00",
+            6
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            7
+          ]
+        ]
+      }
+    },
+    {
+      "id": "different-months",
+      "name": "Same day number in different months and years",
+      "kind": "Local practice case",
+      "description": "Same day number in different months and years.",
+      "input": {
+        "Transactions": [
+          [
+            20,
+            "2023-01-15 08:00:00",
+            50
+          ],
+          [
+            10,
+            "2024-01-15 09:00:00",
+            1
+          ],
+          [
+            30,
+            "2024-02-15 08:00:00",
+            7
+          ],
+          [
+            40,
+            "2024-02-15 09:00:00",
+            6
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            10
+          ],
+          [
+            20
+          ],
+          [
+            30
+          ]
+        ]
+      }
+    },
+    {
+      "id": "zero-amounts",
+      "name": "Every transaction ties at zero",
+      "kind": "Local practice case",
+      "description": "Every transaction ties at zero.",
+      "input": {
+        "Transactions": [
+          [
+            9,
+            "2024-06-10 08:00:00",
+            0
+          ],
+          [
+            4,
+            "2024-06-10 12:00:00",
+            0
+          ],
+          [
+            2,
+            "2024-06-11 08:00:00",
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            9
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No transactions",
+      "kind": "Local practice case",
+      "description": "No transactions.",
+      "input": {
+        "Transactions": []
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Transactions": [
+        [
+          8,
+          "2021-04-03 15:57:28",
+          57
+        ],
+        [
+          9,
+          "2021-04-28 08:47:25",
+          21
+        ],
+        [
+          1,
+          "2021-04-29 13:28:30",
+          58
+        ],
+        [
+          5,
+          "2021-04-28 16:39:59",
+          40
+        ],
+        [
+          6,
+          "2021-04-29 23:39:28",
+          58
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "transaction_id"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          8
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "orderBy": [
+    {
+      "column": "transaction_id",
+      "direction": "asc"
+    }
+  ],
+  "collection": "Added questions",
+  "testNotes": "The published example is included. Extra cases are created for this workspace; LeetCode’s private tests are not available.",
+  "examples": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Transactions": [
+          [
+            8,
+            "2021-04-03 15:57:28",
+            57
+          ],
+          [
+            9,
+            "2021-04-28 08:47:25",
+            21
+          ],
+          [
+            1,
+            "2021-04-29 13:28:30",
+            58
+          ],
+          [
+            5,
+            "2021-04-28 16:39:59",
+            40
+          ],
+          [
+            6,
+            "2021-04-29 23:39:28",
+            58
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Transactions": [
+          [
+            8,
+            "2021-04-03 15:57:28",
+            57
+          ],
+          [
+            9,
+            "2021-04-28 08:47:25",
+            21
+          ],
+          [
+            1,
+            "2021-04-29 13:28:30",
+            58
+          ],
+          [
+            5,
+            "2021-04-28 16:39:59",
+            40
+          ],
+          [
+            6,
+            "2021-04-29 23:39:28",
+            58
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Transactions": [
+          [
+            6,
+            "2021-04-29 23:39:28",
+            58
+          ],
+          [
+            5,
+            "2021-04-28 16:39:59",
+            40
+          ],
+          [
+            1,
+            "2021-04-29 13:28:30",
+            58
+          ],
+          [
+            9,
+            "2021-04-28 08:47:25",
+            21
+          ],
+          [
+            8,
+            "2021-04-03 15:57:28",
+            57
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "daily-ties",
+      "name": "Ties across different times of the same day",
+      "kind": "Local practice case",
+      "description": "Ties across different times of the same day.",
+      "input": {
+        "Transactions": [
+          [
+            7,
+            "2024-01-01 23:59:59",
+            100
+          ],
+          [
+            3,
+            "2024-01-01 00:00:00",
+            100
+          ],
+          [
+            8,
+            "2024-01-01 10:00:00",
+            99
+          ],
+          [
+            1,
+            "2024-01-02 00:00:00",
+            5
+          ],
+          [
+            2,
+            "2024-01-02 16:00:00",
+            6
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            7
+          ]
+        ]
+      }
+    },
+    {
+      "id": "different-months",
+      "name": "Same day number in different months and years",
+      "kind": "Local practice case",
+      "description": "Same day number in different months and years.",
+      "input": {
+        "Transactions": [
+          [
+            20,
+            "2023-01-15 08:00:00",
+            50
+          ],
+          [
+            10,
+            "2024-01-15 09:00:00",
+            1
+          ],
+          [
+            30,
+            "2024-02-15 08:00:00",
+            7
+          ],
+          [
+            40,
+            "2024-02-15 09:00:00",
+            6
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            10
+          ],
+          [
+            20
+          ],
+          [
+            30
+          ]
+        ]
+      }
+    },
+    {
+      "id": "zero-amounts",
+      "name": "Every transaction ties at zero",
+      "kind": "Local practice case",
+      "description": "Every transaction ties at zero.",
+      "input": {
+        "Transactions": [
+          [
+            9,
+            "2024-06-10 08:00:00",
+            0
+          ],
+          [
+            4,
+            "2024-06-10 12:00:00",
+            0
+          ],
+          [
+            2,
+            "2024-06-11 08:00:00",
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            9
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No transactions",
+      "kind": "Local practice case",
+      "description": "No transactions.",
+      "input": {
+        "Transactions": []
+      },
+      "expected": {
+        "columns": [
+          "transaction_id"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "referenceSql": "WITH ranked AS (SELECT transaction_id,DENSE_RANK() OVER(PARTITION BY DATE(day) ORDER BY amount DESC) AS ranking FROM Transactions) SELECT transaction_id FROM ranked WHERE ranking=1 ORDER BY transaction_id"
+}

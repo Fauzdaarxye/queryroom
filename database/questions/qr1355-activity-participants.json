@@ -1,0 +1,997 @@
+{
+  "number": 1355,
+  "slug": "activity-participants",
+  "title": "Activity Participants",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/activity-participants/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1300-1399/1355.Activity Participants/README_EN.md",
+  "schema": [
+    {
+      "name": "Friends",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "activity",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "id is the id of the friend and the primary key for this table in SQL.\nname is the name of the friend.\nactivity is the name of the activity which the friend takes part in.",
+      "primaryKey": [
+        "id"
+      ]
+    },
+    {
+      "name": "Activities",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "In SQL, id is the primary key for this table.\nname is the name of the activity.",
+      "primaryKey": [
+        "id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "<p>Table: <code>Friends</code></p>\n\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>id</td><td>int</td></tr><tr><td>name</td><td>varchar</td></tr><tr><td>activity</td><td>varchar</td></tr></tbody></table></div><p>id is the id of the friend and the primary key for this table in SQL.<br/>name is the name of the friend.<br/>activity is the name of the activity which the friend takes part in.</p>\n\n<p> </p>\n\n<p>Table: <code>Activities</code></p>\n\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>id</td><td>int</td></tr><tr><td>name</td><td>varchar</td></tr></tbody></table></div><p>In SQL, id is the primary key for this table.<br/>name is the name of the activity.</p>\n\n<p> </p>\n\n<p>Find the names of all the activities with neither the maximum nor the minimum number of participants.</p>\n\n<p>Each activity in the <code>Activities</code> table is performed by any person in the table Friends.</p>\n\n<p>Return the result table in <strong>any order</strong>.</p>\n\n<p>The result format is in the following example.</p>\n\n<p> </p>\n<p><strong>Example 1:</strong></p>\n\n<p>Input: <br/>Friends table:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>name</th><th>activity</th></tr></thead><tbody><tr><td>1</td><td>Jonathan D.</td><td>Eating</td></tr><tr><td>2</td><td>Jade W.</td><td>Singing</td></tr><tr><td>3</td><td>Victor J.</td><td>Singing</td></tr><tr><td>4</td><td>Elvis Q.</td><td>Eating</td></tr><tr><td>5</td><td>Daniel A.</td><td>Eating</td></tr><tr><td>6</td><td>Bob B.</td><td>Horse Riding</td></tr></tbody></table></div><p>Activities table:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>name</th></tr></thead><tbody><tr><td>1</td><td>Eating</td></tr><tr><td>2</td><td>Singing</td></tr><tr><td>3</td><td>Horse Riding</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>activity</th></tr></thead><tbody><tr><td>Singing</td></tr></tbody></table></div><p>Explanation: <br/>Eating activity is performed by 3 friends, maximum number of participants, (Jonathan D. , Elvis Q. and Daniel A.)<br/>Horse Riding activity is performed by 1 friend, minimum number of participants, (Bob B.)<br/>Singing is performed by 2 friends (Victor J. and Jade W.)</p>",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Friends": [
+          [
+            1,
+            "Jonathan D.",
+            "Eating"
+          ],
+          [
+            2,
+            "Jade W.",
+            "Singing"
+          ],
+          [
+            3,
+            "Victor J.",
+            "Singing"
+          ],
+          [
+            4,
+            "Elvis Q.",
+            "Eating"
+          ],
+          [
+            5,
+            "Daniel A.",
+            "Eating"
+          ],
+          [
+            6,
+            "Bob B.",
+            "Horse Riding"
+          ]
+        ],
+        "Activities": [
+          [
+            1,
+            "Eating"
+          ],
+          [
+            2,
+            "Singing"
+          ],
+          [
+            3,
+            "Horse Riding"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "Singing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Friends": [
+          [
+            6,
+            "Bob B.",
+            "Horse Riding"
+          ],
+          [
+            5,
+            "Daniel A.",
+            "Eating"
+          ],
+          [
+            4,
+            "Elvis Q.",
+            "Eating"
+          ],
+          [
+            3,
+            "Victor J.",
+            "Singing"
+          ],
+          [
+            2,
+            "Jade W.",
+            "Singing"
+          ],
+          [
+            1,
+            "Jonathan D.",
+            "Eating"
+          ]
+        ],
+        "Activities": [
+          [
+            3,
+            "Horse Riding"
+          ],
+          [
+            2,
+            "Singing"
+          ],
+          [
+            1,
+            "Eating"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "Singing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tied-extremes",
+      "name": "Exclude all activities tied at either extreme",
+      "kind": "Local practice case",
+      "description": "Exclude all activities tied at either extreme.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ],
+          [
+            3,
+            "C"
+          ],
+          [
+            4,
+            "D"
+          ],
+          [
+            5,
+            "E"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "A"
+          ],
+          [
+            11,
+            "Friend 11",
+            "B"
+          ],
+          [
+            21,
+            "Friend 21",
+            "C"
+          ],
+          [
+            22,
+            "Friend 22",
+            "C"
+          ],
+          [
+            31,
+            "Friend 31",
+            "D"
+          ],
+          [
+            32,
+            "Friend 32",
+            "D"
+          ],
+          [
+            33,
+            "Friend 33",
+            "D"
+          ],
+          [
+            41,
+            "Friend 41",
+            "E"
+          ],
+          [
+            42,
+            "Friend 42",
+            "E"
+          ],
+          [
+            43,
+            "Friend 43",
+            "E"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "C"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "all-equal",
+      "name": "Equal participant counts leave no middle activities",
+      "kind": "Local practice case",
+      "description": "Equal participant counts leave no middle activities.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ],
+          [
+            3,
+            "C"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "A"
+          ],
+          [
+            2,
+            "Friend 2",
+            "A"
+          ],
+          [
+            11,
+            "Friend 11",
+            "B"
+          ],
+          [
+            12,
+            "Friend 12",
+            "B"
+          ],
+          [
+            21,
+            "Friend 21",
+            "C"
+          ],
+          [
+            22,
+            "Friend 22",
+            "C"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": []
+      }
+    },
+    {
+      "id": "multiple-middle",
+      "name": "Return more than one middle activity",
+      "kind": "Local practice case",
+      "description": "Return more than one middle activity.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ],
+          [
+            3,
+            "C"
+          ],
+          [
+            4,
+            "D"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "A"
+          ],
+          [
+            11,
+            "Friend 11",
+            "B"
+          ],
+          [
+            12,
+            "Friend 12",
+            "B"
+          ],
+          [
+            21,
+            "Friend 21",
+            "C"
+          ],
+          [
+            22,
+            "Friend 22",
+            "C"
+          ],
+          [
+            23,
+            "Friend 23",
+            "C"
+          ],
+          [
+            31,
+            "Friend 31",
+            "D"
+          ],
+          [
+            32,
+            "Friend 32",
+            "D"
+          ],
+          [
+            33,
+            "Friend 33",
+            "D"
+          ],
+          [
+            34,
+            "Friend 34",
+            "D"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "single-activity",
+      "name": "One activity is both the minimum and maximum",
+      "kind": "Local practice case",
+      "description": "One activity is both the minimum and maximum.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "Only"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "Only"
+          ],
+          [
+            2,
+            "Friend 2",
+            "Only"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Friends": [
+        [
+          1,
+          "Jonathan D.",
+          "Eating"
+        ],
+        [
+          2,
+          "Jade W.",
+          "Singing"
+        ],
+        [
+          3,
+          "Victor J.",
+          "Singing"
+        ],
+        [
+          4,
+          "Elvis Q.",
+          "Eating"
+        ],
+        [
+          5,
+          "Daniel A.",
+          "Eating"
+        ],
+        [
+          6,
+          "Bob B.",
+          "Horse Riding"
+        ]
+      ],
+      "Activities": [
+        [
+          1,
+          "Eating"
+        ],
+        [
+          2,
+          "Singing"
+        ],
+        [
+          3,
+          "Horse Riding"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "activity"
+      ],
+      "rows": [
+        [
+          "Singing"
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "orderBy": [],
+  "collection": "Added questions",
+  "testNotes": "The published example is included. Extra cases are created for this workspace; LeetCode’s private tests are not available.",
+  "examples": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Friends": [
+          [
+            1,
+            "Jonathan D.",
+            "Eating"
+          ],
+          [
+            2,
+            "Jade W.",
+            "Singing"
+          ],
+          [
+            3,
+            "Victor J.",
+            "Singing"
+          ],
+          [
+            4,
+            "Elvis Q.",
+            "Eating"
+          ],
+          [
+            5,
+            "Daniel A.",
+            "Eating"
+          ],
+          [
+            6,
+            "Bob B.",
+            "Horse Riding"
+          ]
+        ],
+        "Activities": [
+          [
+            1,
+            "Eating"
+          ],
+          [
+            2,
+            "Singing"
+          ],
+          [
+            3,
+            "Horse Riding"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "Singing"
+          ]
+        ]
+      }
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Friends": [
+          [
+            1,
+            "Jonathan D.",
+            "Eating"
+          ],
+          [
+            2,
+            "Jade W.",
+            "Singing"
+          ],
+          [
+            3,
+            "Victor J.",
+            "Singing"
+          ],
+          [
+            4,
+            "Elvis Q.",
+            "Eating"
+          ],
+          [
+            5,
+            "Daniel A.",
+            "Eating"
+          ],
+          [
+            6,
+            "Bob B.",
+            "Horse Riding"
+          ]
+        ],
+        "Activities": [
+          [
+            1,
+            "Eating"
+          ],
+          [
+            2,
+            "Singing"
+          ],
+          [
+            3,
+            "Horse Riding"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "Singing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Friends": [
+          [
+            6,
+            "Bob B.",
+            "Horse Riding"
+          ],
+          [
+            5,
+            "Daniel A.",
+            "Eating"
+          ],
+          [
+            4,
+            "Elvis Q.",
+            "Eating"
+          ],
+          [
+            3,
+            "Victor J.",
+            "Singing"
+          ],
+          [
+            2,
+            "Jade W.",
+            "Singing"
+          ],
+          [
+            1,
+            "Jonathan D.",
+            "Eating"
+          ]
+        ],
+        "Activities": [
+          [
+            3,
+            "Horse Riding"
+          ],
+          [
+            2,
+            "Singing"
+          ],
+          [
+            1,
+            "Eating"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "Singing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tied-extremes",
+      "name": "Exclude all activities tied at either extreme",
+      "kind": "Local practice case",
+      "description": "Exclude all activities tied at either extreme.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ],
+          [
+            3,
+            "C"
+          ],
+          [
+            4,
+            "D"
+          ],
+          [
+            5,
+            "E"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "A"
+          ],
+          [
+            11,
+            "Friend 11",
+            "B"
+          ],
+          [
+            21,
+            "Friend 21",
+            "C"
+          ],
+          [
+            22,
+            "Friend 22",
+            "C"
+          ],
+          [
+            31,
+            "Friend 31",
+            "D"
+          ],
+          [
+            32,
+            "Friend 32",
+            "D"
+          ],
+          [
+            33,
+            "Friend 33",
+            "D"
+          ],
+          [
+            41,
+            "Friend 41",
+            "E"
+          ],
+          [
+            42,
+            "Friend 42",
+            "E"
+          ],
+          [
+            43,
+            "Friend 43",
+            "E"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "C"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "all-equal",
+      "name": "Equal participant counts leave no middle activities",
+      "kind": "Local practice case",
+      "description": "Equal participant counts leave no middle activities.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ],
+          [
+            3,
+            "C"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "A"
+          ],
+          [
+            2,
+            "Friend 2",
+            "A"
+          ],
+          [
+            11,
+            "Friend 11",
+            "B"
+          ],
+          [
+            12,
+            "Friend 12",
+            "B"
+          ],
+          [
+            21,
+            "Friend 21",
+            "C"
+          ],
+          [
+            22,
+            "Friend 22",
+            "C"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": []
+      }
+    },
+    {
+      "id": "multiple-middle",
+      "name": "Return more than one middle activity",
+      "kind": "Local practice case",
+      "description": "Return more than one middle activity.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ],
+          [
+            3,
+            "C"
+          ],
+          [
+            4,
+            "D"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "A"
+          ],
+          [
+            11,
+            "Friend 11",
+            "B"
+          ],
+          [
+            12,
+            "Friend 12",
+            "B"
+          ],
+          [
+            21,
+            "Friend 21",
+            "C"
+          ],
+          [
+            22,
+            "Friend 22",
+            "C"
+          ],
+          [
+            23,
+            "Friend 23",
+            "C"
+          ],
+          [
+            31,
+            "Friend 31",
+            "D"
+          ],
+          [
+            32,
+            "Friend 32",
+            "D"
+          ],
+          [
+            33,
+            "Friend 33",
+            "D"
+          ],
+          [
+            34,
+            "Friend 34",
+            "D"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": [
+          [
+            "B"
+          ],
+          [
+            "C"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "single-activity",
+      "name": "One activity is both the minimum and maximum",
+      "kind": "Local practice case",
+      "description": "One activity is both the minimum and maximum.",
+      "input": {
+        "Activities": [
+          [
+            1,
+            "Only"
+          ]
+        ],
+        "Friends": [
+          [
+            1,
+            "Friend 1",
+            "Only"
+          ],
+          [
+            2,
+            "Friend 2",
+            "Only"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "activity"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "referenceSql": "WITH counts AS (SELECT activity,COUNT(*) AS total FROM Friends GROUP BY activity) SELECT activity FROM counts WHERE total>(SELECT MIN(total) FROM counts) AND total<(SELECT MAX(total) FROM counts)"
+}

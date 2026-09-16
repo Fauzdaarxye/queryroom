@@ -1,0 +1,750 @@
+{
+  "number": 2173,
+  "slug": "longest-winning-streak",
+  "title": "Longest Winning Streak",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/longest-winning-streak/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/2100-2199/2173.Longest Winning Streak/README_EN.md",
+  "schema": [
+    {
+      "name": "Matches",
+      "columns": [
+        {
+          "name": "player_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "match_day",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "result",
+          "type": "TEXT",
+          "displayType": "enum"
+        }
+      ],
+      "note": "(player_id, match_day) is the primary key (combination of columns with unique values) for this table.\nEach row of this table contains the ID of a player, the day of the match they played, and the result of that match.\nThe result column is an ENUM (category) type of ('Win', 'Draw', 'Lose').",
+      "primaryKey": [
+        "player_id",
+        "match_day"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Matches</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>player_id</td><td>int</td></tr><tr><td>match_day</td><td>date</td></tr><tr><td>result</td><td>enum</td></tr></tbody></table></div><p>(player_id, match_day) is the primary key (combination of columns with unique values) for this table.<br/>Each row of this table contains the ID of a player, the day of the match they played, and the result of that match.<br/>The result column is an ENUM (category) type of ('Win', 'Draw', 'Lose').</p>\n<p> </p>\n<p>The <strong>winning streak</strong> of a player is the number of consecutive wins uninterrupted by draws or losses.</p>\n<p>Write a solution to count the longest winning streak for each player.</p>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Matches table:</p><div class=\"statement-table\"><table><thead><tr><th>player_id</th><th>match_day</th><th>result</th></tr></thead><tbody><tr><td>1</td><td>2022-01-17</td><td>Win</td></tr><tr><td>1</td><td>2022-01-18</td><td>Win</td></tr><tr><td>1</td><td>2022-01-25</td><td>Win</td></tr><tr><td>1</td><td>2022-01-31</td><td>Draw</td></tr><tr><td>1</td><td>2022-02-08</td><td>Win</td></tr><tr><td>2</td><td>2022-02-06</td><td>Lose</td></tr><tr><td>2</td><td>2022-02-08</td><td>Lose</td></tr><tr><td>3</td><td>2022-03-30</td><td>Win</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>player_id</th><th>longest_streak</th></tr></thead><tbody><tr><td>1</td><td>3</td></tr><tr><td>2</td><td>0</td></tr><tr><td>3</td><td>1</td></tr></tbody></table></div><p>Explanation: <br/>Player 1:<br/>From 2022-01-17 to 2022-01-25, player 1 won 3 consecutive matches.<br/>On 2022-01-31, player 1 had a draw.<br/>On 2022-02-08, player 1 won a match.<br/>The longest winning streak was 3 matches.<br/><br/>Player 2:<br/>From 2022-02-06 to 2022-02-08, player 2 lost 2 consecutive matches.<br/>The longest winning streak was 0 matches.<br/><br/>Player 3:<br/>On 2022-03-30, player 3 won a match.<br/>The longest winning streak was 1 match.</p>\n<p> </p>\n<p><strong>Follow up:</strong> If we are interested in calculating the longest streak without losing (i.e., win or draw), how will your solution change?</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Matches": [
+          [
+            1,
+            "2022-01-17",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            1,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            2,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            2,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            3,
+            "2022-03-30",
+            "Win"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Matches": [
+          [
+            3,
+            "2022-03-30",
+            "Win"
+          ],
+          [
+            2,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            2,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            1,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            1,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-17",
+            "Win"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Matches": [
+          [
+            101,
+            "2022-01-17",
+            "Win"
+          ],
+          [
+            101,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            101,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            101,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            101,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            102,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            102,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            103,
+            "2022-03-30",
+            "Win"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            101,
+            3
+          ],
+          [
+            102,
+            0
+          ],
+          [
+            103,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Matches": [
+          [
+            1,
+            "2022-01-17",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            1,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            2,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            2,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            3,
+            "2022-03-30",
+            "Win"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Matches": [
+          [
+            1,
+            "2022-01-17",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            1,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            2,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            2,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            3,
+            "2022-03-30",
+            "Win"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Matches": [
+        [
+          1,
+          "2022-01-17",
+          "Win"
+        ],
+        [
+          1,
+          "2022-01-18",
+          "Win"
+        ],
+        [
+          1,
+          "2022-01-25",
+          "Win"
+        ],
+        [
+          1,
+          "2022-01-31",
+          "Draw"
+        ],
+        [
+          1,
+          "2022-02-08",
+          "Win"
+        ],
+        [
+          2,
+          "2022-02-06",
+          "Lose"
+        ],
+        [
+          2,
+          "2022-02-08",
+          "Lose"
+        ],
+        [
+          3,
+          "2022-03-30",
+          "Win"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "player_id",
+        "longest_streak"
+      ],
+      "rows": [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "/* Write your MySQL query statement below */\nWITH S AS (\n  SELECT\n    *,\n    ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY match_day) - ROW_NUMBER() OVER (PARTITION BY player_id, result ORDER BY match_day) AS rk\n  FROM Matches\n), T AS (\n  SELECT\n    player_id,\n    SUM(result = 'Win') AS s\n  FROM S\n  GROUP BY\n    player_id,\n    rk\n)\nSELECT\n  player_id,\n  MAX(s) AS longest_streak\nFROM T\nGROUP BY\n  player_id",
+  "playlistIndex": 17,
+  "videos": [
+    {
+      "videoId": "JDCmqo3YAy8",
+      "playlistIndex": 17,
+      "url": "https://www.youtube.com/watch?v=JDCmqo3YAy8&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=17"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Matches": [
+          [
+            1,
+            "2022-01-17",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            1,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            2,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            2,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            3,
+            "2022-03-30",
+            "Win"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Matches": [
+          [
+            3,
+            "2022-03-30",
+            "Win"
+          ],
+          [
+            2,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            2,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            1,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            1,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-17",
+            "Win"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Matches": [
+          [
+            101,
+            "2022-01-17",
+            "Win"
+          ],
+          [
+            101,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            101,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            101,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            101,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            102,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            102,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            103,
+            "2022-03-30",
+            "Win"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            101,
+            3
+          ],
+          [
+            102,
+            0
+          ],
+          [
+            103,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Matches": [
+          [
+            1,
+            "2022-01-17",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-18",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-25",
+            "Win"
+          ],
+          [
+            1,
+            "2022-01-31",
+            "Draw"
+          ],
+          [
+            1,
+            "2022-02-08",
+            "Win"
+          ],
+          [
+            2,
+            "2022-02-06",
+            "Lose"
+          ],
+          [
+            2,
+            "2022-02-08",
+            "Lose"
+          ],
+          [
+            3,
+            "2022-03-30",
+            "Win"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "player_id",
+          "longest_streak"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

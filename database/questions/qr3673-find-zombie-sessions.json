@@ -1,0 +1,2573 @@
+{
+  "number": 3673,
+  "slug": "find-zombie-sessions",
+  "title": "Find Zombie Sessions",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/find-zombie-sessions/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/3600-3699/3673.Find Zombie Sessions/README_EN.md",
+  "schema": [
+    {
+      "name": "app_events",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "event_timestamp",
+          "type": "TEXT",
+          "displayType": "datetime"
+        },
+        {
+          "name": "event_type",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "session_id",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "event_value",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "event_id is the unique identifier for this table.\nevent_type can be app_open, click, scroll, purchase, or app_close.\nsession_id groups events within the same user session.\nevent_value represents: for purchase - amount in dollars, for scroll - pixels scrolled, for others - NULL.",
+      "primaryKey": [
+        "event_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>app_events</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>event_id</td><td>int</td></tr><tr><td>user_id</td><td>int</td></tr><tr><td>event_timestamp</td><td>datetime</td></tr><tr><td>event_type</td><td>varchar</td></tr><tr><td>session_id</td><td>varchar</td></tr><tr><td>event_value</td><td>int</td></tr></tbody></table></div><p>event_id is the unique identifier for this table.<br/>event_type can be app_open, click, scroll, purchase, or app_close.<br/>session_id groups events within the same user session.<br/>event_value represents: for purchase - amount in dollars, for scroll - pixels scrolled, for others - NULL.</p>\n<p>Write a solution to identify <strong>zombie sessions, </strong>sessions where users appear active but show abnormal behavior patterns. A session is considered a <strong>zombie session</strong> if it meets ALL the following criteria:</p>\n<ul>\n<li>The session duration is <strong>more than</strong> <code>30</code> minutes.</li>\n<li>Has <strong>at least</strong> <code>5</code> scroll events.</li>\n<li>The <strong>click-to-scroll ratio</strong> is less than <code>0.20</code> .</li>\n<li><strong>No purchases</strong> were made during the session.</li>\n</ul>\n<p>Return <em>the result table ordered by</em> <code>scroll_count</code> <em>in <strong>descending</strong> order, then by</em> <code>session_id</code> <em>in <strong>ascending</strong> order</em>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example:</strong></p>\n<div>\n<p><strong>Input:</strong></p>\n<p>app_events table:</p>\n<div class=\"statement-table\"><table><thead><tr><th>event_id</th><th>user_id</th><th>event_timestamp</th><th>event_type</th><th>session_id</th><th>event_value</th></tr></thead><tbody><tr><td>1</td><td>201</td><td>2024-03-01 10:00:00</td><td>app_open</td><td>S001</td><td>NULL</td></tr><tr><td>2</td><td>201</td><td>2024-03-01 10:05:00</td><td>scroll</td><td>S001</td><td>500</td></tr><tr><td>3</td><td>201</td><td>2024-03-01 10:10:00</td><td>scroll</td><td>S001</td><td>750</td></tr><tr><td>4</td><td>201</td><td>2024-03-01 10:15:00</td><td>scroll</td><td>S001</td><td>600</td></tr><tr><td>5</td><td>201</td><td>2024-03-01 10:20:00</td><td>scroll</td><td>S001</td><td>800</td></tr><tr><td>6</td><td>201</td><td>2024-03-01 10:25:00</td><td>scroll</td><td>S001</td><td>550</td></tr><tr><td>7</td><td>201</td><td>2024-03-01 10:30:00</td><td>scroll</td><td>S001</td><td>900</td></tr><tr><td>8</td><td>201</td><td>2024-03-01 10:35:00</td><td>app_close</td><td>S001</td><td>NULL</td></tr><tr><td>9</td><td>202</td><td>2024-03-01 11:00:00</td><td>app_open</td><td>S002</td><td>NULL</td></tr><tr><td>10</td><td>202</td><td>2024-03-01 11:02:00</td><td>click</td><td>S002</td><td>NULL</td></tr><tr><td>11</td><td>202</td><td>2024-03-01 11:05:00</td><td>scroll</td><td>S002</td><td>400</td></tr><tr><td>12</td><td>202</td><td>2024-03-01 11:08:00</td><td>click</td><td>S002</td><td>NULL</td></tr><tr><td>13</td><td>202</td><td>2024-03-01 11:10:00</td><td>scroll</td><td>S002</td><td>350</td></tr><tr><td>14</td><td>202</td><td>2024-03-01 11:15:00</td><td>purchase</td><td>S002</td><td>50</td></tr><tr><td>15</td><td>202</td><td>2024-03-01 11:20:00</td><td>app_close</td><td>S002</td><td>NULL</td></tr><tr><td>16</td><td>203</td><td>2024-03-01 12:00:00</td><td>app_open</td><td>S003</td><td>NULL</td></tr><tr><td>17</td><td>203</td><td>2024-03-01 12:10:00</td><td>scroll</td><td>S003</td><td>1000</td></tr><tr><td>18</td><td>203</td><td>2024-03-01 12:20:00</td><td>scroll</td><td>S003</td><td>1200</td></tr><tr><td>19</td><td>203</td><td>2024-03-01 12:25:00</td><td>click</td><td>S003</td><td>NULL</td></tr><tr><td>20</td><td>203</td><td>2024-03-01 12:30:00</td><td>scroll</td><td>S003</td><td>800</td></tr><tr><td>21</td><td>203</td><td>2024-03-01 12:40:00</td><td>scroll</td><td>S003</td><td>900</td></tr><tr><td>22</td><td>203</td><td>2024-03-01 12:50:00</td><td>scroll</td><td>S003</td><td>1100</td></tr><tr><td>23</td><td>203</td><td>2024-03-01 13:00:00</td><td>app_close</td><td>S003</td><td>NULL</td></tr><tr><td>24</td><td>204</td><td>2024-03-01 14:00:00</td><td>app_open</td><td>S004</td><td>NULL</td></tr><tr><td>25</td><td>204</td><td>2024-03-01 14:05:00</td><td>scroll</td><td>S004</td><td>600</td></tr><tr><td>26</td><td>204</td><td>2024-03-01 14:08:00</td><td>scroll</td><td>S004</td><td>700</td></tr><tr><td>27</td><td>204</td><td>2024-03-01 14:10:00</td><td>click</td><td>S004</td><td>NULL</td></tr><tr><td>28</td><td>204</td><td>2024-03-01 14:12:00</td><td>app_close</td><td>S004</td><td>NULL</td></tr></tbody></table></div>\n<p><strong>Output:</strong></p>\n<div class=\"statement-table\"><table><thead><tr><th>session_id</th><th>user_id</th><th>session_duration_minutes</th><th>scroll_count</th></tr></thead><tbody><tr><td>S001</td><td>201</td><td>35</td><td>6</td></tr></tbody></table></div>\n<p><strong>Explanation:</strong></p>\n<ul>\n<li><strong>Session S001 (User 201)</strong>:\n\n    <ul>\n<li>Duration: 10:00:00 to 10:35:00 = 35 minutes (more than 30) </li>\n<li>Scroll events: 6 (at least 5) </li>\n<li>Click events: 0</li>\n<li>Click-to-scroll ratio: 0/6 = 0.00 (less than 0.20) </li>\n<li>Purchases: 0 (no purchases) </li>\n<li>S001 is a zombie session (meets all criteria)</li>\n</ul>\n</li>\n<li><strong>Session S002 (User 202)</strong>:\n    <ul>\n<li>Duration: 11:00:00 to 11:20:00 = 20 minutes (less than 30) </li>\n<li>Has a purchase event </li>\n<li>S002 is not a zombie session </li>\n</ul>\n</li>\n<li><strong>Session S003 (User 203)</strong>:\n    <ul>\n<li>Duration: 12:00:00 to 13:00:00 = 60 minutes (more than 30) </li>\n<li>Scroll events: 5 (at least 5) </li>\n<li>Click events: 1</li>\n<li>Click-to-scroll ratio: 1/5 = 0.20 (not less than 0.20) </li>\n<li>Purchases: 0 (no purchases) </li>\n<li>S003 is not a zombie session (click-to-scroll ratio equals 0.20, needs to be less)</li>\n</ul>\n</li>\n<li><strong>Session S004 (User 204)</strong>:\n    <ul>\n<li>Duration: 14:00:00 to 14:12:00 = 12 minutes (less than 30) </li>\n<li>Scroll events: 2 (less than 5) </li>\n<li>S004  is not a zombie session </li>\n</ul>\n</li>\n</ul>\n<p>The result table is ordered by scroll_count in descending order, then by session_id in ascending order.</p>\n</div>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "app_events": [
+          [
+            1,
+            201,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "S001",
+            null
+          ],
+          [
+            2,
+            201,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "S001",
+            500
+          ],
+          [
+            3,
+            201,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "S001",
+            750
+          ],
+          [
+            4,
+            201,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "S001",
+            600
+          ],
+          [
+            5,
+            201,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "S001",
+            800
+          ],
+          [
+            6,
+            201,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "S001",
+            550
+          ],
+          [
+            7,
+            201,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "S001",
+            900
+          ],
+          [
+            8,
+            201,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "S001",
+            null
+          ],
+          [
+            9,
+            202,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "S002",
+            null
+          ],
+          [
+            10,
+            202,
+            "2024-03-01 11:02:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            11,
+            202,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "S002",
+            400
+          ],
+          [
+            12,
+            202,
+            "2024-03-01 11:08:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            13,
+            202,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "S002",
+            350
+          ],
+          [
+            14,
+            202,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "S002",
+            50
+          ],
+          [
+            15,
+            202,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "S002",
+            null
+          ],
+          [
+            16,
+            203,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "S003",
+            null
+          ],
+          [
+            17,
+            203,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "S003",
+            1000
+          ],
+          [
+            18,
+            203,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "S003",
+            1200
+          ],
+          [
+            19,
+            203,
+            "2024-03-01 12:25:00",
+            "click",
+            "S003",
+            null
+          ],
+          [
+            20,
+            203,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "S003",
+            800
+          ],
+          [
+            21,
+            203,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "S003",
+            900
+          ],
+          [
+            22,
+            203,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "S003",
+            1100
+          ],
+          [
+            23,
+            203,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "S003",
+            null
+          ],
+          [
+            24,
+            204,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "S004",
+            null
+          ],
+          [
+            25,
+            204,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "S004",
+            600
+          ],
+          [
+            26,
+            204,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "S004",
+            700
+          ],
+          [
+            27,
+            204,
+            "2024-03-01 14:10:00",
+            "click",
+            "S004",
+            null
+          ],
+          [
+            28,
+            204,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "S004",
+            null
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "S001",
+            201,
+            35,
+            6
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "app_events": [
+          [
+            28,
+            204,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "S004",
+            null
+          ],
+          [
+            27,
+            204,
+            "2024-03-01 14:10:00",
+            "click",
+            "S004",
+            null
+          ],
+          [
+            26,
+            204,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "S004",
+            700
+          ],
+          [
+            25,
+            204,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "S004",
+            600
+          ],
+          [
+            24,
+            204,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "S004",
+            null
+          ],
+          [
+            23,
+            203,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "S003",
+            null
+          ],
+          [
+            22,
+            203,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "S003",
+            1100
+          ],
+          [
+            21,
+            203,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "S003",
+            900
+          ],
+          [
+            20,
+            203,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "S003",
+            800
+          ],
+          [
+            19,
+            203,
+            "2024-03-01 12:25:00",
+            "click",
+            "S003",
+            null
+          ],
+          [
+            18,
+            203,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "S003",
+            1200
+          ],
+          [
+            17,
+            203,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "S003",
+            1000
+          ],
+          [
+            16,
+            203,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "S003",
+            null
+          ],
+          [
+            15,
+            202,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "S002",
+            null
+          ],
+          [
+            14,
+            202,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "S002",
+            50
+          ],
+          [
+            13,
+            202,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "S002",
+            350
+          ],
+          [
+            12,
+            202,
+            "2024-03-01 11:08:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            11,
+            202,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "S002",
+            400
+          ],
+          [
+            10,
+            202,
+            "2024-03-01 11:02:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            9,
+            202,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "S002",
+            null
+          ],
+          [
+            8,
+            201,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "S001",
+            null
+          ],
+          [
+            7,
+            201,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "S001",
+            900
+          ],
+          [
+            6,
+            201,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "S001",
+            550
+          ],
+          [
+            5,
+            201,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "S001",
+            800
+          ],
+          [
+            4,
+            201,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "S001",
+            600
+          ],
+          [
+            3,
+            201,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "S001",
+            750
+          ],
+          [
+            2,
+            201,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "S001",
+            500
+          ],
+          [
+            1,
+            201,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "S001",
+            null
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "S001",
+            201,
+            35,
+            6
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "app_events": [
+          [
+            101,
+            301,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "Local-S001",
+            null
+          ],
+          [
+            102,
+            301,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "Local-S001",
+            500
+          ],
+          [
+            103,
+            301,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "Local-S001",
+            750
+          ],
+          [
+            104,
+            301,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "Local-S001",
+            600
+          ],
+          [
+            105,
+            301,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "Local-S001",
+            800
+          ],
+          [
+            106,
+            301,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "Local-S001",
+            550
+          ],
+          [
+            107,
+            301,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "Local-S001",
+            900
+          ],
+          [
+            108,
+            301,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "Local-S001",
+            null
+          ],
+          [
+            109,
+            302,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "Local-S002",
+            null
+          ],
+          [
+            110,
+            302,
+            "2024-03-01 11:02:00",
+            "click",
+            "Local-S002",
+            null
+          ],
+          [
+            111,
+            302,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "Local-S002",
+            400
+          ],
+          [
+            112,
+            302,
+            "2024-03-01 11:08:00",
+            "click",
+            "Local-S002",
+            null
+          ],
+          [
+            113,
+            302,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "Local-S002",
+            350
+          ],
+          [
+            114,
+            302,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "Local-S002",
+            50
+          ],
+          [
+            115,
+            302,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "Local-S002",
+            null
+          ],
+          [
+            116,
+            303,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "Local-S003",
+            null
+          ],
+          [
+            117,
+            303,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "Local-S003",
+            1000
+          ],
+          [
+            118,
+            303,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "Local-S003",
+            1200
+          ],
+          [
+            119,
+            303,
+            "2024-03-01 12:25:00",
+            "click",
+            "Local-S003",
+            null
+          ],
+          [
+            120,
+            303,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "Local-S003",
+            800
+          ],
+          [
+            121,
+            303,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "Local-S003",
+            900
+          ],
+          [
+            122,
+            303,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "Local-S003",
+            1100
+          ],
+          [
+            123,
+            303,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "Local-S003",
+            null
+          ],
+          [
+            124,
+            304,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "Local-S004",
+            null
+          ],
+          [
+            125,
+            304,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "Local-S004",
+            600
+          ],
+          [
+            126,
+            304,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "Local-S004",
+            700
+          ],
+          [
+            127,
+            304,
+            "2024-03-01 14:10:00",
+            "click",
+            "Local-S004",
+            null
+          ],
+          [
+            128,
+            304,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "Local-S004",
+            null
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "Local-S001",
+            301,
+            35,
+            6
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "app_events": [
+          [
+            1,
+            201,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "S001",
+            null
+          ],
+          [
+            2,
+            201,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "S001",
+            500
+          ],
+          [
+            3,
+            201,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "S001",
+            750
+          ],
+          [
+            4,
+            201,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "S001",
+            600
+          ],
+          [
+            5,
+            201,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "S001",
+            800
+          ],
+          [
+            6,
+            201,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "S001",
+            550
+          ],
+          [
+            7,
+            201,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "S001",
+            900
+          ],
+          [
+            8,
+            201,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "S001",
+            null
+          ],
+          [
+            9,
+            202,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "S002",
+            null
+          ],
+          [
+            10,
+            202,
+            "2024-03-01 11:02:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            11,
+            202,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "S002",
+            400
+          ],
+          [
+            12,
+            202,
+            "2024-03-01 11:08:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            13,
+            202,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "S002",
+            350
+          ],
+          [
+            14,
+            202,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "S002",
+            50
+          ],
+          [
+            15,
+            202,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "S002",
+            null
+          ],
+          [
+            16,
+            203,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "S003",
+            null
+          ],
+          [
+            17,
+            203,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "S003",
+            1000
+          ],
+          [
+            18,
+            203,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "S003",
+            1200
+          ],
+          [
+            19,
+            203,
+            "2024-03-01 12:25:00",
+            "click",
+            "S003",
+            null
+          ],
+          [
+            20,
+            203,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "S003",
+            800
+          ],
+          [
+            21,
+            203,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "S003",
+            900
+          ],
+          [
+            22,
+            203,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "S003",
+            1100
+          ],
+          [
+            23,
+            203,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "S003",
+            null
+          ],
+          [
+            24,
+            204,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "S004",
+            null
+          ],
+          [
+            25,
+            204,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "S004",
+            600
+          ],
+          [
+            26,
+            204,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "S004",
+            700
+          ],
+          [
+            27,
+            204,
+            "2024-03-01 14:10:00",
+            "click",
+            "S004",
+            null
+          ],
+          [
+            28,
+            204,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "S004",
+            null
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "S001",
+            201,
+            35,
+            6
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "app_events": [
+          [
+            1,
+            201,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "S001",
+            null
+          ],
+          [
+            2,
+            201,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "S001",
+            500
+          ],
+          [
+            3,
+            201,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "S001",
+            750
+          ],
+          [
+            4,
+            201,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "S001",
+            600
+          ],
+          [
+            5,
+            201,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "S001",
+            800
+          ],
+          [
+            6,
+            201,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "S001",
+            550
+          ],
+          [
+            7,
+            201,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "S001",
+            900
+          ],
+          [
+            8,
+            201,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "S001",
+            null
+          ],
+          [
+            9,
+            202,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "S002",
+            null
+          ],
+          [
+            10,
+            202,
+            "2024-03-01 11:02:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            11,
+            202,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "S002",
+            400
+          ],
+          [
+            12,
+            202,
+            "2024-03-01 11:08:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            13,
+            202,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "S002",
+            350
+          ],
+          [
+            14,
+            202,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "S002",
+            50
+          ],
+          [
+            15,
+            202,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "S002",
+            null
+          ],
+          [
+            16,
+            203,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "S003",
+            null
+          ],
+          [
+            17,
+            203,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "S003",
+            1000
+          ],
+          [
+            18,
+            203,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "S003",
+            1200
+          ],
+          [
+            19,
+            203,
+            "2024-03-01 12:25:00",
+            "click",
+            "S003",
+            null
+          ],
+          [
+            20,
+            203,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "S003",
+            800
+          ],
+          [
+            21,
+            203,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "S003",
+            900
+          ],
+          [
+            22,
+            203,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "S003",
+            1100
+          ],
+          [
+            23,
+            203,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "S003",
+            null
+          ],
+          [
+            24,
+            204,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "S004",
+            null
+          ],
+          [
+            25,
+            204,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "S004",
+            600
+          ],
+          [
+            26,
+            204,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "S004",
+            700
+          ],
+          [
+            27,
+            204,
+            "2024-03-01 14:10:00",
+            "click",
+            "S004",
+            null
+          ],
+          [
+            28,
+            204,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "S004",
+            null
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "S001",
+            201,
+            35,
+            6
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "app_events": [
+        [
+          1,
+          201,
+          "2024-03-01 10:00:00",
+          "app_open",
+          "S001",
+          null
+        ],
+        [
+          2,
+          201,
+          "2024-03-01 10:05:00",
+          "scroll",
+          "S001",
+          500
+        ],
+        [
+          3,
+          201,
+          "2024-03-01 10:10:00",
+          "scroll",
+          "S001",
+          750
+        ],
+        [
+          4,
+          201,
+          "2024-03-01 10:15:00",
+          "scroll",
+          "S001",
+          600
+        ],
+        [
+          5,
+          201,
+          "2024-03-01 10:20:00",
+          "scroll",
+          "S001",
+          800
+        ],
+        [
+          6,
+          201,
+          "2024-03-01 10:25:00",
+          "scroll",
+          "S001",
+          550
+        ],
+        [
+          7,
+          201,
+          "2024-03-01 10:30:00",
+          "scroll",
+          "S001",
+          900
+        ],
+        [
+          8,
+          201,
+          "2024-03-01 10:35:00",
+          "app_close",
+          "S001",
+          null
+        ],
+        [
+          9,
+          202,
+          "2024-03-01 11:00:00",
+          "app_open",
+          "S002",
+          null
+        ],
+        [
+          10,
+          202,
+          "2024-03-01 11:02:00",
+          "click",
+          "S002",
+          null
+        ],
+        [
+          11,
+          202,
+          "2024-03-01 11:05:00",
+          "scroll",
+          "S002",
+          400
+        ],
+        [
+          12,
+          202,
+          "2024-03-01 11:08:00",
+          "click",
+          "S002",
+          null
+        ],
+        [
+          13,
+          202,
+          "2024-03-01 11:10:00",
+          "scroll",
+          "S002",
+          350
+        ],
+        [
+          14,
+          202,
+          "2024-03-01 11:15:00",
+          "purchase",
+          "S002",
+          50
+        ],
+        [
+          15,
+          202,
+          "2024-03-01 11:20:00",
+          "app_close",
+          "S002",
+          null
+        ],
+        [
+          16,
+          203,
+          "2024-03-01 12:00:00",
+          "app_open",
+          "S003",
+          null
+        ],
+        [
+          17,
+          203,
+          "2024-03-01 12:10:00",
+          "scroll",
+          "S003",
+          1000
+        ],
+        [
+          18,
+          203,
+          "2024-03-01 12:20:00",
+          "scroll",
+          "S003",
+          1200
+        ],
+        [
+          19,
+          203,
+          "2024-03-01 12:25:00",
+          "click",
+          "S003",
+          null
+        ],
+        [
+          20,
+          203,
+          "2024-03-01 12:30:00",
+          "scroll",
+          "S003",
+          800
+        ],
+        [
+          21,
+          203,
+          "2024-03-01 12:40:00",
+          "scroll",
+          "S003",
+          900
+        ],
+        [
+          22,
+          203,
+          "2024-03-01 12:50:00",
+          "scroll",
+          "S003",
+          1100
+        ],
+        [
+          23,
+          203,
+          "2024-03-01 13:00:00",
+          "app_close",
+          "S003",
+          null
+        ],
+        [
+          24,
+          204,
+          "2024-03-01 14:00:00",
+          "app_open",
+          "S004",
+          null
+        ],
+        [
+          25,
+          204,
+          "2024-03-01 14:05:00",
+          "scroll",
+          "S004",
+          600
+        ],
+        [
+          26,
+          204,
+          "2024-03-01 14:08:00",
+          "scroll",
+          "S004",
+          700
+        ],
+        [
+          27,
+          204,
+          "2024-03-01 14:10:00",
+          "click",
+          "S004",
+          null
+        ],
+        [
+          28,
+          204,
+          "2024-03-01 14:12:00",
+          "app_close",
+          "S004",
+          null
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "session_id",
+        "user_id",
+        "session_duration_minutes",
+        "scroll_count"
+      ],
+      "rows": [
+        [
+          "S001",
+          201,
+          35,
+          6
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "/* Write your MySQL query statement below */\nSELECT\n  session_id,\n  user_id,\n  CAST((unixepoch(MAX(event_timestamp))-unixepoch(MIN(event_timestamp)))/60 AS INTEGER) AS session_duration_minutes,\n  SUM(event_type = 'scroll') AS scroll_count\nFROM app_events\nGROUP BY\n  session_id\nHAVING\n  unixepoch(MAX(event_timestamp))-unixepoch(MIN(event_timestamp)) > 1800\n  AND CAST(SUM(event_type = 'click') AS REAL) / SUM(event_type = 'scroll') < 0.2\n  AND SUM(event_type = 'purchase') = 0\n  AND SUM(event_type = 'scroll') >= 5\nORDER BY\n  scroll_count DESC,\n  session_id",
+  "playlistIndex": 43,
+  "videos": [
+    {
+      "videoId": "qGsCQGULA7o",
+      "playlistIndex": 43,
+      "url": "https://www.youtube.com/watch?v=qGsCQGULA7o&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=43"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "scroll_count",
+      "direction": "desc"
+    },
+    {
+      "column": "session_id",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "app_events": [
+          [
+            1,
+            201,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "S001",
+            null
+          ],
+          [
+            2,
+            201,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "S001",
+            500
+          ],
+          [
+            3,
+            201,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "S001",
+            750
+          ],
+          [
+            4,
+            201,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "S001",
+            600
+          ],
+          [
+            5,
+            201,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "S001",
+            800
+          ],
+          [
+            6,
+            201,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "S001",
+            550
+          ],
+          [
+            7,
+            201,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "S001",
+            900
+          ],
+          [
+            8,
+            201,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "S001",
+            null
+          ],
+          [
+            9,
+            202,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "S002",
+            null
+          ],
+          [
+            10,
+            202,
+            "2024-03-01 11:02:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            11,
+            202,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "S002",
+            400
+          ],
+          [
+            12,
+            202,
+            "2024-03-01 11:08:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            13,
+            202,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "S002",
+            350
+          ],
+          [
+            14,
+            202,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "S002",
+            50
+          ],
+          [
+            15,
+            202,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "S002",
+            null
+          ],
+          [
+            16,
+            203,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "S003",
+            null
+          ],
+          [
+            17,
+            203,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "S003",
+            1000
+          ],
+          [
+            18,
+            203,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "S003",
+            1200
+          ],
+          [
+            19,
+            203,
+            "2024-03-01 12:25:00",
+            "click",
+            "S003",
+            null
+          ],
+          [
+            20,
+            203,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "S003",
+            800
+          ],
+          [
+            21,
+            203,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "S003",
+            900
+          ],
+          [
+            22,
+            203,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "S003",
+            1100
+          ],
+          [
+            23,
+            203,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "S003",
+            null
+          ],
+          [
+            24,
+            204,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "S004",
+            null
+          ],
+          [
+            25,
+            204,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "S004",
+            600
+          ],
+          [
+            26,
+            204,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "S004",
+            700
+          ],
+          [
+            27,
+            204,
+            "2024-03-01 14:10:00",
+            "click",
+            "S004",
+            null
+          ],
+          [
+            28,
+            204,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "S004",
+            null
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "S001",
+            201,
+            35,
+            6
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "app_events": [
+          [
+            28,
+            204,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "S004",
+            null
+          ],
+          [
+            27,
+            204,
+            "2024-03-01 14:10:00",
+            "click",
+            "S004",
+            null
+          ],
+          [
+            26,
+            204,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "S004",
+            700
+          ],
+          [
+            25,
+            204,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "S004",
+            600
+          ],
+          [
+            24,
+            204,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "S004",
+            null
+          ],
+          [
+            23,
+            203,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "S003",
+            null
+          ],
+          [
+            22,
+            203,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "S003",
+            1100
+          ],
+          [
+            21,
+            203,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "S003",
+            900
+          ],
+          [
+            20,
+            203,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "S003",
+            800
+          ],
+          [
+            19,
+            203,
+            "2024-03-01 12:25:00",
+            "click",
+            "S003",
+            null
+          ],
+          [
+            18,
+            203,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "S003",
+            1200
+          ],
+          [
+            17,
+            203,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "S003",
+            1000
+          ],
+          [
+            16,
+            203,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "S003",
+            null
+          ],
+          [
+            15,
+            202,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "S002",
+            null
+          ],
+          [
+            14,
+            202,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "S002",
+            50
+          ],
+          [
+            13,
+            202,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "S002",
+            350
+          ],
+          [
+            12,
+            202,
+            "2024-03-01 11:08:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            11,
+            202,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "S002",
+            400
+          ],
+          [
+            10,
+            202,
+            "2024-03-01 11:02:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            9,
+            202,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "S002",
+            null
+          ],
+          [
+            8,
+            201,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "S001",
+            null
+          ],
+          [
+            7,
+            201,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "S001",
+            900
+          ],
+          [
+            6,
+            201,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "S001",
+            550
+          ],
+          [
+            5,
+            201,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "S001",
+            800
+          ],
+          [
+            4,
+            201,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "S001",
+            600
+          ],
+          [
+            3,
+            201,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "S001",
+            750
+          ],
+          [
+            2,
+            201,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "S001",
+            500
+          ],
+          [
+            1,
+            201,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "S001",
+            null
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "S001",
+            201,
+            35,
+            6
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "app_events": [
+          [
+            101,
+            301,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "Local-S001",
+            null
+          ],
+          [
+            102,
+            301,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "Local-S001",
+            500
+          ],
+          [
+            103,
+            301,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "Local-S001",
+            750
+          ],
+          [
+            104,
+            301,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "Local-S001",
+            600
+          ],
+          [
+            105,
+            301,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "Local-S001",
+            800
+          ],
+          [
+            106,
+            301,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "Local-S001",
+            550
+          ],
+          [
+            107,
+            301,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "Local-S001",
+            900
+          ],
+          [
+            108,
+            301,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "Local-S001",
+            null
+          ],
+          [
+            109,
+            302,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "Local-S002",
+            null
+          ],
+          [
+            110,
+            302,
+            "2024-03-01 11:02:00",
+            "click",
+            "Local-S002",
+            null
+          ],
+          [
+            111,
+            302,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "Local-S002",
+            400
+          ],
+          [
+            112,
+            302,
+            "2024-03-01 11:08:00",
+            "click",
+            "Local-S002",
+            null
+          ],
+          [
+            113,
+            302,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "Local-S002",
+            350
+          ],
+          [
+            114,
+            302,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "Local-S002",
+            50
+          ],
+          [
+            115,
+            302,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "Local-S002",
+            null
+          ],
+          [
+            116,
+            303,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "Local-S003",
+            null
+          ],
+          [
+            117,
+            303,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "Local-S003",
+            1000
+          ],
+          [
+            118,
+            303,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "Local-S003",
+            1200
+          ],
+          [
+            119,
+            303,
+            "2024-03-01 12:25:00",
+            "click",
+            "Local-S003",
+            null
+          ],
+          [
+            120,
+            303,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "Local-S003",
+            800
+          ],
+          [
+            121,
+            303,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "Local-S003",
+            900
+          ],
+          [
+            122,
+            303,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "Local-S003",
+            1100
+          ],
+          [
+            123,
+            303,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "Local-S003",
+            null
+          ],
+          [
+            124,
+            304,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "Local-S004",
+            null
+          ],
+          [
+            125,
+            304,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "Local-S004",
+            600
+          ],
+          [
+            126,
+            304,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "Local-S004",
+            700
+          ],
+          [
+            127,
+            304,
+            "2024-03-01 14:10:00",
+            "click",
+            "Local-S004",
+            null
+          ],
+          [
+            128,
+            304,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "Local-S004",
+            null
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "Local-S001",
+            301,
+            35,
+            6
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "app_events": [
+          [
+            1,
+            201,
+            "2024-03-01 10:00:00",
+            "app_open",
+            "S001",
+            null
+          ],
+          [
+            2,
+            201,
+            "2024-03-01 10:05:00",
+            "scroll",
+            "S001",
+            500
+          ],
+          [
+            3,
+            201,
+            "2024-03-01 10:10:00",
+            "scroll",
+            "S001",
+            750
+          ],
+          [
+            4,
+            201,
+            "2024-03-01 10:15:00",
+            "scroll",
+            "S001",
+            600
+          ],
+          [
+            5,
+            201,
+            "2024-03-01 10:20:00",
+            "scroll",
+            "S001",
+            800
+          ],
+          [
+            6,
+            201,
+            "2024-03-01 10:25:00",
+            "scroll",
+            "S001",
+            550
+          ],
+          [
+            7,
+            201,
+            "2024-03-01 10:30:00",
+            "scroll",
+            "S001",
+            900
+          ],
+          [
+            8,
+            201,
+            "2024-03-01 10:35:00",
+            "app_close",
+            "S001",
+            null
+          ],
+          [
+            9,
+            202,
+            "2024-03-01 11:00:00",
+            "app_open",
+            "S002",
+            null
+          ],
+          [
+            10,
+            202,
+            "2024-03-01 11:02:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            11,
+            202,
+            "2024-03-01 11:05:00",
+            "scroll",
+            "S002",
+            400
+          ],
+          [
+            12,
+            202,
+            "2024-03-01 11:08:00",
+            "click",
+            "S002",
+            null
+          ],
+          [
+            13,
+            202,
+            "2024-03-01 11:10:00",
+            "scroll",
+            "S002",
+            350
+          ],
+          [
+            14,
+            202,
+            "2024-03-01 11:15:00",
+            "purchase",
+            "S002",
+            50
+          ],
+          [
+            15,
+            202,
+            "2024-03-01 11:20:00",
+            "app_close",
+            "S002",
+            null
+          ],
+          [
+            16,
+            203,
+            "2024-03-01 12:00:00",
+            "app_open",
+            "S003",
+            null
+          ],
+          [
+            17,
+            203,
+            "2024-03-01 12:10:00",
+            "scroll",
+            "S003",
+            1000
+          ],
+          [
+            18,
+            203,
+            "2024-03-01 12:20:00",
+            "scroll",
+            "S003",
+            1200
+          ],
+          [
+            19,
+            203,
+            "2024-03-01 12:25:00",
+            "click",
+            "S003",
+            null
+          ],
+          [
+            20,
+            203,
+            "2024-03-01 12:30:00",
+            "scroll",
+            "S003",
+            800
+          ],
+          [
+            21,
+            203,
+            "2024-03-01 12:40:00",
+            "scroll",
+            "S003",
+            900
+          ],
+          [
+            22,
+            203,
+            "2024-03-01 12:50:00",
+            "scroll",
+            "S003",
+            1100
+          ],
+          [
+            23,
+            203,
+            "2024-03-01 13:00:00",
+            "app_close",
+            "S003",
+            null
+          ],
+          [
+            24,
+            204,
+            "2024-03-01 14:00:00",
+            "app_open",
+            "S004",
+            null
+          ],
+          [
+            25,
+            204,
+            "2024-03-01 14:05:00",
+            "scroll",
+            "S004",
+            600
+          ],
+          [
+            26,
+            204,
+            "2024-03-01 14:08:00",
+            "scroll",
+            "S004",
+            700
+          ],
+          [
+            27,
+            204,
+            "2024-03-01 14:10:00",
+            "click",
+            "S004",
+            null
+          ],
+          [
+            28,
+            204,
+            "2024-03-01 14:12:00",
+            "app_close",
+            "S004",
+            null
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "session_id",
+          "user_id",
+          "session_duration_minutes",
+          "scroll_count"
+        ],
+        "rows": [
+          [
+            "S001",
+            201,
+            35,
+            6
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

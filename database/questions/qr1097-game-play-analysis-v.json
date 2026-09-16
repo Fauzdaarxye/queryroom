@@ -1,0 +1,633 @@
+{
+  "number": 1097,
+  "slug": "game-play-analysis-v",
+  "title": "Game Play Analysis V",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/game-play-analysis-v/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1000-1099/1097.Game Play Analysis V/README_EN.md",
+  "schema": [
+    {
+      "name": "Activity",
+      "columns": [
+        {
+          "name": "player_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "device_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "event_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "games_played",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "(player_id, event_date) is the primary key (combination of columns with unique values) of this table.\nThis table shows the activity of players of some games.\nEach row is a record of a player who logged in and played a number of games (possibly 0) before logging out on someday using some device.",
+      "primaryKey": [
+        "player_id",
+        "event_date"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Activity</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>player_id</td><td>int</td></tr><tr><td>device_id</td><td>int</td></tr><tr><td>event_date</td><td>date</td></tr><tr><td>games_played</td><td>int</td></tr></tbody></table></div><p>(player_id, event_date) is the primary key (combination of columns with unique values) of this table.<br/>This table shows the activity of players of some games.<br/>Each row is a record of a player who logged in and played a number of games (possibly 0) before logging out on someday using some device.</p>\n<p> </p>\n<p>The <strong>install date</strong> of a player is the first login day of that player.</p>\n<p>We define <strong>day one retention</strong> of some date <code>x</code> to be the number of players whose <strong>install date</strong> is <code>x</code> and they logged back in on the day right after <code>x</code>, divided by the number of players whose install date is <code>x</code>, rounded to <code>2</code> decimal places.</p>\n<p>Write a solution to report for each install date, the number of players that installed the game on that day, and the <strong>day one retention</strong>.</p>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Activity table:</p><div class=\"statement-table\"><table><thead><tr><th>player_id</th><th>device_id</th><th>event_date</th><th>games_played</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>2016-03-01</td><td>5</td></tr><tr><td>1</td><td>2</td><td>2016-03-02</td><td>6</td></tr><tr><td>2</td><td>3</td><td>2017-06-25</td><td>1</td></tr><tr><td>3</td><td>1</td><td>2016-03-01</td><td>0</td></tr><tr><td>3</td><td>4</td><td>2016-07-03</td><td>5</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>install_dt</th><th>installs</th><th>Day1_retention</th></tr></thead><tbody><tr><td>2016-03-01</td><td>2</td><td>0.50</td></tr><tr><td>2017-06-25</td><td>1</td><td>0.00</td></tr></tbody></table></div><p>Explanation: <br/>Player 1 and 3 installed the game on 2016-03-01 but only player 1 logged back in on 2016-03-02 so the day 1 retention of 2016-03-01 is 1 / 2 = 0.50<br/>Player 2 installed the game on 2017-06-25 but didn't log back in on 2017-06-26 so the day 1 retention of 2017-06-25 is 0 / 1 = 0.00</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            2,
+            "2016-03-02",
+            6
+          ],
+          [
+            2,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            3,
+            1,
+            "2016-03-01",
+            0
+          ],
+          [
+            3,
+            4,
+            "2016-07-03",
+            5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "Day1_retention"
+        ],
+        "rows": [
+          [
+            "2016-03-01",
+            2,
+            0.5
+          ],
+          [
+            "2017-06-25",
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Activity": [
+          [
+            3,
+            4,
+            "2016-07-03",
+            5
+          ],
+          [
+            3,
+            1,
+            "2016-03-01",
+            0
+          ],
+          [
+            2,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            1,
+            2,
+            "2016-03-02",
+            6
+          ],
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "day1_retention"
+        ],
+        "rows": [
+          [
+            "2016-03-01",
+            2,
+            0.5
+          ],
+          [
+            "2017-06-25",
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Activity": [
+          [
+            101,
+            102,
+            "2016-03-01",
+            5
+          ],
+          [
+            101,
+            102,
+            "2016-03-02",
+            6
+          ],
+          [
+            102,
+            103,
+            "2017-06-25",
+            1
+          ],
+          [
+            103,
+            101,
+            "2016-03-01",
+            0
+          ],
+          [
+            103,
+            104,
+            "2016-07-03",
+            5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "day1_retention"
+        ],
+        "rows": [
+          [
+            "2016-03-01",
+            2,
+            0.5
+          ],
+          [
+            "2017-06-25",
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            1,
+            "2020-01-01",
+            5
+          ],
+          [
+            1,
+            1,
+            "2020-01-02",
+            0
+          ],
+          [
+            2,
+            2,
+            "2020-01-01",
+            2
+          ],
+          [
+            3,
+            3,
+            "2020-01-02",
+            6
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "day1_retention"
+        ],
+        "rows": [
+          [
+            "2020-01-01",
+            2,
+            0.5
+          ],
+          [
+            "2020-01-02",
+            1,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Activity": [
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            2,
+            "2016-03-02",
+            6
+          ],
+          [
+            2,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            3,
+            1,
+            "2016-03-01",
+            0
+          ],
+          [
+            3,
+            4,
+            "2016-07-03",
+            5
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "Day1_retention"
+        ],
+        "rows": [
+          [
+            "2016-03-01",
+            2,
+            0.5
+          ],
+          [
+            "2017-06-25",
+            1,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Activity": [
+        [
+          1,
+          2,
+          "2016-03-01",
+          5
+        ],
+        [
+          1,
+          2,
+          "2016-03-02",
+          6
+        ],
+        [
+          2,
+          3,
+          "2017-06-25",
+          1
+        ],
+        [
+          3,
+          1,
+          "2016-03-01",
+          0
+        ],
+        [
+          3,
+          4,
+          "2016-07-03",
+          5
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "install_dt",
+        "installs",
+        "Day1_retention"
+      ],
+      "rows": [
+        [
+          "2016-03-01",
+          2,
+          0.5
+        ],
+        [
+          "2017-06-25",
+          1,
+          0
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "/* Write your MySQL query statement below */\nWITH T AS (\n  SELECT\n    player_id,\n    event_date,\n    MIN(event_date) OVER (PARTITION BY player_id) AS install_dt\n  FROM Activity\n)\nSELECT\n  install_dt,\n  COUNT(DISTINCT player_id) AS installs,\n  ROUND(\n    CAST(SUM(CAST((JULIANDAY(event_date) - JULIANDAY(install_dt)) AS INTEGER) = 1) AS REAL) / COUNT(DISTINCT player_id),\n    2\n  ) AS day1_retention\nFROM T\nGROUP BY\n  1",
+  "playlistIndex": 25,
+  "videos": [
+    {
+      "videoId": "5u0wpF3i60U",
+      "playlistIndex": 25,
+      "url": "https://www.youtube.com/watch?v=5u0wpF3i60U&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=25"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            2,
+            "2016-03-02",
+            6
+          ],
+          [
+            2,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            3,
+            1,
+            "2016-03-01",
+            0
+          ],
+          [
+            3,
+            4,
+            "2016-07-03",
+            5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "Day1_retention"
+        ],
+        "rows": [
+          [
+            "2016-03-01",
+            2,
+            0.5
+          ],
+          [
+            "2017-06-25",
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Activity": [
+          [
+            3,
+            4,
+            "2016-07-03",
+            5
+          ],
+          [
+            3,
+            1,
+            "2016-03-01",
+            0
+          ],
+          [
+            2,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            1,
+            2,
+            "2016-03-02",
+            6
+          ],
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "day1_retention"
+        ],
+        "rows": [
+          [
+            "2016-03-01",
+            2,
+            0.5
+          ],
+          [
+            "2017-06-25",
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Activity": [
+          [
+            101,
+            102,
+            "2016-03-01",
+            5
+          ],
+          [
+            101,
+            102,
+            "2016-03-02",
+            6
+          ],
+          [
+            102,
+            103,
+            "2017-06-25",
+            1
+          ],
+          [
+            103,
+            101,
+            "2016-03-01",
+            0
+          ],
+          [
+            103,
+            104,
+            "2016-07-03",
+            5
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "day1_retention"
+        ],
+        "rows": [
+          [
+            "2016-03-01",
+            2,
+            0.5
+          ],
+          [
+            "2017-06-25",
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            1,
+            "2020-01-01",
+            5
+          ],
+          [
+            1,
+            1,
+            "2020-01-02",
+            0
+          ],
+          [
+            2,
+            2,
+            "2020-01-01",
+            2
+          ],
+          [
+            3,
+            3,
+            "2020-01-02",
+            6
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "install_dt",
+          "installs",
+          "day1_retention"
+        ],
+        "rows": [
+          [
+            "2020-01-01",
+            2,
+            0.5
+          ],
+          [
+            "2020-01-02",
+            1,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

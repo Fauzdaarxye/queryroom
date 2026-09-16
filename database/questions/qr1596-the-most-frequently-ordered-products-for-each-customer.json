@@ -1,0 +1,1532 @@
+{
+  "number": 1596,
+  "slug": "the-most-frequently-ordered-products-for-each-customer",
+  "title": "The Most Frequently Ordered Products for Each Customer",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/the-most-frequently-ordered-products-for-each-customer/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1500-1599/1596.The Most Frequently Ordered Products for Each Customer/README_EN.md",
+  "schema": [
+    {
+      "name": "Customers",
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "customer_id is the column with unique values for this table.\nThis table contains information about the customers.",
+      "primaryKey": [
+        "customer_id"
+      ]
+    },
+    {
+      "name": "Orders",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "order_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "customer_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "product_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "order_id is the column with unique values for this table.\nThis table contains information about the orders made by customer_id.\nNo customer will order the same product more than once in a single day.",
+      "primaryKey": [
+        "order_id"
+      ]
+    },
+    {
+      "name": "Products",
+      "columns": [
+        {
+          "name": "product_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "product_name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "price",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "product_id is the column with unique values for this table.\nThis table contains information about the products.",
+      "primaryKey": [
+        "product_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Customers</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>customer_id</td><td>int</td></tr><tr><td>name</td><td>varchar</td></tr></tbody></table></div><p>customer_id is the column with unique values for this table.<br/>This table contains information about the customers.</p>\n<p> </p>\n<p>Table: <code>Orders</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>order_id</td><td>int</td></tr><tr><td>order_date</td><td>date</td></tr><tr><td>customer_id</td><td>int</td></tr><tr><td>product_id</td><td>int</td></tr></tbody></table></div><p>order_id is the column with unique values for this table.<br/>This table contains information about the orders made by customer_id.<br/>No customer will order the same product more than once in a single day.</p>\n<p> </p>\n<p>Table: <code>Products</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>product_id</td><td>int</td></tr><tr><td>product_name</td><td>varchar</td></tr><tr><td>price</td><td>int</td></tr></tbody></table></div><p>product_id is the column with unique values for this table.<br/>This table contains information about the products.</p>\n<p> </p>\n<p>Write a solution to find the most frequently ordered product(s) for each customer.</p>\n<p>The result table should have the <code>product_id</code> and <code>product_name</code> for each <code>customer_id</code> who ordered at least one order.</p>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Customers table:</p><div class=\"statement-table\"><table><thead><tr><th>customer_id</th><th>name</th></tr></thead><tbody><tr><td>1</td><td>Alice</td></tr><tr><td>2</td><td>Bob</td></tr><tr><td>3</td><td>Tom</td></tr><tr><td>4</td><td>Jerry</td></tr><tr><td>5</td><td>John</td></tr></tbody></table></div><p>Orders table:</p><div class=\"statement-table\"><table><thead><tr><th>order_id</th><th>order_date</th><th>customer_id</th><th>product_id</th></tr></thead><tbody><tr><td>1</td><td>2020-07-31</td><td>1</td><td>1</td></tr><tr><td>2</td><td>2020-07-30</td><td>2</td><td>2</td></tr><tr><td>3</td><td>2020-08-29</td><td>3</td><td>3</td></tr><tr><td>4</td><td>2020-07-29</td><td>4</td><td>1</td></tr><tr><td>5</td><td>2020-06-10</td><td>1</td><td>2</td></tr><tr><td>6</td><td>2020-08-01</td><td>2</td><td>1</td></tr><tr><td>7</td><td>2020-08-01</td><td>3</td><td>3</td></tr><tr><td>8</td><td>2020-08-03</td><td>1</td><td>2</td></tr><tr><td>9</td><td>2020-08-07</td><td>2</td><td>3</td></tr><tr><td>10</td><td>2020-07-15</td><td>1</td><td>2</td></tr></tbody></table></div><p>Products table:</p><div class=\"statement-table\"><table><thead><tr><th>product_id</th><th>product_name</th><th>price</th></tr></thead><tbody><tr><td>1</td><td>keyboard</td><td>120</td></tr><tr><td>2</td><td>mouse</td><td>80</td></tr><tr><td>3</td><td>screen</td><td>600</td></tr><tr><td>4</td><td>hard disk</td><td>450</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>customer_id</th><th>product_id</th><th>product_name</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>mouse</td></tr><tr><td>2</td><td>1</td><td>keyboard</td></tr><tr><td>2</td><td>2</td><td>mouse</td></tr><tr><td>2</td><td>3</td><td>screen</td></tr><tr><td>3</td><td>3</td><td>screen</td></tr><tr><td>4</td><td>1</td><td>keyboard</td></tr></tbody></table></div><p>Explanation: <br/>Alice (customer 1) ordered the mouse three times and the keyboard one time, so the mouse is the most frequently ordered product for them.<br/>Bob (customer 2) ordered the keyboard, the mouse, and the screen one time, so those are the most frequently ordered products for them.<br/>Tom (customer 3) only ordered the screen (two times), so that is the most frequently ordered product for them.<br/>Jerry (customer 4) only ordered the keyboard (one time), so that is the most frequently ordered product for them.<br/>John (customer 5) did not order anything, so we do not include them in the result table.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Customers": [
+          [
+            1,
+            "Alice"
+          ],
+          [
+            2,
+            "Bob"
+          ],
+          [
+            3,
+            "Tom"
+          ],
+          [
+            4,
+            "Jerry"
+          ],
+          [
+            5,
+            "John"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2020-07-31",
+            1,
+            1
+          ],
+          [
+            2,
+            "2020-07-30",
+            2,
+            2
+          ],
+          [
+            3,
+            "2020-08-29",
+            3,
+            3
+          ],
+          [
+            4,
+            "2020-07-29",
+            4,
+            1
+          ],
+          [
+            5,
+            "2020-06-10",
+            1,
+            2
+          ],
+          [
+            6,
+            "2020-08-01",
+            2,
+            1
+          ],
+          [
+            7,
+            "2020-08-01",
+            3,
+            3
+          ],
+          [
+            8,
+            "2020-08-03",
+            1,
+            2
+          ],
+          [
+            9,
+            "2020-08-07",
+            2,
+            3
+          ],
+          [
+            10,
+            "2020-07-15",
+            1,
+            2
+          ]
+        ],
+        "Products": [
+          [
+            1,
+            "keyboard",
+            120
+          ],
+          [
+            2,
+            "mouse",
+            80
+          ],
+          [
+            3,
+            "screen",
+            600
+          ],
+          [
+            4,
+            "hard disk",
+            450
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            1,
+            "keyboard"
+          ],
+          [
+            2,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            3,
+            "screen"
+          ],
+          [
+            3,
+            3,
+            "screen"
+          ],
+          [
+            4,
+            1,
+            "keyboard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Published rows in a different input order",
+      "input": {
+        "Customers": [
+          [
+            5,
+            "John"
+          ],
+          [
+            4,
+            "Jerry"
+          ],
+          [
+            3,
+            "Tom"
+          ],
+          [
+            2,
+            "Bob"
+          ],
+          [
+            1,
+            "Alice"
+          ]
+        ],
+        "Orders": [
+          [
+            10,
+            "2020-07-15",
+            1,
+            2
+          ],
+          [
+            9,
+            "2020-08-07",
+            2,
+            3
+          ],
+          [
+            8,
+            "2020-08-03",
+            1,
+            2
+          ],
+          [
+            7,
+            "2020-08-01",
+            3,
+            3
+          ],
+          [
+            6,
+            "2020-08-01",
+            2,
+            1
+          ],
+          [
+            5,
+            "2020-06-10",
+            1,
+            2
+          ],
+          [
+            4,
+            "2020-07-29",
+            4,
+            1
+          ],
+          [
+            3,
+            "2020-08-29",
+            3,
+            3
+          ],
+          [
+            2,
+            "2020-07-30",
+            2,
+            2
+          ],
+          [
+            1,
+            "2020-07-31",
+            1,
+            1
+          ]
+        ],
+        "Products": [
+          [
+            4,
+            "hard disk",
+            450
+          ],
+          [
+            3,
+            "screen",
+            600
+          ],
+          [
+            2,
+            "mouse",
+            80
+          ],
+          [
+            1,
+            "keyboard",
+            120
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Published rows in a different input order.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            3,
+            "screen"
+          ],
+          [
+            2,
+            1,
+            "keyboard"
+          ],
+          [
+            2,
+            2,
+            "mouse"
+          ],
+          [
+            3,
+            3,
+            "screen"
+          ],
+          [
+            4,
+            1,
+            "keyboard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tied-favorites",
+      "name": "Return all tied favorites and omit lower counts",
+      "input": {
+        "Customers": [
+          [
+            10,
+            "Buyer"
+          ],
+          [
+            20,
+            "No orders"
+          ]
+        ],
+        "Products": [
+          [
+            1,
+            "Pen",
+            2
+          ],
+          [
+            2,
+            "Book",
+            5
+          ],
+          [
+            3,
+            "Bag",
+            20
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2024-01-01",
+            10,
+            1
+          ],
+          [
+            2,
+            "2024-01-02",
+            10,
+            1
+          ],
+          [
+            3,
+            "2024-01-01",
+            10,
+            2
+          ],
+          [
+            4,
+            "2024-01-02",
+            10,
+            2
+          ],
+          [
+            5,
+            "2024-01-01",
+            10,
+            3
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Return all tied favorites and omit lower counts.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            10,
+            1,
+            "Pen"
+          ],
+          [
+            10,
+            2,
+            "Book"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "same-name",
+      "name": "Count product IDs even when names match",
+      "input": {
+        "Customers": [
+          [
+            7,
+            "Customer"
+          ]
+        ],
+        "Products": [
+          [
+            9,
+            "Same name",
+            10
+          ],
+          [
+            11,
+            "Same name",
+            20
+          ]
+        ],
+        "Orders": [
+          [
+            8,
+            "2024-02-01",
+            7,
+            9
+          ],
+          [
+            9,
+            "2024-02-02",
+            7,
+            9
+          ],
+          [
+            10,
+            "2024-02-03",
+            7,
+            11
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Count product IDs even when names match.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            7,
+            9,
+            "Same name"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "per-customer",
+      "name": "Each customer has their own favorite",
+      "input": {
+        "Customers": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ]
+        ],
+        "Products": [
+          [
+            4,
+            "Tea",
+            4
+          ],
+          [
+            5,
+            "Coffee",
+            7
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2024-03-01",
+            1,
+            4
+          ],
+          [
+            2,
+            "2024-03-02",
+            1,
+            4
+          ],
+          [
+            3,
+            "2024-03-03",
+            1,
+            5
+          ],
+          [
+            4,
+            "2024-03-01",
+            2,
+            5
+          ],
+          [
+            5,
+            "2024-03-02",
+            2,
+            5
+          ],
+          [
+            6,
+            "2024-03-03",
+            2,
+            4
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Each customer has their own favorite.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            1,
+            4,
+            "Tea"
+          ],
+          [
+            2,
+            5,
+            "Coffee"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "no-orders",
+      "name": "Customers and products without orders",
+      "input": {
+        "Customers": [
+          [
+            1,
+            "No orders"
+          ]
+        ],
+        "Products": [
+          [
+            2,
+            "Unordered",
+            30
+          ]
+        ],
+        "Orders": []
+      },
+      "kind": "Local practice case",
+      "description": "Customers and products without orders.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Customers": [
+          [
+            1,
+            "Alice"
+          ],
+          [
+            2,
+            "Bob"
+          ],
+          [
+            3,
+            "Tom"
+          ],
+          [
+            4,
+            "Jerry"
+          ],
+          [
+            5,
+            "John"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2020-07-31",
+            1,
+            1
+          ],
+          [
+            2,
+            "2020-07-30",
+            2,
+            2
+          ],
+          [
+            3,
+            "2020-08-29",
+            3,
+            3
+          ],
+          [
+            4,
+            "2020-07-29",
+            4,
+            1
+          ],
+          [
+            5,
+            "2020-06-10",
+            1,
+            2
+          ],
+          [
+            6,
+            "2020-08-01",
+            2,
+            1
+          ],
+          [
+            7,
+            "2020-08-01",
+            3,
+            3
+          ],
+          [
+            8,
+            "2020-08-03",
+            1,
+            2
+          ],
+          [
+            9,
+            "2020-08-07",
+            2,
+            3
+          ],
+          [
+            10,
+            "2020-07-15",
+            1,
+            2
+          ]
+        ],
+        "Products": [
+          [
+            1,
+            "keyboard",
+            120
+          ],
+          [
+            2,
+            "mouse",
+            80
+          ],
+          [
+            3,
+            "screen",
+            600
+          ],
+          [
+            4,
+            "hard disk",
+            450
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            1,
+            "keyboard"
+          ],
+          [
+            2,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            3,
+            "screen"
+          ],
+          [
+            3,
+            3,
+            "screen"
+          ],
+          [
+            4,
+            1,
+            "keyboard"
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Customers": [
+        [
+          1,
+          "Alice"
+        ],
+        [
+          2,
+          "Bob"
+        ],
+        [
+          3,
+          "Tom"
+        ],
+        [
+          4,
+          "Jerry"
+        ],
+        [
+          5,
+          "John"
+        ]
+      ],
+      "Orders": [
+        [
+          1,
+          "2020-07-31",
+          1,
+          1
+        ],
+        [
+          2,
+          "2020-07-30",
+          2,
+          2
+        ],
+        [
+          3,
+          "2020-08-29",
+          3,
+          3
+        ],
+        [
+          4,
+          "2020-07-29",
+          4,
+          1
+        ],
+        [
+          5,
+          "2020-06-10",
+          1,
+          2
+        ],
+        [
+          6,
+          "2020-08-01",
+          2,
+          1
+        ],
+        [
+          7,
+          "2020-08-01",
+          3,
+          3
+        ],
+        [
+          8,
+          "2020-08-03",
+          1,
+          2
+        ],
+        [
+          9,
+          "2020-08-07",
+          2,
+          3
+        ],
+        [
+          10,
+          "2020-07-15",
+          1,
+          2
+        ]
+      ],
+      "Products": [
+        [
+          1,
+          "keyboard",
+          120
+        ],
+        [
+          2,
+          "mouse",
+          80
+        ],
+        [
+          3,
+          "screen",
+          600
+        ],
+        [
+          4,
+          "hard disk",
+          450
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "customer_id",
+        "product_id",
+        "product_name"
+      ],
+      "rows": [
+        [
+          1,
+          2,
+          "mouse"
+        ],
+        [
+          2,
+          1,
+          "keyboard"
+        ],
+        [
+          2,
+          2,
+          "mouse"
+        ],
+        [
+          2,
+          3,
+          "screen"
+        ],
+        [
+          3,
+          3,
+          "screen"
+        ],
+        [
+          4,
+          1,
+          "keyboard"
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "WITH counts AS (SELECT customer_id,product_id,COUNT(*) AS frequency FROM Orders GROUP BY customer_id,product_id), ranked AS (SELECT *,DENSE_RANK() OVER(PARTITION BY customer_id ORDER BY frequency DESC) AS ranking FROM counts) SELECT r.customer_id,r.product_id,p.product_name FROM ranked r JOIN Products p ON r.product_id=p.product_id WHERE ranking=1",
+  "collection": "Added questions",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Customers": [
+          [
+            1,
+            "Alice"
+          ],
+          [
+            2,
+            "Bob"
+          ],
+          [
+            3,
+            "Tom"
+          ],
+          [
+            4,
+            "Jerry"
+          ],
+          [
+            5,
+            "John"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2020-07-31",
+            1,
+            1
+          ],
+          [
+            2,
+            "2020-07-30",
+            2,
+            2
+          ],
+          [
+            3,
+            "2020-08-29",
+            3,
+            3
+          ],
+          [
+            4,
+            "2020-07-29",
+            4,
+            1
+          ],
+          [
+            5,
+            "2020-06-10",
+            1,
+            2
+          ],
+          [
+            6,
+            "2020-08-01",
+            2,
+            1
+          ],
+          [
+            7,
+            "2020-08-01",
+            3,
+            3
+          ],
+          [
+            8,
+            "2020-08-03",
+            1,
+            2
+          ],
+          [
+            9,
+            "2020-08-07",
+            2,
+            3
+          ],
+          [
+            10,
+            "2020-07-15",
+            1,
+            2
+          ]
+        ],
+        "Products": [
+          [
+            1,
+            "keyboard",
+            120
+          ],
+          [
+            2,
+            "mouse",
+            80
+          ],
+          [
+            3,
+            "screen",
+            600
+          ],
+          [
+            4,
+            "hard disk",
+            450
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            1,
+            "keyboard"
+          ],
+          [
+            2,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            3,
+            "screen"
+          ],
+          [
+            3,
+            3,
+            "screen"
+          ],
+          [
+            4,
+            1,
+            "keyboard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Published rows in a different input order",
+      "input": {
+        "Customers": [
+          [
+            5,
+            "John"
+          ],
+          [
+            4,
+            "Jerry"
+          ],
+          [
+            3,
+            "Tom"
+          ],
+          [
+            2,
+            "Bob"
+          ],
+          [
+            1,
+            "Alice"
+          ]
+        ],
+        "Orders": [
+          [
+            10,
+            "2020-07-15",
+            1,
+            2
+          ],
+          [
+            9,
+            "2020-08-07",
+            2,
+            3
+          ],
+          [
+            8,
+            "2020-08-03",
+            1,
+            2
+          ],
+          [
+            7,
+            "2020-08-01",
+            3,
+            3
+          ],
+          [
+            6,
+            "2020-08-01",
+            2,
+            1
+          ],
+          [
+            5,
+            "2020-06-10",
+            1,
+            2
+          ],
+          [
+            4,
+            "2020-07-29",
+            4,
+            1
+          ],
+          [
+            3,
+            "2020-08-29",
+            3,
+            3
+          ],
+          [
+            2,
+            "2020-07-30",
+            2,
+            2
+          ],
+          [
+            1,
+            "2020-07-31",
+            1,
+            1
+          ]
+        ],
+        "Products": [
+          [
+            4,
+            "hard disk",
+            450
+          ],
+          [
+            3,
+            "screen",
+            600
+          ],
+          [
+            2,
+            "mouse",
+            80
+          ],
+          [
+            1,
+            "keyboard",
+            120
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Published rows in a different input order.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            "mouse"
+          ],
+          [
+            2,
+            3,
+            "screen"
+          ],
+          [
+            2,
+            1,
+            "keyboard"
+          ],
+          [
+            2,
+            2,
+            "mouse"
+          ],
+          [
+            3,
+            3,
+            "screen"
+          ],
+          [
+            4,
+            1,
+            "keyboard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tied-favorites",
+      "name": "Return all tied favorites and omit lower counts",
+      "input": {
+        "Customers": [
+          [
+            10,
+            "Buyer"
+          ],
+          [
+            20,
+            "No orders"
+          ]
+        ],
+        "Products": [
+          [
+            1,
+            "Pen",
+            2
+          ],
+          [
+            2,
+            "Book",
+            5
+          ],
+          [
+            3,
+            "Bag",
+            20
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2024-01-01",
+            10,
+            1
+          ],
+          [
+            2,
+            "2024-01-02",
+            10,
+            1
+          ],
+          [
+            3,
+            "2024-01-01",
+            10,
+            2
+          ],
+          [
+            4,
+            "2024-01-02",
+            10,
+            2
+          ],
+          [
+            5,
+            "2024-01-01",
+            10,
+            3
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Return all tied favorites and omit lower counts.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            10,
+            1,
+            "Pen"
+          ],
+          [
+            10,
+            2,
+            "Book"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "same-name",
+      "name": "Count product IDs even when names match",
+      "input": {
+        "Customers": [
+          [
+            7,
+            "Customer"
+          ]
+        ],
+        "Products": [
+          [
+            9,
+            "Same name",
+            10
+          ],
+          [
+            11,
+            "Same name",
+            20
+          ]
+        ],
+        "Orders": [
+          [
+            8,
+            "2024-02-01",
+            7,
+            9
+          ],
+          [
+            9,
+            "2024-02-02",
+            7,
+            9
+          ],
+          [
+            10,
+            "2024-02-03",
+            7,
+            11
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Count product IDs even when names match.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            7,
+            9,
+            "Same name"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "per-customer",
+      "name": "Each customer has their own favorite",
+      "input": {
+        "Customers": [
+          [
+            1,
+            "A"
+          ],
+          [
+            2,
+            "B"
+          ]
+        ],
+        "Products": [
+          [
+            4,
+            "Tea",
+            4
+          ],
+          [
+            5,
+            "Coffee",
+            7
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2024-03-01",
+            1,
+            4
+          ],
+          [
+            2,
+            "2024-03-02",
+            1,
+            4
+          ],
+          [
+            3,
+            "2024-03-03",
+            1,
+            5
+          ],
+          [
+            4,
+            "2024-03-01",
+            2,
+            5
+          ],
+          [
+            5,
+            "2024-03-02",
+            2,
+            5
+          ],
+          [
+            6,
+            "2024-03-03",
+            2,
+            4
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Each customer has their own favorite.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": [
+          [
+            1,
+            4,
+            "Tea"
+          ],
+          [
+            2,
+            5,
+            "Coffee"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "no-orders",
+      "name": "Customers and products without orders",
+      "input": {
+        "Customers": [
+          [
+            1,
+            "No orders"
+          ]
+        ],
+        "Products": [
+          [
+            2,
+            "Unordered",
+            30
+          ]
+        ],
+        "Orders": []
+      },
+      "kind": "Local practice case",
+      "description": "Customers and products without orders.",
+      "expected": {
+        "columns": [
+          "customer_id",
+          "product_id",
+          "product_name"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "testNotes": "The published example plus local cases for sorting, grouping, ties, and edge conditions. These are practice tests, not LeetCode’s private tests."
+}

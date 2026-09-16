@@ -1,0 +1,803 @@
+{
+  "number": 1699,
+  "slug": "number-of-calls-between-two-persons",
+  "title": "Number of Calls Between Two Persons",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/number-of-calls-between-two-persons/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1600-1699/1699.Number of Calls Between Two Persons/README_EN.md",
+  "schema": [
+    {
+      "name": "Calls",
+      "columns": [
+        {
+          "name": "from_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "to_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "duration",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "This table does not have a primary key (column with unique values), it may contain duplicates.\nThis table contains the duration of a phone call between from_id and to_id.\nfrom_id != to_id"
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Calls</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>from_id</td><td>int</td></tr><tr><td>to_id</td><td>int</td></tr><tr><td>duration</td><td>int</td></tr></tbody></table></div><p>This table does not have a primary key (column with unique values), it may contain duplicates.<br/>This table contains the duration of a phone call between from_id and to_id.<br/>from_id != to_id</p>\n<p> </p>\n<p>Write a solution to report the number of calls and the total call duration between each pair of distinct persons <code>(person1, person2)</code> where <code>person1 &lt; person2</code>.</p>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Calls table:</p><div class=\"statement-table\"><table><thead><tr><th>from_id</th><th>to_id</th><th>duration</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>59</td></tr><tr><td>2</td><td>1</td><td>11</td></tr><tr><td>1</td><td>3</td><td>20</td></tr><tr><td>3</td><td>4</td><td>100</td></tr><tr><td>3</td><td>4</td><td>200</td></tr><tr><td>3</td><td>4</td><td>200</td></tr><tr><td>4</td><td>3</td><td>499</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>person1</th><th>person2</th><th>call_count</th><th>total_duration</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>2</td><td>70</td></tr><tr><td>1</td><td>3</td><td>1</td><td>20</td></tr><tr><td>3</td><td>4</td><td>4</td><td>999</td></tr></tbody></table></div><p>Explanation: <br/>Users 1 and 2 had 2 calls and the total duration is 70 (59 + 11).<br/>Users 1 and 3 had 1 call and the total duration is 20.<br/>Users 3 and 4 had 4 calls and the total duration is 999 (100 + 200 + 200 + 499).</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Calls": [
+          [
+            1,
+            2,
+            59
+          ],
+          [
+            2,
+            1,
+            11
+          ],
+          [
+            1,
+            3,
+            20
+          ],
+          [
+            3,
+            4,
+            100
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            4,
+            3,
+            499
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            2,
+            70
+          ],
+          [
+            1,
+            3,
+            1,
+            20
+          ],
+          [
+            3,
+            4,
+            4,
+            999
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Published rows in a different input order",
+      "input": {
+        "Calls": [
+          [
+            4,
+            3,
+            499
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            3,
+            4,
+            100
+          ],
+          [
+            1,
+            3,
+            20
+          ],
+          [
+            2,
+            1,
+            11
+          ],
+          [
+            1,
+            2,
+            59
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Published rows in a different input order.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            3,
+            4,
+            4,
+            999
+          ],
+          [
+            1,
+            3,
+            1,
+            20
+          ],
+          [
+            1,
+            2,
+            2,
+            70
+          ]
+        ]
+      }
+    },
+    {
+      "id": "duplicates",
+      "name": "Repeated and reversed calls all count",
+      "input": {
+        "Calls": [
+          [
+            5,
+            2,
+            10
+          ],
+          [
+            5,
+            2,
+            10
+          ],
+          [
+            2,
+            5,
+            7
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Repeated and reversed calls all count.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            2,
+            5,
+            3,
+            27
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reversed",
+      "name": "Normalize pairs with larger caller IDs",
+      "input": {
+        "Calls": [
+          [
+            9,
+            1,
+            5
+          ],
+          [
+            8,
+            3,
+            12
+          ],
+          [
+            9,
+            1,
+            15
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Normalize pairs with larger caller IDs.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            1,
+            9,
+            2,
+            20
+          ],
+          [
+            3,
+            8,
+            1,
+            12
+          ]
+        ]
+      }
+    },
+    {
+      "id": "separate-pairs",
+      "name": "Keep distinct pairs separate",
+      "input": {
+        "Calls": [
+          [
+            1,
+            2,
+            30
+          ],
+          [
+            1,
+            3,
+            30
+          ],
+          [
+            2,
+            3,
+            30
+          ],
+          [
+            3,
+            1,
+            20
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Keep distinct pairs separate.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            1,
+            30
+          ],
+          [
+            1,
+            3,
+            2,
+            50
+          ],
+          [
+            2,
+            3,
+            1,
+            30
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No calls",
+      "input": {
+        "Calls": []
+      },
+      "kind": "Local practice case",
+      "description": "No calls.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Calls": [
+          [
+            1,
+            2,
+            59
+          ],
+          [
+            2,
+            1,
+            11
+          ],
+          [
+            1,
+            3,
+            20
+          ],
+          [
+            3,
+            4,
+            100
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            4,
+            3,
+            499
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            2,
+            70
+          ],
+          [
+            1,
+            3,
+            1,
+            20
+          ],
+          [
+            3,
+            4,
+            4,
+            999
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Calls": [
+        [
+          1,
+          2,
+          59
+        ],
+        [
+          2,
+          1,
+          11
+        ],
+        [
+          1,
+          3,
+          20
+        ],
+        [
+          3,
+          4,
+          100
+        ],
+        [
+          3,
+          4,
+          200
+        ],
+        [
+          3,
+          4,
+          200
+        ],
+        [
+          4,
+          3,
+          499
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "person1",
+        "person2",
+        "call_count",
+        "total_duration"
+      ],
+      "rows": [
+        [
+          1,
+          2,
+          2,
+          70
+        ],
+        [
+          1,
+          3,
+          1,
+          20
+        ],
+        [
+          3,
+          4,
+          4,
+          999
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "WITH pairs AS (SELECT CASE WHEN from_id<to_id THEN from_id ELSE to_id END AS person1,CASE WHEN from_id<to_id THEN to_id ELSE from_id END AS person2,duration FROM Calls) SELECT person1,person2,COUNT(*) AS call_count,SUM(duration) AS total_duration FROM pairs GROUP BY person1,person2",
+  "collection": "Added questions",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Calls": [
+          [
+            1,
+            2,
+            59
+          ],
+          [
+            2,
+            1,
+            11
+          ],
+          [
+            1,
+            3,
+            20
+          ],
+          [
+            3,
+            4,
+            100
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            4,
+            3,
+            499
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            2,
+            70
+          ],
+          [
+            1,
+            3,
+            1,
+            20
+          ],
+          [
+            3,
+            4,
+            4,
+            999
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Published rows in a different input order",
+      "input": {
+        "Calls": [
+          [
+            4,
+            3,
+            499
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            3,
+            4,
+            200
+          ],
+          [
+            3,
+            4,
+            100
+          ],
+          [
+            1,
+            3,
+            20
+          ],
+          [
+            2,
+            1,
+            11
+          ],
+          [
+            1,
+            2,
+            59
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Published rows in a different input order.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            3,
+            4,
+            4,
+            999
+          ],
+          [
+            1,
+            3,
+            1,
+            20
+          ],
+          [
+            1,
+            2,
+            2,
+            70
+          ]
+        ]
+      }
+    },
+    {
+      "id": "duplicates",
+      "name": "Repeated and reversed calls all count",
+      "input": {
+        "Calls": [
+          [
+            5,
+            2,
+            10
+          ],
+          [
+            5,
+            2,
+            10
+          ],
+          [
+            2,
+            5,
+            7
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Repeated and reversed calls all count.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            2,
+            5,
+            3,
+            27
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reversed",
+      "name": "Normalize pairs with larger caller IDs",
+      "input": {
+        "Calls": [
+          [
+            9,
+            1,
+            5
+          ],
+          [
+            8,
+            3,
+            12
+          ],
+          [
+            9,
+            1,
+            15
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Normalize pairs with larger caller IDs.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            1,
+            9,
+            2,
+            20
+          ],
+          [
+            3,
+            8,
+            1,
+            12
+          ]
+        ]
+      }
+    },
+    {
+      "id": "separate-pairs",
+      "name": "Keep distinct pairs separate",
+      "input": {
+        "Calls": [
+          [
+            1,
+            2,
+            30
+          ],
+          [
+            1,
+            3,
+            30
+          ],
+          [
+            2,
+            3,
+            30
+          ],
+          [
+            3,
+            1,
+            20
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "description": "Keep distinct pairs separate.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            1,
+            30
+          ],
+          [
+            1,
+            3,
+            2,
+            50
+          ],
+          [
+            2,
+            3,
+            1,
+            30
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No calls",
+      "input": {
+        "Calls": []
+      },
+      "kind": "Local practice case",
+      "description": "No calls.",
+      "expected": {
+        "columns": [
+          "person1",
+          "person2",
+          "call_count",
+          "total_duration"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "testNotes": "The published example plus local cases for sorting, grouping, ties, and edge conditions. These are practice tests, not LeetCode’s private tests."
+}

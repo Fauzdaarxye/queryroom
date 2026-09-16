@@ -1,0 +1,919 @@
+{
+  "number": 3052,
+  "slug": "maximize-items",
+  "title": "Maximize Items",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/maximize-items/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/3000-3099/3052.Maximize Items/README_EN.md",
+  "schema": [
+    {
+      "name": "Inventory",
+      "columns": [
+        {
+          "name": "item_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "item_type",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "item_category",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "square_footage",
+          "type": "REAL",
+          "displayType": "decimal"
+        }
+      ],
+      "note": "item_id is the column of unique values for this table.\nEach row includes item id, item type, item category and sqaure footage.",
+      "primaryKey": [
+        "item_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Inventory</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>item_id</td><td>int</td></tr><tr><td>item_type</td><td>varchar</td></tr><tr><td>item_category</td><td>varchar</td></tr><tr><td>square_footage</td><td>decimal</td></tr></tbody></table></div><p>item_id is the column of unique values for this table.<br/>Each row includes item id, item type, item category and sqaure footage.</p>\n<p>Leetcode warehouse wants to maximize the number of items it can stock in a <code>500,000</code> square feet warehouse. It wants to stock as many <strong>prime</strong> items as possible, and afterwards use the <strong>remaining</strong> square footage to stock the most number of <strong>non-prime</strong> items.</p>\n<p>Write a solution to find the number of <strong>prime</strong> and <strong>non-prime</strong> items that can be <strong>stored</strong> in the <code>500,000</code> square feet warehouse. Output the item type with <code>prime_eligible</code> followed by <code>not_prime</code> and the maximum number of items that can be stocked.</p>\n<p><strong>Note:</strong></p>\n<ul>\n<li>Item <strong>count</strong> must be a whole number (integer).</li>\n<li>If the count for the <strong>not_prime</strong> category is <code>0</code>, you should <strong>output</strong> <code>0</code> for that particular category.</li>\n</ul>\n<p>Return <em>the result table ordered by item count in <strong>descending order</strong></em>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Inventory table:</p><div class=\"statement-table\"><table><thead><tr><th>item_id</th><th>item_type</th><th>item_category</th><th>square_footage</th></tr></thead><tbody><tr><td>1374</td><td>prime_eligible</td><td>Watches</td><td>68.00</td></tr><tr><td>4245</td><td>not_prime</td><td>Art</td><td>26.40</td></tr><tr><td>5743</td><td>prime_eligible</td><td>Software</td><td>325.00</td></tr><tr><td>8543</td><td>not_prime</td><td>Clothing</td><td>64.50</td></tr><tr><td>2556</td><td>not_prime</td><td>Shoes</td><td>15.00</td></tr><tr><td>2452</td><td>prime_eligible</td><td>Scientific</td><td>85.00</td></tr><tr><td>3255</td><td>not_prime</td><td>Furniture</td><td>22.60</td></tr><tr><td>1672</td><td>prime_eligible</td><td>Beauty</td><td>8.50</td></tr><tr><td>4256</td><td>prime_eligible</td><td>Furniture</td><td>55.50</td></tr><tr><td>6325</td><td>prime_eligible</td><td>Food</td><td>13.20</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>item_type</th><th>item_count</th></tr></thead><tbody><tr><td>prime_eligible</td><td>5400</td></tr><tr><td>not_prime</td><td>8</td></tr></tbody></table></div><p>Explanation: <br/>- The prime-eligible category comprises a total of 6 items, amounting to a combined square footage of 555.20 (68 + 325 + 85 + 8.50 + 55.50 + 13.20). It is possible to store 900 combinations of these 6 items, totaling 5400 items and occupying 499,680 square footage.<br/>- In the not_prime category, there are a total of 4 items with a combined square footage of 128.50. After deducting the storage used by prime-eligible items (500,000 - 499,680 = 320), there is room for 2 combinations of non-prime items, accommodating a total of 8 non-prime items within the available 320 square footage.<br/>Output table is ordered by item count in descending order.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Inventory": [
+          [
+            1374,
+            "prime_eligible",
+            "Watches",
+            68
+          ],
+          [
+            4245,
+            "not_prime",
+            "Art",
+            26.4
+          ],
+          [
+            5743,
+            "prime_eligible",
+            "Software",
+            325
+          ],
+          [
+            8543,
+            "not_prime",
+            "Clothing",
+            64.5
+          ],
+          [
+            2556,
+            "not_prime",
+            "Shoes",
+            15
+          ],
+          [
+            2452,
+            "prime_eligible",
+            "Scientific",
+            85
+          ],
+          [
+            3255,
+            "not_prime",
+            "Furniture",
+            22.6
+          ],
+          [
+            1672,
+            "prime_eligible",
+            "Beauty",
+            8.5
+          ],
+          [
+            4256,
+            "prime_eligible",
+            "Furniture",
+            55.5
+          ],
+          [
+            6325,
+            "prime_eligible",
+            "Food",
+            13.2
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            5400
+          ],
+          [
+            "not_prime",
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Inventory": [
+          [
+            6325,
+            "prime_eligible",
+            "Food",
+            13.2
+          ],
+          [
+            4256,
+            "prime_eligible",
+            "Furniture",
+            55.5
+          ],
+          [
+            1672,
+            "prime_eligible",
+            "Beauty",
+            8.5
+          ],
+          [
+            3255,
+            "not_prime",
+            "Furniture",
+            22.6
+          ],
+          [
+            2452,
+            "prime_eligible",
+            "Scientific",
+            85
+          ],
+          [
+            2556,
+            "not_prime",
+            "Shoes",
+            15
+          ],
+          [
+            8543,
+            "not_prime",
+            "Clothing",
+            64.5
+          ],
+          [
+            5743,
+            "prime_eligible",
+            "Software",
+            325
+          ],
+          [
+            4245,
+            "not_prime",
+            "Art",
+            26.4
+          ],
+          [
+            1374,
+            "prime_eligible",
+            "Watches",
+            68
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            5400
+          ],
+          [
+            "not_prime",
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Inventory": [
+          [
+            1474,
+            "prime_eligible",
+            "Watches Lab",
+            68
+          ],
+          [
+            4345,
+            "not_prime",
+            "Art Lab",
+            26.4
+          ],
+          [
+            5843,
+            "prime_eligible",
+            "Software Lab",
+            325
+          ],
+          [
+            8643,
+            "not_prime",
+            "Clothing Lab",
+            64.5
+          ],
+          [
+            2656,
+            "not_prime",
+            "Shoes Lab",
+            15
+          ],
+          [
+            2552,
+            "prime_eligible",
+            "Scientific Lab",
+            85
+          ],
+          [
+            3355,
+            "not_prime",
+            "Furniture Lab",
+            22.6
+          ],
+          [
+            1772,
+            "prime_eligible",
+            "Beauty Lab",
+            8.5
+          ],
+          [
+            4356,
+            "prime_eligible",
+            "Furniture Lab",
+            55.5
+          ],
+          [
+            6425,
+            "prime_eligible",
+            "Food Lab",
+            13.2
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            5400
+          ],
+          [
+            "not_prime",
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Inventory": [
+          [
+            1374,
+            "prime_eligible",
+            "Watches",
+            78.7
+          ],
+          [
+            4245,
+            "not_prime",
+            "Art",
+            30.86
+          ],
+          [
+            5743,
+            "prime_eligible",
+            "Software",
+            374.25
+          ],
+          [
+            8543,
+            "not_prime",
+            "Clothing",
+            74.68
+          ],
+          [
+            2556,
+            "not_prime",
+            "Shoes",
+            17.75
+          ],
+          [
+            2452,
+            "prime_eligible",
+            "Scientific",
+            98.25
+          ],
+          [
+            3255,
+            "not_prime",
+            "Furniture",
+            26.49
+          ],
+          [
+            1672,
+            "prime_eligible",
+            "Beauty",
+            10.27
+          ],
+          [
+            4256,
+            "prime_eligible",
+            "Furniture",
+            64.32
+          ],
+          [
+            6325,
+            "prime_eligible",
+            "Food",
+            15.68
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            4674
+          ],
+          [
+            "not_prime",
+            4
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Inventory": [
+          [
+            1374,
+            "prime_eligible",
+            "Watches",
+            68
+          ],
+          [
+            4245,
+            "not_prime",
+            "Art",
+            26.4
+          ],
+          [
+            5743,
+            "prime_eligible",
+            "Software",
+            325
+          ],
+          [
+            8543,
+            "not_prime",
+            "Clothing",
+            64.5
+          ],
+          [
+            2556,
+            "not_prime",
+            "Shoes",
+            15
+          ],
+          [
+            2452,
+            "prime_eligible",
+            "Scientific",
+            85
+          ],
+          [
+            3255,
+            "not_prime",
+            "Furniture",
+            22.6
+          ],
+          [
+            1672,
+            "prime_eligible",
+            "Beauty",
+            8.5
+          ],
+          [
+            4256,
+            "prime_eligible",
+            "Furniture",
+            55.5
+          ],
+          [
+            6325,
+            "prime_eligible",
+            "Food",
+            13.2
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            5400
+          ],
+          [
+            "not_prime",
+            8
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Inventory": [
+        [
+          1374,
+          "prime_eligible",
+          "Watches",
+          68
+        ],
+        [
+          4245,
+          "not_prime",
+          "Art",
+          26.4
+        ],
+        [
+          5743,
+          "prime_eligible",
+          "Software",
+          325
+        ],
+        [
+          8543,
+          "not_prime",
+          "Clothing",
+          64.5
+        ],
+        [
+          2556,
+          "not_prime",
+          "Shoes",
+          15
+        ],
+        [
+          2452,
+          "prime_eligible",
+          "Scientific",
+          85
+        ],
+        [
+          3255,
+          "not_prime",
+          "Furniture",
+          22.6
+        ],
+        [
+          1672,
+          "prime_eligible",
+          "Beauty",
+          8.5
+        ],
+        [
+          4256,
+          "prime_eligible",
+          "Furniture",
+          55.5
+        ],
+        [
+          6325,
+          "prime_eligible",
+          "Food",
+          13.2
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "item_type",
+        "item_count"
+      ],
+      "rows": [
+        [
+          "prime_eligible",
+          5400
+        ],
+        [
+          "not_prime",
+          8
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "WITH totals AS (\n SELECT SUM(CASE WHEN item_type='prime_eligible' THEN square_footage ELSE 0 END) AS prime_area,\n SUM(item_type='prime_eligible') AS prime_count,\n SUM(CASE WHEN item_type='not_prime' THEN square_footage ELSE 0 END) AS other_area,\n SUM(item_type='not_prime') AS other_count FROM Inventory\n), batches AS (\n SELECT *,COALESCE(FLOOR(500000.0/NULLIF(prime_area,0)),0) AS prime_batches FROM totals\n)\nSELECT 'prime_eligible' AS item_type,COALESCE(prime_batches*prime_count,0) AS item_count FROM batches\nUNION ALL\nSELECT 'not_prime',COALESCE(FLOOR((500000.0-prime_batches*COALESCE(prime_area,0))/NULLIF(other_area,0))*other_count,0) FROM batches\nORDER BY item_count DESC",
+  "playlistIndex": 20,
+  "videos": [
+    {
+      "videoId": "js8EyYxpXAY",
+      "playlistIndex": 20,
+      "url": "https://www.youtube.com/watch?v=js8EyYxpXAY&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=20"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "item_count",
+      "direction": "desc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Inventory": [
+          [
+            1374,
+            "prime_eligible",
+            "Watches",
+            68
+          ],
+          [
+            4245,
+            "not_prime",
+            "Art",
+            26.4
+          ],
+          [
+            5743,
+            "prime_eligible",
+            "Software",
+            325
+          ],
+          [
+            8543,
+            "not_prime",
+            "Clothing",
+            64.5
+          ],
+          [
+            2556,
+            "not_prime",
+            "Shoes",
+            15
+          ],
+          [
+            2452,
+            "prime_eligible",
+            "Scientific",
+            85
+          ],
+          [
+            3255,
+            "not_prime",
+            "Furniture",
+            22.6
+          ],
+          [
+            1672,
+            "prime_eligible",
+            "Beauty",
+            8.5
+          ],
+          [
+            4256,
+            "prime_eligible",
+            "Furniture",
+            55.5
+          ],
+          [
+            6325,
+            "prime_eligible",
+            "Food",
+            13.2
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            5400
+          ],
+          [
+            "not_prime",
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Inventory": [
+          [
+            6325,
+            "prime_eligible",
+            "Food",
+            13.2
+          ],
+          [
+            4256,
+            "prime_eligible",
+            "Furniture",
+            55.5
+          ],
+          [
+            1672,
+            "prime_eligible",
+            "Beauty",
+            8.5
+          ],
+          [
+            3255,
+            "not_prime",
+            "Furniture",
+            22.6
+          ],
+          [
+            2452,
+            "prime_eligible",
+            "Scientific",
+            85
+          ],
+          [
+            2556,
+            "not_prime",
+            "Shoes",
+            15
+          ],
+          [
+            8543,
+            "not_prime",
+            "Clothing",
+            64.5
+          ],
+          [
+            5743,
+            "prime_eligible",
+            "Software",
+            325
+          ],
+          [
+            4245,
+            "not_prime",
+            "Art",
+            26.4
+          ],
+          [
+            1374,
+            "prime_eligible",
+            "Watches",
+            68
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            5400
+          ],
+          [
+            "not_prime",
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Inventory": [
+          [
+            1474,
+            "prime_eligible",
+            "Watches Lab",
+            68
+          ],
+          [
+            4345,
+            "not_prime",
+            "Art Lab",
+            26.4
+          ],
+          [
+            5843,
+            "prime_eligible",
+            "Software Lab",
+            325
+          ],
+          [
+            8643,
+            "not_prime",
+            "Clothing Lab",
+            64.5
+          ],
+          [
+            2656,
+            "not_prime",
+            "Shoes Lab",
+            15
+          ],
+          [
+            2552,
+            "prime_eligible",
+            "Scientific Lab",
+            85
+          ],
+          [
+            3355,
+            "not_prime",
+            "Furniture Lab",
+            22.6
+          ],
+          [
+            1772,
+            "prime_eligible",
+            "Beauty Lab",
+            8.5
+          ],
+          [
+            4356,
+            "prime_eligible",
+            "Furniture Lab",
+            55.5
+          ],
+          [
+            6425,
+            "prime_eligible",
+            "Food Lab",
+            13.2
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            5400
+          ],
+          [
+            "not_prime",
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Inventory": [
+          [
+            1374,
+            "prime_eligible",
+            "Watches",
+            78.7
+          ],
+          [
+            4245,
+            "not_prime",
+            "Art",
+            30.86
+          ],
+          [
+            5743,
+            "prime_eligible",
+            "Software",
+            374.25
+          ],
+          [
+            8543,
+            "not_prime",
+            "Clothing",
+            74.68
+          ],
+          [
+            2556,
+            "not_prime",
+            "Shoes",
+            17.75
+          ],
+          [
+            2452,
+            "prime_eligible",
+            "Scientific",
+            98.25
+          ],
+          [
+            3255,
+            "not_prime",
+            "Furniture",
+            26.49
+          ],
+          [
+            1672,
+            "prime_eligible",
+            "Beauty",
+            10.27
+          ],
+          [
+            4256,
+            "prime_eligible",
+            "Furniture",
+            64.32
+          ],
+          [
+            6325,
+            "prime_eligible",
+            "Food",
+            15.68
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "item_type",
+          "item_count"
+        ],
+        "rows": [
+          [
+            "prime_eligible",
+            4674
+          ],
+          [
+            "not_prime",
+            4
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

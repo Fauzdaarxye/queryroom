@@ -1,0 +1,822 @@
+{
+  "number": 1112,
+  "slug": "highest-grade-for-each-student",
+  "title": "Highest Grade For Each Student",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/highest-grade-for-each-student/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1100-1199/1112.Highest Grade For Each Student/README_EN.md",
+  "schema": [
+    {
+      "name": "Enrollments",
+      "columns": [
+        {
+          "name": "student_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "course_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "grade",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "(student_id, course_id) is the primary key (combination of columns with unique values) of this table.\ngrade is never NULL.",
+      "primaryKey": [
+        "student_id",
+        "course_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "<p>Table: <code>Enrollments</code></p>\n\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>student_id</td><td>int</td></tr><tr><td>course_id</td><td>int</td></tr><tr><td>grade</td><td>int</td></tr></tbody></table></div><p>(student_id, course_id) is the primary key (combination of columns with unique values) of this table.<br/>grade is never NULL.</p>\n\n<p> </p>\n\n<p>Write a solution to find the highest grade with its corresponding course for each student. In case of a tie, you should find the course with the smallest <code>course_id</code>.</p>\n\n<p>Return the result table ordered by <code>student_id</code> in <strong>ascending order</strong>.</p>\n\n<p>The result format is in the following example.</p>\n\n<p> </p>\n<p><strong>Example 1:</strong></p>\n\n<p>Input: <br/>Enrollments table:</p><div class=\"statement-table\"><table><thead><tr><th>student_id</th><th>course_id</th><th>grade</th></tr></thead><tbody><tr><td>2</td><td>2</td><td>95</td></tr><tr><td>2</td><td>3</td><td>95</td></tr><tr><td>1</td><td>1</td><td>90</td></tr><tr><td>1</td><td>2</td><td>99</td></tr><tr><td>3</td><td>1</td><td>80</td></tr><tr><td>3</td><td>2</td><td>75</td></tr><tr><td>3</td><td>3</td><td>82</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>student_id</th><th>course_id</th><th>grade</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>99</td></tr><tr><td>2</td><td>2</td><td>95</td></tr><tr><td>3</td><td>3</td><td>82</td></tr></tbody></table></div>",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Enrollments": [
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            2,
+            3,
+            95
+          ],
+          [
+            1,
+            1,
+            90
+          ],
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            3,
+            1,
+            80
+          ],
+          [
+            3,
+            2,
+            75
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Enrollments": [
+          [
+            3,
+            3,
+            82
+          ],
+          [
+            3,
+            2,
+            75
+          ],
+          [
+            3,
+            1,
+            80
+          ],
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            1,
+            1,
+            90
+          ],
+          [
+            2,
+            3,
+            95
+          ],
+          [
+            2,
+            2,
+            95
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tied-grades",
+      "name": "The smallest course ID breaks a grade tie",
+      "kind": "Local practice case",
+      "description": "The smallest course ID breaks a grade tie.",
+      "input": {
+        "Enrollments": [
+          [
+            2,
+            9,
+            99
+          ],
+          [
+            2,
+            3,
+            99
+          ],
+          [
+            2,
+            1,
+            98
+          ],
+          [
+            1,
+            8,
+            50
+          ],
+          [
+            1,
+            2,
+            50
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            50
+          ],
+          [
+            2,
+            3,
+            99
+          ]
+        ]
+      }
+    },
+    {
+      "id": "grade-before-course",
+      "name": "Highest grade takes priority over the smallest course ID",
+      "kind": "Local practice case",
+      "description": "Highest grade takes priority over the smallest course ID.",
+      "input": {
+        "Enrollments": [
+          [
+            9,
+            1,
+            10
+          ],
+          [
+            9,
+            8,
+            100
+          ],
+          [
+            4,
+            2,
+            88
+          ],
+          [
+            4,
+            3,
+            90
+          ],
+          [
+            1,
+            7,
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            0
+          ],
+          [
+            4,
+            3,
+            90
+          ],
+          [
+            9,
+            8,
+            100
+          ]
+        ]
+      }
+    },
+    {
+      "id": "zero-grades",
+      "name": "Zero grades and more than two tied courses",
+      "kind": "Local practice case",
+      "description": "Zero grades and more than two tied courses.",
+      "input": {
+        "Enrollments": [
+          [
+            5,
+            6,
+            0
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            5,
+            1,
+            0
+          ],
+          [
+            2,
+            9,
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            2,
+            9,
+            0
+          ],
+          [
+            5,
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No enrollments",
+      "kind": "Local practice case",
+      "description": "No enrollments.",
+      "input": {
+        "Enrollments": []
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Enrollments": [
+        [
+          2,
+          2,
+          95
+        ],
+        [
+          2,
+          3,
+          95
+        ],
+        [
+          1,
+          1,
+          90
+        ],
+        [
+          1,
+          2,
+          99
+        ],
+        [
+          3,
+          1,
+          80
+        ],
+        [
+          3,
+          2,
+          75
+        ],
+        [
+          3,
+          3,
+          82
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "student_id",
+        "course_id",
+        "grade"
+      ],
+      "rows": [
+        [
+          1,
+          2,
+          99
+        ],
+        [
+          2,
+          2,
+          95
+        ],
+        [
+          3,
+          3,
+          82
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "orderBy": [
+    {
+      "column": "student_id",
+      "direction": "asc"
+    }
+  ],
+  "collection": "Added questions",
+  "testNotes": "The published example is included. Extra cases are created for this workspace; LeetCode’s private tests are not available.",
+  "examples": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Enrollments": [
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            2,
+            3,
+            95
+          ],
+          [
+            1,
+            1,
+            90
+          ],
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            3,
+            1,
+            80
+          ],
+          [
+            3,
+            2,
+            75
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      }
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Enrollments": [
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            2,
+            3,
+            95
+          ],
+          [
+            1,
+            1,
+            90
+          ],
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            3,
+            1,
+            80
+          ],
+          [
+            3,
+            2,
+            75
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Enrollments": [
+          [
+            3,
+            3,
+            82
+          ],
+          [
+            3,
+            2,
+            75
+          ],
+          [
+            3,
+            1,
+            80
+          ],
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            1,
+            1,
+            90
+          ],
+          [
+            2,
+            3,
+            95
+          ],
+          [
+            2,
+            2,
+            95
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            99
+          ],
+          [
+            2,
+            2,
+            95
+          ],
+          [
+            3,
+            3,
+            82
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tied-grades",
+      "name": "The smallest course ID breaks a grade tie",
+      "kind": "Local practice case",
+      "description": "The smallest course ID breaks a grade tie.",
+      "input": {
+        "Enrollments": [
+          [
+            2,
+            9,
+            99
+          ],
+          [
+            2,
+            3,
+            99
+          ],
+          [
+            2,
+            1,
+            98
+          ],
+          [
+            1,
+            8,
+            50
+          ],
+          [
+            1,
+            2,
+            50
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            50
+          ],
+          [
+            2,
+            3,
+            99
+          ]
+        ]
+      }
+    },
+    {
+      "id": "grade-before-course",
+      "name": "Highest grade takes priority over the smallest course ID",
+      "kind": "Local practice case",
+      "description": "Highest grade takes priority over the smallest course ID.",
+      "input": {
+        "Enrollments": [
+          [
+            9,
+            1,
+            10
+          ],
+          [
+            9,
+            8,
+            100
+          ],
+          [
+            4,
+            2,
+            88
+          ],
+          [
+            4,
+            3,
+            90
+          ],
+          [
+            1,
+            7,
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            1,
+            7,
+            0
+          ],
+          [
+            4,
+            3,
+            90
+          ],
+          [
+            9,
+            8,
+            100
+          ]
+        ]
+      }
+    },
+    {
+      "id": "zero-grades",
+      "name": "Zero grades and more than two tied courses",
+      "kind": "Local practice case",
+      "description": "Zero grades and more than two tied courses.",
+      "input": {
+        "Enrollments": [
+          [
+            5,
+            6,
+            0
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            5,
+            1,
+            0
+          ],
+          [
+            2,
+            9,
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": [
+          [
+            2,
+            9,
+            0
+          ],
+          [
+            5,
+            1,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No enrollments",
+      "kind": "Local practice case",
+      "description": "No enrollments.",
+      "input": {
+        "Enrollments": []
+      },
+      "expected": {
+        "columns": [
+          "student_id",
+          "course_id",
+          "grade"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "referenceSql": "WITH ranked AS (SELECT *,ROW_NUMBER() OVER(PARTITION BY student_id ORDER BY grade DESC,course_id) AS ranking FROM Enrollments) SELECT student_id,course_id,grade FROM ranked WHERE ranking=1 ORDER BY student_id"
+}

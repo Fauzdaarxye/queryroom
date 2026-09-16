@@ -1,0 +1,1994 @@
+{
+  "number": 3188,
+  "slug": "find-top-scoring-students-ii",
+  "title": "Find Top Scoring Students II",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/find-top-scoring-students-ii/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/3100-3199/3188.Find Top Scoring Students II/README_EN.md",
+  "schema": [
+    {
+      "name": "students",
+      "columns": [
+        {
+          "name": "student_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "major",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "student_id is the primary key for this table. \nEach row contains the student ID, student name, and their major.",
+      "primaryKey": [
+        "student_id"
+      ]
+    },
+    {
+      "name": "courses",
+      "columns": [
+        {
+          "name": "course_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "credits",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "major",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "mandatory",
+          "type": "TEXT",
+          "displayType": "enum"
+        }
+      ],
+      "note": "course_id is the primary key for this table. \nmandatory is an enum type of ('Yes', 'No').\nEach row contains the course ID, course name, credits, major it belongs to, and whether the course is mandatory.",
+      "primaryKey": [
+        "course_id"
+      ]
+    },
+    {
+      "name": "enrollments",
+      "columns": [
+        {
+          "name": "student_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "course_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "semester",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "grade",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "GPA",
+          "type": "REAL",
+          "displayType": "decimal"
+        }
+      ],
+      "note": "(student_id, course_id, semester) is the primary key (combination of columns with unique values) for this table.\nEach row contains the student ID, course ID, semester, and grade received.",
+      "primaryKey": [
+        "student_id",
+        "course_id",
+        "semester"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>students</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>student_id</td><td>int</td></tr><tr><td>name</td><td>varchar</td></tr><tr><td>major</td><td>varchar</td></tr></tbody></table></div><p>student_id is the primary key for this table. <br/>Each row contains the student ID, student name, and their major.</p>\n<p>Table: <code>courses</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>course_id</td><td>int</td></tr><tr><td>name</td><td>varchar</td></tr><tr><td>credits</td><td>int</td></tr><tr><td>major</td><td>varchar</td></tr><tr><td>mandatory</td><td>enum</td></tr></tbody></table></div><p>course_id is the primary key for this table. <br/>mandatory is an enum type of ('Yes', 'No').<br/>Each row contains the course ID, course name, credits, major it belongs to, and whether the course is mandatory.</p>\n<p>Table: <code>enrollments</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>student_id</td><td>int</td></tr><tr><td>course_id</td><td>int</td></tr><tr><td>semester</td><td>varchar</td></tr><tr><td>grade</td><td>varchar</td></tr><tr><td>GPA</td><td>decimal</td></tr></tbody></table></div><p>(student_id, course_id, semester) is the primary key (combination of columns with unique values) for this table.<br/>Each row contains the student ID, course ID, semester, and grade received.</p>\n<p>Write a solution to find the students who meet the following criteria:</p>\n<ul>\n<li>Have<strong> taken all mandatory courses</strong> and <strong>at least two</strong> elective courses offered in <strong>their major.</strong></li>\n<li>Achieved a grade of <strong>A</strong> in <strong>all mandatory courses</strong> and at least <strong>B</strong> in<strong> elective courses</strong>.</li>\n<li>Maintained an average <code>GPA</code> of at least <code>2.5</code> across all their courses (including those outside their major).</li>\n</ul>\n<p>Return <em>the result table ordered by</em> <code>student_id</code> <em>in <strong>ascending</strong> order</em>.</p>\n<p> </p>\n<p><strong>Example:</strong></p>\n<div>\n<p><strong>Input:</strong></p>\n<p>students table:</p>\n<div class=\"statement-table\"><table><thead><tr><th>student_id</th><th>name</th><th>major</th></tr></thead><tbody><tr><td>1</td><td>Alice</td><td>Computer Science</td></tr><tr><td>2</td><td>Bob</td><td>Computer Science</td></tr><tr><td>3</td><td>Charlie</td><td>Mathematics</td></tr><tr><td>4</td><td>David</td><td>Mathematics</td></tr></tbody></table></div>\n<p>courses table:</p>\n<div class=\"statement-table\"><table><thead><tr><th>course_id</th><th>name</th><th>credits</th><th>major</th><th>mandatory</th></tr></thead><tbody><tr><td>101</td><td>Algorithms</td><td>3</td><td>Computer Science</td><td>yes</td></tr><tr><td>102</td><td>Data Structures</td><td>3</td><td>Computer Science</td><td>yes</td></tr><tr><td>103</td><td>Calculus</td><td>4</td><td>Mathematics</td><td>yes</td></tr><tr><td>104</td><td>Linear Algebra</td><td>4</td><td>Mathematics</td><td>yes</td></tr><tr><td>105</td><td>Machine Learning</td><td>3</td><td>Computer Science</td><td>no</td></tr><tr><td>106</td><td>Probability</td><td>3</td><td>Mathematics</td><td>no</td></tr><tr><td>107</td><td>Operating Systems</td><td>3</td><td>Computer Science</td><td>no</td></tr><tr><td>108</td><td>Statistics</td><td>3</td><td>Mathematics</td><td>no</td></tr></tbody></table></div>\n<p>enrollments table:</p>\n<div class=\"statement-table\"><table><thead><tr><th>student_id</th><th>course_id</th><th>semester</th><th>grade</th><th>GPA</th></tr></thead><tbody><tr><td>1</td><td>101</td><td>Fall 2023</td><td>A</td><td>4.0</td></tr><tr><td>1</td><td>102</td><td>Spring 2023</td><td>A</td><td>4.0</td></tr><tr><td>1</td><td>105</td><td>Spring 2023</td><td>A</td><td>4.0</td></tr><tr><td>1</td><td>107</td><td>Fall 2023</td><td>B</td><td>3.5</td></tr><tr><td>2</td><td>101</td><td>Fall 2023</td><td>A</td><td>4.0</td></tr><tr><td>2</td><td>102</td><td>Spring 2023</td><td>B</td><td>3.0</td></tr><tr><td>3</td><td>103</td><td>Fall 2023</td><td>A</td><td>4.0</td></tr><tr><td>3</td><td>104</td><td>Spring 2023</td><td>A</td><td>4.0</td></tr><tr><td>3</td><td>106</td><td>Spring 2023</td><td>A</td><td>4.0</td></tr><tr><td>3</td><td>108</td><td>Fall 2023</td><td>B</td><td>3.5</td></tr><tr><td>4</td><td>103</td><td>Fall 2023</td><td>B</td><td>3.0</td></tr><tr><td>4</td><td>104</td><td>Spring 2023</td><td>B</td><td>3.0</td></tr></tbody></table></div>\n<p><strong>Output:</strong></p>\n<div class=\"statement-table\"><table><thead><tr><th>student_id</th></tr></thead><tbody><tr><td>1</td></tr><tr><td>3</td></tr></tbody></table></div>\n<p><strong>Explanation:</strong></p>\n<ul>\n<li>Alice (student_id 1) is a Computer Science major and has taken both Algorithms and Data Structures, receiving an A in both. She has also taken Machine Learning and Operating Systems as electives, receiving an A and B respectively.</li>\n<li>Bob (student_id 2) is a Computer Science major but did not receive an A in all required courses.</li>\n<li>Charlie (student_id 3) is a Mathematics major and has taken both Calculus and Linear Algebra, receiving an A in both. He has also taken Probability and Statistics as electives, receiving an A and B respectively.</li>\n<li>David (student_id 4) is a Mathematics major but did not receive an A in all required courses.</li>\n</ul>\n<p><strong>Note:</strong> Output table is ordered by student_id in ascending order.</p>\n</div>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob",
+            "Computer Science"
+          ],
+          [
+            3,
+            "Charlie",
+            "Mathematics"
+          ],
+          [
+            4,
+            "David",
+            "Mathematics"
+          ]
+        ],
+        "courses": [
+          [
+            101,
+            "Algorithms",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            102,
+            "Data Structures",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            103,
+            "Calculus",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            104,
+            "Linear Algebra",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            105,
+            "Machine Learning",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            106,
+            "Probability",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            107,
+            "Operating Systems",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            108,
+            "Statistics",
+            3,
+            "Mathematics",
+            "no"
+          ]
+        ],
+        "enrollments": [
+          [
+            1,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            102,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            105,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            107,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            2,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            2,
+            102,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            3,
+            103,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            104,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            106,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            108,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            4,
+            103,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            4,
+            104,
+            "Spring 2023",
+            "B",
+            3
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "students": [
+          [
+            4,
+            "David",
+            "Mathematics"
+          ],
+          [
+            3,
+            "Charlie",
+            "Mathematics"
+          ],
+          [
+            2,
+            "Bob",
+            "Computer Science"
+          ],
+          [
+            1,
+            "Alice",
+            "Computer Science"
+          ]
+        ],
+        "courses": [
+          [
+            108,
+            "Statistics",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            107,
+            "Operating Systems",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            106,
+            "Probability",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            105,
+            "Machine Learning",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            104,
+            "Linear Algebra",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            103,
+            "Calculus",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            102,
+            "Data Structures",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            101,
+            "Algorithms",
+            3,
+            "Computer Science",
+            "yes"
+          ]
+        ],
+        "enrollments": [
+          [
+            4,
+            104,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            4,
+            103,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            3,
+            108,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            3,
+            106,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            104,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            103,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            2,
+            102,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            2,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            107,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            1,
+            105,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            102,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "students": [
+          [
+            101,
+            "Alice Lab",
+            "Computer Science"
+          ],
+          [
+            102,
+            "Bob Lab",
+            "Computer Science"
+          ],
+          [
+            103,
+            "Charlie Lab",
+            "Mathematics"
+          ],
+          [
+            104,
+            "David Lab",
+            "Mathematics"
+          ]
+        ],
+        "courses": [
+          [
+            201,
+            "Algorithms Lab",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            202,
+            "Data Structures Lab",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            203,
+            "Calculus Lab",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            204,
+            "Linear Algebra Lab",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            205,
+            "Machine Learning Lab",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            206,
+            "Probability Lab",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            207,
+            "Operating Systems Lab",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            208,
+            "Statistics Lab",
+            3,
+            "Mathematics",
+            "no"
+          ]
+        ],
+        "enrollments": [
+          [
+            101,
+            201,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            101,
+            202,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            101,
+            205,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            101,
+            207,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            102,
+            201,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            102,
+            202,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            103,
+            203,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            103,
+            204,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            103,
+            206,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            103,
+            208,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            104,
+            203,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            104,
+            204,
+            "Spring 2023",
+            "B",
+            3
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            101
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob",
+            "Computer Science"
+          ],
+          [
+            3,
+            "Charlie",
+            "Mathematics"
+          ],
+          [
+            4,
+            "David",
+            "Mathematics"
+          ]
+        ],
+        "courses": [
+          [
+            101,
+            "Algorithms",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            102,
+            "Data Structures",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            103,
+            "Calculus",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            104,
+            "Linear Algebra",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            105,
+            "Machine Learning",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            106,
+            "Probability",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            107,
+            "Operating Systems",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            108,
+            "Statistics",
+            3,
+            "Mathematics",
+            "no"
+          ]
+        ],
+        "enrollments": [
+          [
+            1,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            102,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            105,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            107,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            2,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            2,
+            102,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            3,
+            103,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            104,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            106,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            108,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            4,
+            103,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            4,
+            104,
+            "Spring 2023",
+            "B",
+            3
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob",
+            "Computer Science"
+          ],
+          [
+            3,
+            "Charlie",
+            "Mathematics"
+          ],
+          [
+            4,
+            "David",
+            "Mathematics"
+          ]
+        ],
+        "courses": [
+          [
+            101,
+            "Algorithms",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            102,
+            "Data Structures",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            103,
+            "Calculus",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            104,
+            "Linear Algebra",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            105,
+            "Machine Learning",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            106,
+            "Probability",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            107,
+            "Operating Systems",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            108,
+            "Statistics",
+            3,
+            "Mathematics",
+            "no"
+          ]
+        ],
+        "enrollments": [
+          [
+            1,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            102,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            105,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            107,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            2,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            2,
+            102,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            3,
+            103,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            104,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            106,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            108,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            4,
+            103,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            4,
+            104,
+            "Spring 2023",
+            "B",
+            3
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "students": [
+        [
+          1,
+          "Alice",
+          "Computer Science"
+        ],
+        [
+          2,
+          "Bob",
+          "Computer Science"
+        ],
+        [
+          3,
+          "Charlie",
+          "Mathematics"
+        ],
+        [
+          4,
+          "David",
+          "Mathematics"
+        ]
+      ],
+      "courses": [
+        [
+          101,
+          "Algorithms",
+          3,
+          "Computer Science",
+          "yes"
+        ],
+        [
+          102,
+          "Data Structures",
+          3,
+          "Computer Science",
+          "yes"
+        ],
+        [
+          103,
+          "Calculus",
+          4,
+          "Mathematics",
+          "yes"
+        ],
+        [
+          104,
+          "Linear Algebra",
+          4,
+          "Mathematics",
+          "yes"
+        ],
+        [
+          105,
+          "Machine Learning",
+          3,
+          "Computer Science",
+          "no"
+        ],
+        [
+          106,
+          "Probability",
+          3,
+          "Mathematics",
+          "no"
+        ],
+        [
+          107,
+          "Operating Systems",
+          3,
+          "Computer Science",
+          "no"
+        ],
+        [
+          108,
+          "Statistics",
+          3,
+          "Mathematics",
+          "no"
+        ]
+      ],
+      "enrollments": [
+        [
+          1,
+          101,
+          "Fall 2023",
+          "A",
+          4
+        ],
+        [
+          1,
+          102,
+          "Spring 2023",
+          "A",
+          4
+        ],
+        [
+          1,
+          105,
+          "Spring 2023",
+          "A",
+          4
+        ],
+        [
+          1,
+          107,
+          "Fall 2023",
+          "B",
+          3.5
+        ],
+        [
+          2,
+          101,
+          "Fall 2023",
+          "A",
+          4
+        ],
+        [
+          2,
+          102,
+          "Spring 2023",
+          "B",
+          3
+        ],
+        [
+          3,
+          103,
+          "Fall 2023",
+          "A",
+          4
+        ],
+        [
+          3,
+          104,
+          "Spring 2023",
+          "A",
+          4
+        ],
+        [
+          3,
+          106,
+          "Spring 2023",
+          "A",
+          4
+        ],
+        [
+          3,
+          108,
+          "Fall 2023",
+          "B",
+          3.5
+        ],
+        [
+          4,
+          103,
+          "Fall 2023",
+          "B",
+          3
+        ],
+        [
+          4,
+          104,
+          "Spring 2023",
+          "B",
+          3
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "student_id"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          3
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "SELECT s.student_id FROM students s\nWHERE (SELECT AVG(e.GPA) FROM enrollments e WHERE e.student_id=s.student_id)>=2.5\nAND NOT EXISTS (\n SELECT 1 FROM courses c WHERE c.major=s.major AND LOWER(c.mandatory)='yes'\n AND (NOT EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id=s.student_id AND e.course_id=c.course_id)\n OR EXISTS (SELECT 1 FROM enrollments e WHERE e.student_id=s.student_id AND e.course_id=c.course_id AND e.grade<>'A'))\n)\nAND (SELECT COUNT(DISTINCT c.course_id) FROM courses c JOIN enrollments e ON e.course_id=c.course_id\n WHERE e.student_id=s.student_id AND c.major=s.major AND LOWER(c.mandatory)='no')>=2\nAND NOT EXISTS (\n SELECT 1 FROM courses c JOIN enrollments e ON e.course_id=c.course_id\n WHERE e.student_id=s.student_id AND c.major=s.major AND LOWER(c.mandatory)='no' AND e.grade NOT IN ('A','B')\n) ORDER BY s.student_id",
+  "playlistIndex": 34,
+  "videos": [
+    {
+      "videoId": "MJ3XEtM_M6M",
+      "playlistIndex": 34,
+      "url": "https://www.youtube.com/watch?v=MJ3XEtM_M6M&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=34"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "student_id",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob",
+            "Computer Science"
+          ],
+          [
+            3,
+            "Charlie",
+            "Mathematics"
+          ],
+          [
+            4,
+            "David",
+            "Mathematics"
+          ]
+        ],
+        "courses": [
+          [
+            101,
+            "Algorithms",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            102,
+            "Data Structures",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            103,
+            "Calculus",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            104,
+            "Linear Algebra",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            105,
+            "Machine Learning",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            106,
+            "Probability",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            107,
+            "Operating Systems",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            108,
+            "Statistics",
+            3,
+            "Mathematics",
+            "no"
+          ]
+        ],
+        "enrollments": [
+          [
+            1,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            102,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            105,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            107,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            2,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            2,
+            102,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            3,
+            103,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            104,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            106,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            108,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            4,
+            103,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            4,
+            104,
+            "Spring 2023",
+            "B",
+            3
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "students": [
+          [
+            4,
+            "David",
+            "Mathematics"
+          ],
+          [
+            3,
+            "Charlie",
+            "Mathematics"
+          ],
+          [
+            2,
+            "Bob",
+            "Computer Science"
+          ],
+          [
+            1,
+            "Alice",
+            "Computer Science"
+          ]
+        ],
+        "courses": [
+          [
+            108,
+            "Statistics",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            107,
+            "Operating Systems",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            106,
+            "Probability",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            105,
+            "Machine Learning",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            104,
+            "Linear Algebra",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            103,
+            "Calculus",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            102,
+            "Data Structures",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            101,
+            "Algorithms",
+            3,
+            "Computer Science",
+            "yes"
+          ]
+        ],
+        "enrollments": [
+          [
+            4,
+            104,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            4,
+            103,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            3,
+            108,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            3,
+            106,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            104,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            103,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            2,
+            102,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            2,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            107,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            1,
+            105,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            102,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "students": [
+          [
+            101,
+            "Alice Lab",
+            "Computer Science"
+          ],
+          [
+            102,
+            "Bob Lab",
+            "Computer Science"
+          ],
+          [
+            103,
+            "Charlie Lab",
+            "Mathematics"
+          ],
+          [
+            104,
+            "David Lab",
+            "Mathematics"
+          ]
+        ],
+        "courses": [
+          [
+            201,
+            "Algorithms Lab",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            202,
+            "Data Structures Lab",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            203,
+            "Calculus Lab",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            204,
+            "Linear Algebra Lab",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            205,
+            "Machine Learning Lab",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            206,
+            "Probability Lab",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            207,
+            "Operating Systems Lab",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            208,
+            "Statistics Lab",
+            3,
+            "Mathematics",
+            "no"
+          ]
+        ],
+        "enrollments": [
+          [
+            101,
+            201,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            101,
+            202,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            101,
+            205,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            101,
+            207,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            102,
+            201,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            102,
+            202,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            103,
+            203,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            103,
+            204,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            103,
+            206,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            103,
+            208,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            104,
+            203,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            104,
+            204,
+            "Spring 2023",
+            "B",
+            3
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            101
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "students": [
+          [
+            1,
+            "Alice",
+            "Computer Science"
+          ],
+          [
+            2,
+            "Bob",
+            "Computer Science"
+          ],
+          [
+            3,
+            "Charlie",
+            "Mathematics"
+          ],
+          [
+            4,
+            "David",
+            "Mathematics"
+          ]
+        ],
+        "courses": [
+          [
+            101,
+            "Algorithms",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            102,
+            "Data Structures",
+            3,
+            "Computer Science",
+            "yes"
+          ],
+          [
+            103,
+            "Calculus",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            104,
+            "Linear Algebra",
+            4,
+            "Mathematics",
+            "yes"
+          ],
+          [
+            105,
+            "Machine Learning",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            106,
+            "Probability",
+            3,
+            "Mathematics",
+            "no"
+          ],
+          [
+            107,
+            "Operating Systems",
+            3,
+            "Computer Science",
+            "no"
+          ],
+          [
+            108,
+            "Statistics",
+            3,
+            "Mathematics",
+            "no"
+          ]
+        ],
+        "enrollments": [
+          [
+            1,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            102,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            105,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            1,
+            107,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            2,
+            101,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            2,
+            102,
+            "Spring 2023",
+            "B",
+            3
+          ],
+          [
+            3,
+            103,
+            "Fall 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            104,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            106,
+            "Spring 2023",
+            "A",
+            4
+          ],
+          [
+            3,
+            108,
+            "Fall 2023",
+            "B",
+            3.5
+          ],
+          [
+            4,
+            103,
+            "Fall 2023",
+            "B",
+            3
+          ],
+          [
+            4,
+            104,
+            "Spring 2023",
+            "B",
+            3
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "student_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            3
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

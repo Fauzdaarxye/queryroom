@@ -1,0 +1,641 @@
+{
+  "number": 1972,
+  "slug": "first-and-last-call-on-the-same-day",
+  "title": "First and Last Call On the Same Day",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/first-and-last-call-on-the-same-day/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1900-1999/1972.First and Last Call On the Same Day/README_EN.md",
+  "schema": [
+    {
+      "name": "Calls",
+      "columns": [
+        {
+          "name": "caller_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "recipient_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "call_time",
+          "type": "TEXT",
+          "displayType": "datetime"
+        }
+      ],
+      "note": "(caller_id, recipient_id, call_time) is the primary key (combination of columns with unique values) for this table.\nEach row contains information about the time of a phone call between caller_id and recipient_id.",
+      "primaryKey": [
+        "caller_id",
+        "recipient_id",
+        "call_time"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Calls</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>caller_id</td><td>int</td></tr><tr><td>recipient_id</td><td>int</td></tr><tr><td>call_time</td><td>datetime</td></tr></tbody></table></div><p>(caller_id, recipient_id, call_time) is the primary key (combination of columns with unique values) for this table.<br/>Each row contains information about the time of a phone call between caller_id and recipient_id.</p>\n<p> </p>\n<p>Write a solution to report the IDs of the users whose first and last calls on <strong>any day</strong> were with <strong>the same person</strong>. Calls are counted regardless of being the caller or the recipient.</p>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Calls table:</p><div class=\"statement-table\"><table><thead><tr><th>caller_id</th><th>recipient_id</th><th>call_time</th></tr></thead><tbody><tr><td>8</td><td>4</td><td>2021-08-24 17:46:07</td></tr><tr><td>4</td><td>8</td><td>2021-08-24 19:57:13</td></tr><tr><td>5</td><td>1</td><td>2021-08-11 05:28:44</td></tr><tr><td>8</td><td>3</td><td>2021-08-17 04:04:15</td></tr><tr><td>11</td><td>3</td><td>2021-08-17 13:07:00</td></tr><tr><td>8</td><td>11</td><td>2021-08-17 22:22:22</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>user_id</th></tr></thead><tbody><tr><td>1</td></tr><tr><td>4</td></tr><tr><td>5</td></tr><tr><td>8</td></tr></tbody></table></div><p>Explanation: <br/>On 2021-08-24, the first and last call of this day for user 8 was with user 4. User 8 should be included in the answer.<br/>Similarly, user 4 on 2021-08-24 had their first and last call with user 8. User 4 should be included in the answer.<br/>On 2021-08-11, user 1 and 5 had a call. This call was the only call for both of them on this day. Since this call is the first and last call of the day for both of them, they should both be included in the answer.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Calls": [
+          [
+            8,
+            4,
+            "2021-08-24 17:46:07"
+          ],
+          [
+            4,
+            8,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            5,
+            1,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            8,
+            3,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            11,
+            3,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            8,
+            11,
+            "2021-08-17 22:22:22"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Calls": [
+          [
+            8,
+            11,
+            "2021-08-17 22:22:22"
+          ],
+          [
+            11,
+            3,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            8,
+            3,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            5,
+            1,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            4,
+            8,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            8,
+            4,
+            "2021-08-24 17:46:07"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            4
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Calls": [
+          [
+            108,
+            104,
+            "2021-08-24 17:46:07"
+          ],
+          [
+            104,
+            108,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            105,
+            101,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            108,
+            103,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            111,
+            103,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            108,
+            111,
+            "2021-08-17 22:22:22"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            101
+          ],
+          [
+            105
+          ],
+          [
+            104
+          ],
+          [
+            108
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Calls": [
+          [
+            8,
+            4,
+            "2021-08-24 17:46:07"
+          ],
+          [
+            4,
+            8,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            5,
+            1,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            8,
+            3,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            11,
+            3,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            8,
+            11,
+            "2021-08-17 22:22:22"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            4
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Calls": [
+          [
+            8,
+            4,
+            "2021-08-24 17:46:07"
+          ],
+          [
+            4,
+            8,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            5,
+            1,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            8,
+            3,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            11,
+            3,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            8,
+            11,
+            "2021-08-17 22:22:22"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Calls": [
+        [
+          8,
+          4,
+          "2021-08-24 17:46:07"
+        ],
+        [
+          4,
+          8,
+          "2021-08-24 19:57:13"
+        ],
+        [
+          5,
+          1,
+          "2021-08-11 05:28:44"
+        ],
+        [
+          8,
+          3,
+          "2021-08-17 04:04:15"
+        ],
+        [
+          11,
+          3,
+          "2021-08-17 13:07:00"
+        ],
+        [
+          8,
+          11,
+          "2021-08-17 22:22:22"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "user_id"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          8
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "/* Write your MySQL query statement below */\nWITH s AS (\n  SELECT\n    *\n  FROM Calls\n  UNION ALL\n  SELECT\n    recipient_id,\n    caller_id,\n    call_time\n  FROM Calls\n), t AS (\n  SELECT\n    caller_id AS user_id,\n    FIRST_VALUE(recipient_id) OVER (PARTITION BY STRFTIME('%Y-%m-%d', call_time), caller_id ORDER BY call_time ASC) AS first,\n    FIRST_VALUE(recipient_id) OVER (PARTITION BY STRFTIME('%Y-%m-%d', call_time), caller_id ORDER BY call_time DESC) AS last\n  FROM s\n)\nSELECT DISTINCT\n  user_id\nFROM t\nWHERE\n  first = last",
+  "playlistIndex": 16,
+  "videos": [
+    {
+      "videoId": "XRKh_KpoLE0",
+      "playlistIndex": 16,
+      "url": "https://www.youtube.com/watch?v=XRKh_KpoLE0&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=16"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Calls": [
+          [
+            8,
+            4,
+            "2021-08-24 17:46:07"
+          ],
+          [
+            4,
+            8,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            5,
+            1,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            8,
+            3,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            11,
+            3,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            8,
+            11,
+            "2021-08-17 22:22:22"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            4
+          ],
+          [
+            5
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Calls": [
+          [
+            8,
+            11,
+            "2021-08-17 22:22:22"
+          ],
+          [
+            11,
+            3,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            8,
+            3,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            5,
+            1,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            4,
+            8,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            8,
+            4,
+            "2021-08-24 17:46:07"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            4
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Calls": [
+          [
+            108,
+            104,
+            "2021-08-24 17:46:07"
+          ],
+          [
+            104,
+            108,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            105,
+            101,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            108,
+            103,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            111,
+            103,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            108,
+            111,
+            "2021-08-17 22:22:22"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            101
+          ],
+          [
+            105
+          ],
+          [
+            104
+          ],
+          [
+            108
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Calls": [
+          [
+            8,
+            4,
+            "2021-08-24 17:46:07"
+          ],
+          [
+            4,
+            8,
+            "2021-08-24 19:57:13"
+          ],
+          [
+            5,
+            1,
+            "2021-08-11 05:28:44"
+          ],
+          [
+            8,
+            3,
+            "2021-08-17 04:04:15"
+          ],
+          [
+            11,
+            3,
+            "2021-08-17 13:07:00"
+          ],
+          [
+            8,
+            11,
+            "2021-08-17 22:22:22"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            1
+          ],
+          [
+            5
+          ],
+          [
+            4
+          ],
+          [
+            8
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

@@ -1,0 +1,950 @@
+{
+  "number": 2720,
+  "slug": "popularity-percentage",
+  "title": "Popularity Percentage",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/popularity-percentage/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/2700-2799/2720.Popularity Percentage/README_EN.md",
+  "schema": [
+    {
+      "name": "Friends",
+      "columns": [
+        {
+          "name": "user1",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "user2",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "(user1, user2) is the primary key (combination of unique values) of this table.\nEach row contains information about friendship where user1 and user2 are friends.",
+      "primaryKey": [
+        "user1",
+        "user2"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Friends</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>user1</td><td>int</td></tr><tr><td>user2</td><td>int</td></tr></tbody></table></div><p>(user1, user2) is the primary key (combination of unique values) of this table.<br/>Each row contains information about friendship where user1 and user2 are friends.</p>\n<p>Write a solution to find the popularity percentage for each user on Meta/Facebook. The popularity percentage is defined as the total number of friends the user has divided by the total number of users on the platform, then converted into a percentage by multiplying by 100, <strong>rounded to 2 decimal places</strong>.</p>\n<p>Return <em>the result table ordered by</em> <code>user1</code> <em>in <strong>ascending</strong> order.</em></p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Friends table:</p><div class=\"statement-table\"><table><thead><tr><th>user1</th><th>user2</th></tr></thead><tbody><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>3</td></tr><tr><td>4</td><td>1</td></tr><tr><td>1</td><td>5</td></tr><tr><td>1</td><td>6</td></tr><tr><td>2</td><td>6</td></tr><tr><td>7</td><td>2</td></tr><tr><td>8</td><td>3</td></tr><tr><td>3</td><td>9</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>user1</th><th>percentage_popularity</th></tr></thead><tbody><tr><td>1</td><td>55.56</td></tr><tr><td>2</td><td>33.33</td></tr><tr><td>3</td><td>33.33</td></tr><tr><td>4</td><td>11.11</td></tr><tr><td>5</td><td>11.11</td></tr><tr><td>6</td><td>22.22</td></tr><tr><td>7</td><td>11.11</td></tr><tr><td>8</td><td>11.11</td></tr><tr><td>9</td><td>11.11</td></tr></tbody></table></div><p>Explanation: <br/>There are total 9 users on the platform.<br/>- User \"1\" has friendships with 2, 3, 4, 5 and 6. Therefore, the percentage popularity for user 1 would be calculated as (5/9) * 100 = 55.56.<br/>- User \"2\" has friendships with 1, 6 and 7. Therefore, the percentage popularity for user 2 would be calculated as (3/9) * 100 = 33.33.<br/>- User \"3\" has friendships with 1, 8 and 9. Therefore, the percentage popularity for user 3 would be calculated as (3/9) * 100 = 33.33.<br/>- User \"4\" has friendships with 1. Therefore, the percentage popularity for user 4 would be calculated as (1/9) * 100 = 11.11.<br/>- User \"5\" has friendships with 1. Therefore, the percentage popularity for user 5 would be calculated as (1/9) * 100 = 11.11.<br/>- User \"6\" has friendships with 1 and 2. Therefore, the percentage popularity for user 6 would be calculated as (2/9) * 100 = 22.22.<br/>- User \"7\" has friendships with 2. Therefore, the percentage popularity for user 7 would be calculated as (1/9) * 100 = 11.11.<br/>- User \"8\" has friendships with 3. Therefore, the percentage popularity for user 8 would be calculated as (1/9) * 100 = 11.11.<br/>- User \"9\" has friendships with 3. Therefore, the percentage popularity for user 9 would be calculated as (1/9) * 100 = 11.11.<br/>user1 is sorted in ascending order.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Friends": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            3,
+            9
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            1,
+            55.56
+          ],
+          [
+            2,
+            33.33
+          ],
+          [
+            3,
+            33.33
+          ],
+          [
+            4,
+            11.11
+          ],
+          [
+            5,
+            11.11
+          ],
+          [
+            6,
+            22.22
+          ],
+          [
+            7,
+            11.11
+          ],
+          [
+            8,
+            11.11
+          ],
+          [
+            9,
+            11.11
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Friends": [
+          [
+            3,
+            9
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            1
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            1,
+            55.56
+          ],
+          [
+            2,
+            33.33
+          ],
+          [
+            3,
+            33.33
+          ],
+          [
+            4,
+            11.11
+          ],
+          [
+            5,
+            11.11
+          ],
+          [
+            6,
+            22.22
+          ],
+          [
+            7,
+            11.11
+          ],
+          [
+            8,
+            11.11
+          ],
+          [
+            9,
+            11.11
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Friends": [
+          [
+            102,
+            101
+          ],
+          [
+            101,
+            103
+          ],
+          [
+            104,
+            101
+          ],
+          [
+            101,
+            105
+          ],
+          [
+            101,
+            106
+          ],
+          [
+            102,
+            106
+          ],
+          [
+            107,
+            102
+          ],
+          [
+            108,
+            103
+          ],
+          [
+            103,
+            109
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            101,
+            55.56
+          ],
+          [
+            102,
+            33.33
+          ],
+          [
+            103,
+            33.33
+          ],
+          [
+            104,
+            11.11
+          ],
+          [
+            105,
+            11.11
+          ],
+          [
+            106,
+            22.22
+          ],
+          [
+            107,
+            11.11
+          ],
+          [
+            108,
+            11.11
+          ],
+          [
+            109,
+            11.11
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Friends": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            3,
+            9
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            1,
+            55.56
+          ],
+          [
+            2,
+            33.33
+          ],
+          [
+            3,
+            33.33
+          ],
+          [
+            4,
+            11.11
+          ],
+          [
+            5,
+            11.11
+          ],
+          [
+            6,
+            22.22
+          ],
+          [
+            7,
+            11.11
+          ],
+          [
+            8,
+            11.11
+          ],
+          [
+            9,
+            11.11
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Friends": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            3,
+            9
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            1,
+            55.56
+          ],
+          [
+            2,
+            33.33
+          ],
+          [
+            3,
+            33.33
+          ],
+          [
+            4,
+            11.11
+          ],
+          [
+            5,
+            11.11
+          ],
+          [
+            6,
+            22.22
+          ],
+          [
+            7,
+            11.11
+          ],
+          [
+            8,
+            11.11
+          ],
+          [
+            9,
+            11.11
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Friends": [
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          7,
+          2
+        ],
+        [
+          8,
+          3
+        ],
+        [
+          3,
+          9
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "user1",
+        "percentage_popularity"
+      ],
+      "rows": [
+        [
+          1,
+          55.56
+        ],
+        [
+          2,
+          33.33
+        ],
+        [
+          3,
+          33.33
+        ],
+        [
+          4,
+          11.11
+        ],
+        [
+          5,
+          11.11
+        ],
+        [
+          6,
+          22.22
+        ],
+        [
+          7,
+          11.11
+        ],
+        [
+          8,
+          11.11
+        ],
+        [
+          9,
+          11.11
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "/* Write your MySQL query statement below */\nWITH F AS (\n  SELECT\n    *\n  FROM Friends\n  UNION\n  SELECT\n    user2,\n    user1\n  FROM Friends\n), T AS (\n  SELECT\n    COUNT(DISTINCT user1) AS cnt\n  FROM F\n)\nSELECT DISTINCT\n  user1,\n  ROUND(\n    CAST((\n      COUNT(1) OVER (PARTITION BY user1)\n    ) * 100 AS REAL) / (\n      SELECT\n        cnt\n      FROM T\n    ),\n    2\n  ) AS percentage_popularity\nFROM F\nORDER BY\n  1",
+  "playlistIndex": 30,
+  "videos": [
+    {
+      "videoId": "9JyZoOr2prA",
+      "playlistIndex": 30,
+      "url": "https://www.youtube.com/watch?v=9JyZoOr2prA&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=30"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "user1",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Friends": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            3,
+            9
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            1,
+            55.56
+          ],
+          [
+            2,
+            33.33
+          ],
+          [
+            3,
+            33.33
+          ],
+          [
+            4,
+            11.11
+          ],
+          [
+            5,
+            11.11
+          ],
+          [
+            6,
+            22.22
+          ],
+          [
+            7,
+            11.11
+          ],
+          [
+            8,
+            11.11
+          ],
+          [
+            9,
+            11.11
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Friends": [
+          [
+            3,
+            9
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            1
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            1,
+            55.56
+          ],
+          [
+            2,
+            33.33
+          ],
+          [
+            3,
+            33.33
+          ],
+          [
+            4,
+            11.11
+          ],
+          [
+            5,
+            11.11
+          ],
+          [
+            6,
+            22.22
+          ],
+          [
+            7,
+            11.11
+          ],
+          [
+            8,
+            11.11
+          ],
+          [
+            9,
+            11.11
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Friends": [
+          [
+            102,
+            101
+          ],
+          [
+            101,
+            103
+          ],
+          [
+            104,
+            101
+          ],
+          [
+            101,
+            105
+          ],
+          [
+            101,
+            106
+          ],
+          [
+            102,
+            106
+          ],
+          [
+            107,
+            102
+          ],
+          [
+            108,
+            103
+          ],
+          [
+            103,
+            109
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            101,
+            55.56
+          ],
+          [
+            102,
+            33.33
+          ],
+          [
+            103,
+            33.33
+          ],
+          [
+            104,
+            11.11
+          ],
+          [
+            105,
+            11.11
+          ],
+          [
+            106,
+            22.22
+          ],
+          [
+            107,
+            11.11
+          ],
+          [
+            108,
+            11.11
+          ],
+          [
+            109,
+            11.11
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Friends": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            8,
+            3
+          ],
+          [
+            3,
+            9
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user1",
+          "percentage_popularity"
+        ],
+        "rows": [
+          [
+            1,
+            55.56
+          ],
+          [
+            2,
+            33.33
+          ],
+          [
+            3,
+            33.33
+          ],
+          [
+            4,
+            11.11
+          ],
+          [
+            5,
+            11.11
+          ],
+          [
+            6,
+            22.22
+          ],
+          [
+            7,
+            11.11
+          ],
+          [
+            8,
+            11.11
+          ],
+          [
+            9,
+            11.11
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

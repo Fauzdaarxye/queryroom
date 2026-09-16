@@ -1,0 +1,1039 @@
+{
+  "number": 2991,
+  "slug": "top-three-wineries",
+  "title": "Top Three Wineries",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/top-three-wineries/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/2900-2999/2991.Top Three Wineries/README_EN.md",
+  "schema": [
+    {
+      "name": "Wineries",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "country",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "points",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "winery",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "id is column of unique values for this table.\nThis table contains id, country, points, and winery.",
+      "primaryKey": [
+        "id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Wineries</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>id</td><td>int</td></tr><tr><td>country</td><td>varchar</td></tr><tr><td>points</td><td>int</td></tr><tr><td>winery</td><td>varchar</td></tr></tbody></table></div><p>id is column of unique values for this table.<br/>This table contains id, country, points, and winery.</p>\n<p>Write a solution to find the <strong>top three wineries</strong> in <strong>each</strong> <strong>country</strong> based on their <strong>total points</strong>. If <strong>multiple wineries</strong> have the <strong>same</strong> total points, order them by <code>winery</code> name in <strong>ascending</strong> order. If there's <strong>no second winery</strong>, output 'No second winery,' and if there's <strong>no third winery</strong>, output 'No third winery.'</p>\n<p>Return <em>the result table ordered by </em><code>country</code><em> in <strong>ascending</strong> order</em><em>.</em></p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Wineries table:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>country</th><th>points</th><th>winery</th></tr></thead><tbody><tr><td>103</td><td>Australia</td><td>84</td><td>WhisperingPines</td></tr><tr><td>737</td><td>Australia</td><td>85</td><td>GrapesGalore</td></tr><tr><td>848</td><td>Australia</td><td>100</td><td>HarmonyHill</td></tr><tr><td>222</td><td>Hungary</td><td>60</td><td>MoonlitCellars</td></tr><tr><td>116</td><td>USA</td><td>47</td><td>RoyalVines</td></tr><tr><td>124</td><td>USA</td><td>45</td><td>Eagle'sNest</td></tr><tr><td>648</td><td>India</td><td>69</td><td>SunsetVines</td></tr><tr><td>894</td><td>USA</td><td>39</td><td>RoyalVines</td></tr><tr><td>677</td><td>USA</td><td>9</td><td>PacificCrest</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>country</th><th>top_winery</th><th>second_winery</th><th>third_winery</th></tr></thead><tbody><tr><td>Australia</td><td>HarmonyHill (100)</td><td>GrapesGalore (85)</td><td>WhisperingPines (84)</td></tr><tr><td>Hungary</td><td>MoonlitCellars (60)</td><td>No second winery</td><td>No third winery</td></tr><tr><td>India</td><td>SunsetVines (69)</td><td>No second winery</td><td>No third winery</td></tr><tr><td>USA</td><td>RoyalVines (86)</td><td>Eagle'sNest (45)</td><td>PacificCrest (9)</td></tr></tbody></table></div><p>Explanation<br/>For Australia<br/> - HarmonyHill Winery accumulates the highest score of 100 points in Australia.<br/> - GrapesGalore Winery has a total of 85 points, securing the second-highest position in Australia.<br/> - WhisperingPines Winery has a total of 80 points, ranking as the third-highest.<br/>For Hungary<br/> - MoonlitCellars is the sole winery, accruing 60 points, automatically making it the highest. There is no second or third winery.<br/>For India<br/> - SunsetVines is the sole winery, earning 69 points, making it the top winery. There is no second or third winery.<br/>For the USA<br/> - RoyalVines Wines accumulates a total of 47 + 39 = 86 points, claiming the highest position in the USA.<br/> - Eagle'sNest has a total of 45 points, securing the second-highest position in the USA.<br/> - PacificCrest accumulates 9 points, ranking as the third-highest winery in the USA<br/>Output table is ordered by country in ascending order.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Wineries": [
+          [
+            103,
+            "Australia",
+            84,
+            "WhisperingPines"
+          ],
+          [
+            737,
+            "Australia",
+            85,
+            "GrapesGalore"
+          ],
+          [
+            848,
+            "Australia",
+            100,
+            "HarmonyHill"
+          ],
+          [
+            222,
+            "Hungary",
+            60,
+            "MoonlitCellars"
+          ],
+          [
+            116,
+            "USA",
+            47,
+            "RoyalVines"
+          ],
+          [
+            124,
+            "USA",
+            45,
+            "Eagle'sNest"
+          ],
+          [
+            648,
+            "India",
+            69,
+            "SunsetVines"
+          ],
+          [
+            894,
+            "USA",
+            39,
+            "RoyalVines"
+          ],
+          [
+            677,
+            "USA",
+            9,
+            "PacificCrest"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia",
+            "HarmonyHill (100)",
+            "GrapesGalore (85)",
+            "WhisperingPines (84)"
+          ],
+          [
+            "Hungary",
+            "MoonlitCellars (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India",
+            "SunsetVines (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA",
+            "RoyalVines (86)",
+            "Eagle'sNest (45)",
+            "PacificCrest (9)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Wineries": [
+          [
+            677,
+            "USA",
+            9,
+            "PacificCrest"
+          ],
+          [
+            894,
+            "USA",
+            39,
+            "RoyalVines"
+          ],
+          [
+            648,
+            "India",
+            69,
+            "SunsetVines"
+          ],
+          [
+            124,
+            "USA",
+            45,
+            "Eagle'sNest"
+          ],
+          [
+            116,
+            "USA",
+            47,
+            "RoyalVines"
+          ],
+          [
+            222,
+            "Hungary",
+            60,
+            "MoonlitCellars"
+          ],
+          [
+            848,
+            "Australia",
+            100,
+            "HarmonyHill"
+          ],
+          [
+            737,
+            "Australia",
+            85,
+            "GrapesGalore"
+          ],
+          [
+            103,
+            "Australia",
+            84,
+            "WhisperingPines"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia",
+            "HarmonyHill (100)",
+            "GrapesGalore (85)",
+            "WhisperingPines (84)"
+          ],
+          [
+            "Hungary",
+            "MoonlitCellars (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India",
+            "SunsetVines (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA",
+            "RoyalVines (86)",
+            "Eagle'sNest (45)",
+            "PacificCrest (9)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Wineries": [
+          [
+            203,
+            "Australia Lab",
+            84,
+            "WhisperingPines Lab"
+          ],
+          [
+            837,
+            "Australia Lab",
+            85,
+            "GrapesGalore Lab"
+          ],
+          [
+            948,
+            "Australia Lab",
+            100,
+            "HarmonyHill Lab"
+          ],
+          [
+            322,
+            "Hungary Lab",
+            60,
+            "MoonlitCellars Lab"
+          ],
+          [
+            216,
+            "USA Lab",
+            47,
+            "RoyalVines Lab"
+          ],
+          [
+            224,
+            "USA Lab",
+            45,
+            "Eagle'sNest Lab"
+          ],
+          [
+            748,
+            "India Lab",
+            69,
+            "SunsetVines Lab"
+          ],
+          [
+            994,
+            "USA Lab",
+            39,
+            "RoyalVines Lab"
+          ],
+          [
+            777,
+            "USA Lab",
+            9,
+            "PacificCrest Lab"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia Lab",
+            "HarmonyHill Lab (100)",
+            "GrapesGalore Lab (85)",
+            "WhisperingPines Lab (84)"
+          ],
+          [
+            "Hungary Lab",
+            "MoonlitCellars Lab (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India Lab",
+            "SunsetVines Lab (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA Lab",
+            "RoyalVines Lab (86)",
+            "Eagle'sNest Lab (45)",
+            "PacificCrest Lab (9)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Wineries": [
+          [
+            103,
+            "Australia",
+            84,
+            "WhisperingPines"
+          ],
+          [
+            737,
+            "Australia",
+            85,
+            "GrapesGalore"
+          ],
+          [
+            848,
+            "Australia",
+            100,
+            "HarmonyHill"
+          ],
+          [
+            222,
+            "Hungary",
+            60,
+            "MoonlitCellars"
+          ],
+          [
+            116,
+            "USA",
+            47,
+            "RoyalVines"
+          ],
+          [
+            124,
+            "USA",
+            45,
+            "Eagle'sNest"
+          ],
+          [
+            648,
+            "India",
+            69,
+            "SunsetVines"
+          ],
+          [
+            894,
+            "USA",
+            39,
+            "RoyalVines"
+          ],
+          [
+            677,
+            "USA",
+            9,
+            "PacificCrest"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia",
+            "HarmonyHill (100)",
+            "GrapesGalore (85)",
+            "WhisperingPines (84)"
+          ],
+          [
+            "Hungary",
+            "MoonlitCellars (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India",
+            "SunsetVines (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA",
+            "RoyalVines (86)",
+            "Eagle'sNest (45)",
+            "PacificCrest (9)"
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Wineries": [
+          [
+            103,
+            "Australia",
+            84,
+            "WhisperingPines"
+          ],
+          [
+            737,
+            "Australia",
+            85,
+            "GrapesGalore"
+          ],
+          [
+            848,
+            "Australia",
+            100,
+            "HarmonyHill"
+          ],
+          [
+            222,
+            "Hungary",
+            60,
+            "MoonlitCellars"
+          ],
+          [
+            116,
+            "USA",
+            47,
+            "RoyalVines"
+          ],
+          [
+            124,
+            "USA",
+            45,
+            "Eagle'sNest"
+          ],
+          [
+            648,
+            "India",
+            69,
+            "SunsetVines"
+          ],
+          [
+            894,
+            "USA",
+            39,
+            "RoyalVines"
+          ],
+          [
+            677,
+            "USA",
+            9,
+            "PacificCrest"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia",
+            "HarmonyHill (100)",
+            "GrapesGalore (85)",
+            "WhisperingPines (84)"
+          ],
+          [
+            "Hungary",
+            "MoonlitCellars (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India",
+            "SunsetVines (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA",
+            "RoyalVines (86)",
+            "Eagle'sNest (45)",
+            "PacificCrest (9)"
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Wineries": [
+        [
+          103,
+          "Australia",
+          84,
+          "WhisperingPines"
+        ],
+        [
+          737,
+          "Australia",
+          85,
+          "GrapesGalore"
+        ],
+        [
+          848,
+          "Australia",
+          100,
+          "HarmonyHill"
+        ],
+        [
+          222,
+          "Hungary",
+          60,
+          "MoonlitCellars"
+        ],
+        [
+          116,
+          "USA",
+          47,
+          "RoyalVines"
+        ],
+        [
+          124,
+          "USA",
+          45,
+          "Eagle'sNest"
+        ],
+        [
+          648,
+          "India",
+          69,
+          "SunsetVines"
+        ],
+        [
+          894,
+          "USA",
+          39,
+          "RoyalVines"
+        ],
+        [
+          677,
+          "USA",
+          9,
+          "PacificCrest"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "country",
+        "top_winery",
+        "second_winery",
+        "third_winery"
+      ],
+      "rows": [
+        [
+          "Australia",
+          "HarmonyHill (100)",
+          "GrapesGalore (85)",
+          "WhisperingPines (84)"
+        ],
+        [
+          "Hungary",
+          "MoonlitCellars (60)",
+          "No second winery",
+          "No third winery"
+        ],
+        [
+          "India",
+          "SunsetVines (69)",
+          "No second winery",
+          "No third winery"
+        ],
+        [
+          "USA",
+          "RoyalVines (86)",
+          "Eagle'sNest (45)",
+          "PacificCrest (9)"
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "/* Write your MySQL query statement below */\nWITH T AS (\n  SELECT\n    country,\n    winery || ' (' || points || ')' AS winery,\n    RANK() OVER (PARTITION BY country ORDER BY points DESC, winery) AS rk\n  FROM (\n    SELECT\n      country,\n      SUM(points) AS points,\n      winery\n    FROM Wineries\n    GROUP BY\n      1,\n      3\n  ) AS t\n)\nSELECT\n  t1.country,\n  t1.winery AS top_winery,\n  COALESCE(t2.winery, 'No second winery') AS second_winery,\n  COALESCE(t3.winery, 'No third winery') AS third_winery\nFROM T AS t1\nLEFT JOIN T AS t2\n  ON t1.country = t2.country AND t1.rk = t2.rk - 1\nLEFT JOIN T AS t3\n  ON t2.country = t3.country AND t2.rk = t3.rk - 1\nWHERE\n  t1.rk = 1\nORDER BY\n  1",
+  "playlistIndex": 21,
+  "videos": [
+    {
+      "videoId": "74_hHkYe3Dk",
+      "playlistIndex": 21,
+      "url": "https://www.youtube.com/watch?v=74_hHkYe3Dk&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=21"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "country",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Wineries": [
+          [
+            103,
+            "Australia",
+            84,
+            "WhisperingPines"
+          ],
+          [
+            737,
+            "Australia",
+            85,
+            "GrapesGalore"
+          ],
+          [
+            848,
+            "Australia",
+            100,
+            "HarmonyHill"
+          ],
+          [
+            222,
+            "Hungary",
+            60,
+            "MoonlitCellars"
+          ],
+          [
+            116,
+            "USA",
+            47,
+            "RoyalVines"
+          ],
+          [
+            124,
+            "USA",
+            45,
+            "Eagle'sNest"
+          ],
+          [
+            648,
+            "India",
+            69,
+            "SunsetVines"
+          ],
+          [
+            894,
+            "USA",
+            39,
+            "RoyalVines"
+          ],
+          [
+            677,
+            "USA",
+            9,
+            "PacificCrest"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia",
+            "HarmonyHill (100)",
+            "GrapesGalore (85)",
+            "WhisperingPines (84)"
+          ],
+          [
+            "Hungary",
+            "MoonlitCellars (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India",
+            "SunsetVines (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA",
+            "RoyalVines (86)",
+            "Eagle'sNest (45)",
+            "PacificCrest (9)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Wineries": [
+          [
+            677,
+            "USA",
+            9,
+            "PacificCrest"
+          ],
+          [
+            894,
+            "USA",
+            39,
+            "RoyalVines"
+          ],
+          [
+            648,
+            "India",
+            69,
+            "SunsetVines"
+          ],
+          [
+            124,
+            "USA",
+            45,
+            "Eagle'sNest"
+          ],
+          [
+            116,
+            "USA",
+            47,
+            "RoyalVines"
+          ],
+          [
+            222,
+            "Hungary",
+            60,
+            "MoonlitCellars"
+          ],
+          [
+            848,
+            "Australia",
+            100,
+            "HarmonyHill"
+          ],
+          [
+            737,
+            "Australia",
+            85,
+            "GrapesGalore"
+          ],
+          [
+            103,
+            "Australia",
+            84,
+            "WhisperingPines"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia",
+            "HarmonyHill (100)",
+            "GrapesGalore (85)",
+            "WhisperingPines (84)"
+          ],
+          [
+            "Hungary",
+            "MoonlitCellars (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India",
+            "SunsetVines (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA",
+            "RoyalVines (86)",
+            "Eagle'sNest (45)",
+            "PacificCrest (9)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Wineries": [
+          [
+            203,
+            "Australia Lab",
+            84,
+            "WhisperingPines Lab"
+          ],
+          [
+            837,
+            "Australia Lab",
+            85,
+            "GrapesGalore Lab"
+          ],
+          [
+            948,
+            "Australia Lab",
+            100,
+            "HarmonyHill Lab"
+          ],
+          [
+            322,
+            "Hungary Lab",
+            60,
+            "MoonlitCellars Lab"
+          ],
+          [
+            216,
+            "USA Lab",
+            47,
+            "RoyalVines Lab"
+          ],
+          [
+            224,
+            "USA Lab",
+            45,
+            "Eagle'sNest Lab"
+          ],
+          [
+            748,
+            "India Lab",
+            69,
+            "SunsetVines Lab"
+          ],
+          [
+            994,
+            "USA Lab",
+            39,
+            "RoyalVines Lab"
+          ],
+          [
+            777,
+            "USA Lab",
+            9,
+            "PacificCrest Lab"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia Lab",
+            "HarmonyHill Lab (100)",
+            "GrapesGalore Lab (85)",
+            "WhisperingPines Lab (84)"
+          ],
+          [
+            "Hungary Lab",
+            "MoonlitCellars Lab (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India Lab",
+            "SunsetVines Lab (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA Lab",
+            "RoyalVines Lab (86)",
+            "Eagle'sNest Lab (45)",
+            "PacificCrest Lab (9)"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Wineries": [
+          [
+            103,
+            "Australia",
+            84,
+            "WhisperingPines"
+          ],
+          [
+            737,
+            "Australia",
+            85,
+            "GrapesGalore"
+          ],
+          [
+            848,
+            "Australia",
+            100,
+            "HarmonyHill"
+          ],
+          [
+            222,
+            "Hungary",
+            60,
+            "MoonlitCellars"
+          ],
+          [
+            116,
+            "USA",
+            47,
+            "RoyalVines"
+          ],
+          [
+            124,
+            "USA",
+            45,
+            "Eagle'sNest"
+          ],
+          [
+            648,
+            "India",
+            69,
+            "SunsetVines"
+          ],
+          [
+            894,
+            "USA",
+            39,
+            "RoyalVines"
+          ],
+          [
+            677,
+            "USA",
+            9,
+            "PacificCrest"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "country",
+          "top_winery",
+          "second_winery",
+          "third_winery"
+        ],
+        "rows": [
+          [
+            "Australia",
+            "HarmonyHill (100)",
+            "GrapesGalore (85)",
+            "WhisperingPines (84)"
+          ],
+          [
+            "Hungary",
+            "MoonlitCellars (60)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "India",
+            "SunsetVines (69)",
+            "No second winery",
+            "No third winery"
+          ],
+          [
+            "USA",
+            "RoyalVines (86)",
+            "Eagle'sNest (45)",
+            "PacificCrest (9)"
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

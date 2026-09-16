@@ -1,0 +1,744 @@
+{
+  "number": 2199,
+  "slug": "finding-the-topic-of-each-post",
+  "title": "Finding the Topic of Each Post",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/finding-the-topic-of-each-post/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/2100-2199/2199.Finding the Topic of Each Post/README_EN.md",
+  "schema": [
+    {
+      "name": "Keywords",
+      "columns": [
+        {
+          "name": "topic_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "word",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "(topic_id, word) is the primary key (combination of columns with unique values) for this table.\nEach row of this table contains the id of a topic and a word that is used to express this topic.\nThere may be more than one word to express the same topic and one word may be used to express multiple topics.",
+      "primaryKey": [
+        "topic_id",
+        "word"
+      ]
+    },
+    {
+      "name": "Posts",
+      "columns": [
+        {
+          "name": "post_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "content",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "post_id is the primary key (column with unique values) for this table.\nEach row of this table contains the ID of a post and its content.\nContent will consist only of English letters and spaces.",
+      "primaryKey": [
+        "post_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Keywords</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>topic_id</td><td>int</td></tr><tr><td>word</td><td>varchar</td></tr></tbody></table></div><p>(topic_id, word) is the primary key (combination of columns with unique values) for this table.<br/>Each row of this table contains the id of a topic and a word that is used to express this topic.<br/>There may be more than one word to express the same topic and one word may be used to express multiple topics.</p>\n<p> </p>\n<p>Table: <code>Posts</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>post_id</td><td>int</td></tr><tr><td>content</td><td>varchar</td></tr></tbody></table></div><p>post_id is the primary key (column with unique values) for this table.<br/>Each row of this table contains the ID of a post and its content.<br/>Content will consist only of English letters and spaces.</p>\n<p> </p>\n<p>Leetcode has collected some posts from its social media website and is interested in finding the topics of each post. Each topic can be expressed by one or more keywords. If a keyword of a certain topic exists in the content of a post (<strong>case insensitive</strong>) then the post has this topic.</p>\n<p>Write a solution to find the topics of each post according to the following rules:</p>\n<ul>\n<li>If the post does not have keywords from any topic, its topic should be <code>\"Ambiguous!\"</code>.</li>\n<li>If the post has at least one keyword of any topic, its topic should be a string of the IDs of its topics sorted in ascending order and separated by commas <code>','</code>. The string should not contain duplicate IDs.</li>\n</ul>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Keywords table:</p><div class=\"statement-table\"><table><thead><tr><th>topic_id</th><th>word</th></tr></thead><tbody><tr><td>1</td><td>handball</td></tr><tr><td>1</td><td>football</td></tr><tr><td>3</td><td>WAR</td></tr><tr><td>2</td><td>Vaccine</td></tr></tbody></table></div><p>Posts table:</p><div class=\"statement-table\"><table><thead><tr><th>post_id</th><th>content</th></tr></thead><tbody><tr><td>1</td><td>We call it soccer They call it football hahaha</td></tr><tr><td>2</td><td>Americans prefer basketball while Europeans love handball and football</td></tr><tr><td>3</td><td>stop the war and play handball</td></tr><tr><td>4</td><td>warning I planted some flowers this morning and then got vaccinated</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>post_id</th><th>topic</th></tr></thead><tbody><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>1</td></tr><tr><td>3</td><td>1,3</td></tr><tr><td>4</td><td>Ambiguous!</td></tr></tbody></table></div><p>Explanation: <br/>1: \"We call it soccer They call it football hahaha\"<br/>\"football\" expresses topic 1. There is no other word that expresses any other topic.<br/><br/>2: \"Americans prefer basketball while Europeans love handball and football\"<br/>\"handball\" expresses topic 1. \"football\" expresses topic 1. <br/>There is no other word that expresses any other topic.<br/><br/>3: \"stop the war and play handball\"<br/>\"war\" expresses topic 3. \"handball\" expresses topic 1.<br/>There is no other word that expresses any other topic.<br/><br/>4: \"warning I planted some flowers this morning and then got vaccinated\"<br/>There is no word in this sentence that expresses any topic. Note that \"warning\" is different from \"war\" although they have a common prefix. <br/>This post is ambiguous.<br/><br/>Note that it is okay to have one word that expresses more than one topic.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Keywords": [
+          [
+            1,
+            "handball"
+          ],
+          [
+            1,
+            "football"
+          ],
+          [
+            3,
+            "WAR"
+          ],
+          [
+            2,
+            "Vaccine"
+          ]
+        ],
+        "Posts": [
+          [
+            1,
+            "We call it soccer They call it football hahaha"
+          ],
+          [
+            2,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            3,
+            "stop the war and play handball"
+          ],
+          [
+            4,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ],
+          [
+            3,
+            "1,3"
+          ],
+          [
+            4,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Keywords": [
+          [
+            2,
+            "Vaccine"
+          ],
+          [
+            3,
+            "WAR"
+          ],
+          [
+            1,
+            "football"
+          ],
+          [
+            1,
+            "handball"
+          ]
+        ],
+        "Posts": [
+          [
+            4,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ],
+          [
+            3,
+            "stop the war and play handball"
+          ],
+          [
+            2,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            1,
+            "We call it soccer They call it football hahaha"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ],
+          [
+            3,
+            "1,3"
+          ],
+          [
+            4,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Keywords": [
+          [
+            101,
+            "handball"
+          ],
+          [
+            101,
+            "football"
+          ],
+          [
+            103,
+            "WAR"
+          ],
+          [
+            102,
+            "Vaccine"
+          ]
+        ],
+        "Posts": [
+          [
+            101,
+            "We call it soccer They call it football hahaha"
+          ],
+          [
+            102,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            103,
+            "stop the war and play handball"
+          ],
+          [
+            104,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            101,
+            "101"
+          ],
+          [
+            102,
+            "101"
+          ],
+          [
+            103,
+            "101,103"
+          ],
+          [
+            104,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Keywords": [
+          [
+            1,
+            "handball"
+          ],
+          [
+            1,
+            "football"
+          ],
+          [
+            3,
+            "WAR"
+          ],
+          [
+            2,
+            "Vaccine"
+          ]
+        ],
+        "Posts": [
+          [
+            1,
+            "We call it soccer They call it football hahaha"
+          ],
+          [
+            2,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            3,
+            "stop the war and play handball"
+          ],
+          [
+            4,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ],
+          [
+            3,
+            "1,3"
+          ],
+          [
+            4,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Keywords": [
+          [
+            1,
+            "handball"
+          ],
+          [
+            1,
+            "football"
+          ],
+          [
+            3,
+            "WAR"
+          ],
+          [
+            2,
+            "Vaccine"
+          ]
+        ],
+        "Posts": [
+          [
+            1,
+            "We call it soccer They call it football hahaha"
+          ],
+          [
+            2,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            3,
+            "stop the war and play handball"
+          ],
+          [
+            4,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ],
+          [
+            3,
+            "1,3"
+          ],
+          [
+            4,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Keywords": [
+        [
+          1,
+          "handball"
+        ],
+        [
+          1,
+          "football"
+        ],
+        [
+          3,
+          "WAR"
+        ],
+        [
+          2,
+          "Vaccine"
+        ]
+      ],
+      "Posts": [
+        [
+          1,
+          "We call it soccer They call it football hahaha"
+        ],
+        [
+          2,
+          "Americans prefer basketball while Europeans love handball and football"
+        ],
+        [
+          3,
+          "stop the war and play handball"
+        ],
+        [
+          4,
+          "warning I planted some flowers this morning and then got vaccinated"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "post_id",
+        "topic"
+      ],
+      "rows": [
+        [
+          1,
+          "1"
+        ],
+        [
+          2,
+          "1"
+        ],
+        [
+          3,
+          "1,3"
+        ],
+        [
+          4,
+          "Ambiguous!"
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "WITH hits AS (\n SELECT DISTINCT post_id, topic_id FROM Posts LEFT JOIN Keywords\n ON instr(' '||lower(content)||' ',' '||lower(word)||' ')>0\n)\nSELECT post_id,COALESCE(group_concat(topic_id ORDER BY topic_id),'Ambiguous!') AS topic\nFROM hits GROUP BY post_id",
+  "playlistIndex": 6,
+  "videos": [
+    {
+      "videoId": "_l735tL_SlI",
+      "playlistIndex": 6,
+      "url": "https://www.youtube.com/watch?v=_l735tL_SlI&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=6"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Keywords": [
+          [
+            1,
+            "handball"
+          ],
+          [
+            1,
+            "football"
+          ],
+          [
+            3,
+            "WAR"
+          ],
+          [
+            2,
+            "Vaccine"
+          ]
+        ],
+        "Posts": [
+          [
+            1,
+            "We call it soccer They call it football hahaha"
+          ],
+          [
+            2,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            3,
+            "stop the war and play handball"
+          ],
+          [
+            4,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ],
+          [
+            3,
+            "1,3"
+          ],
+          [
+            4,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Keywords": [
+          [
+            2,
+            "Vaccine"
+          ],
+          [
+            3,
+            "WAR"
+          ],
+          [
+            1,
+            "football"
+          ],
+          [
+            1,
+            "handball"
+          ]
+        ],
+        "Posts": [
+          [
+            4,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ],
+          [
+            3,
+            "stop the war and play handball"
+          ],
+          [
+            2,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            1,
+            "We call it soccer They call it football hahaha"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ],
+          [
+            3,
+            "1,3"
+          ],
+          [
+            4,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Keywords": [
+          [
+            101,
+            "handball"
+          ],
+          [
+            101,
+            "football"
+          ],
+          [
+            103,
+            "WAR"
+          ],
+          [
+            102,
+            "Vaccine"
+          ]
+        ],
+        "Posts": [
+          [
+            101,
+            "We call it soccer They call it football hahaha"
+          ],
+          [
+            102,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            103,
+            "stop the war and play handball"
+          ],
+          [
+            104,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            101,
+            "101"
+          ],
+          [
+            102,
+            "101"
+          ],
+          [
+            103,
+            "101,103"
+          ],
+          [
+            104,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Keywords": [
+          [
+            1,
+            "handball"
+          ],
+          [
+            1,
+            "football"
+          ],
+          [
+            3,
+            "WAR"
+          ],
+          [
+            2,
+            "Vaccine"
+          ]
+        ],
+        "Posts": [
+          [
+            1,
+            "We call it soccer They call it football hahaha"
+          ],
+          [
+            2,
+            "Americans prefer basketball while Europeans love handball and football"
+          ],
+          [
+            3,
+            "stop the war and play handball"
+          ],
+          [
+            4,
+            "warning I planted some flowers this morning and then got vaccinated"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "post_id",
+          "topic"
+        ],
+        "rows": [
+          [
+            1,
+            "1"
+          ],
+          [
+            2,
+            "1"
+          ],
+          [
+            3,
+            "1,3"
+          ],
+          [
+            4,
+            "Ambiguous!"
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

@@ -1,0 +1,928 @@
+{
+  "number": 534,
+  "slug": "game-play-analysis-iii",
+  "title": "Game Play Analysis III",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/game-play-analysis-iii/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/0500-0599/0534.Game Play Analysis III/README_EN.md",
+  "schema": [
+    {
+      "name": "Activity",
+      "columns": [
+        {
+          "name": "player_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "device_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "event_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "games_played",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "(player_id, event_date) is the primary key (column with unique values) of this table.\nThis table shows the activity of players of some games.\nEach row is a record of a player who logged in and played a number of games (possibly 0) before logging out on someday using some device.",
+      "primaryKey": [
+        "player_id",
+        "event_date"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "<p>Table: <code>Activity</code></p>\n\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>player_id</td><td>int</td></tr><tr><td>device_id</td><td>int</td></tr><tr><td>event_date</td><td>date</td></tr><tr><td>games_played</td><td>int</td></tr></tbody></table></div><p>(player_id, event_date) is the primary key (column with unique values) of this table.<br/>This table shows the activity of players of some games.<br/>Each row is a record of a player who logged in and played a number of games (possibly 0) before logging out on someday using some device.</p>\n\n<p> </p>\n\n<p>Write a solution to report for each player and date, how many games played <strong>so far</strong> by the player. That is, the total number of games played by the player until that date. Check the example for clarity.</p>\n\n<p>Return the result table in <strong>any order</strong>.</p>\n\n<p>The result format is in the following example.</p>\n\n<p> </p>\n<p><strong>Example 1:</strong></p>\n\n<p>Input: <br/>Activity table:</p><div class=\"statement-table\"><table><thead><tr><th>player_id</th><th>device_id</th><th>event_date</th><th>games_played</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>2016-03-01</td><td>5</td></tr><tr><td>1</td><td>2</td><td>2016-05-02</td><td>6</td></tr><tr><td>1</td><td>3</td><td>2017-06-25</td><td>1</td></tr><tr><td>3</td><td>1</td><td>2016-03-02</td><td>0</td></tr><tr><td>3</td><td>4</td><td>2018-07-03</td><td>5</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>player_id</th><th>event_date</th><th>games_played_so_far</th></tr></thead><tbody><tr><td>1</td><td>2016-03-01</td><td>5</td></tr><tr><td>1</td><td>2016-05-02</td><td>11</td></tr><tr><td>1</td><td>2017-06-25</td><td>12</td></tr><tr><td>3</td><td>2016-03-02</td><td>0</td></tr><tr><td>3</td><td>2018-07-03</td><td>5</td></tr></tbody></table></div><p>Explanation: <br/>For the player with id 1, 5 + 6 = 11 games played by 2016-05-02, and 5 + 6 + 1 = 12 games played by 2017-06-25.<br/>For the player with id 3, 0 + 5 = 5 games played by 2018-07-03.<br/>Note that for each player we only care about the days when the player logged in.</p>",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            2,
+            "2016-05-02",
+            6
+          ],
+          [
+            1,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            3,
+            1,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            4,
+            "2018-07-03",
+            5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            1,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            "2016-05-02",
+            11
+          ],
+          [
+            1,
+            "2017-06-25",
+            12
+          ],
+          [
+            3,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            "2018-07-03",
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Activity": [
+          [
+            3,
+            4,
+            "2018-07-03",
+            5
+          ],
+          [
+            3,
+            1,
+            "2016-03-02",
+            0
+          ],
+          [
+            1,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            1,
+            2,
+            "2016-05-02",
+            6
+          ],
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            3,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            "2018-07-03",
+            5
+          ],
+          [
+            1,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            "2016-05-02",
+            11
+          ],
+          [
+            1,
+            "2017-06-25",
+            12
+          ]
+        ]
+      }
+    },
+    {
+      "id": "device-switch",
+      "name": "Running totals continue across devices",
+      "kind": "Local practice case",
+      "description": "Running totals continue across devices.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            5,
+            "2024-01-05",
+            4
+          ],
+          [
+            1,
+            2,
+            "2024-01-01",
+            3
+          ],
+          [
+            1,
+            9,
+            "2024-01-03",
+            0
+          ],
+          [
+            2,
+            5,
+            "2024-01-01",
+            8
+          ],
+          [
+            2,
+            2,
+            "2024-01-05",
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            1,
+            "2024-01-01",
+            3
+          ],
+          [
+            1,
+            "2024-01-03",
+            3
+          ],
+          [
+            1,
+            "2024-01-05",
+            7
+          ],
+          [
+            2,
+            "2024-01-01",
+            8
+          ],
+          [
+            2,
+            "2024-01-05",
+            9
+          ]
+        ]
+      }
+    },
+    {
+      "id": "equal-days",
+      "name": "Different players on the same dates",
+      "kind": "Local practice case",
+      "description": "Different players on the same dates.",
+      "input": {
+        "Activity": [
+          [
+            5,
+            1,
+            "2023-12-31",
+            10
+          ],
+          [
+            3,
+            1,
+            "2023-12-31",
+            2
+          ],
+          [
+            5,
+            1,
+            "2024-01-01",
+            20
+          ],
+          [
+            3,
+            2,
+            "2024-01-01",
+            3
+          ],
+          [
+            5,
+            1,
+            "2025-01-01",
+            30
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            5,
+            "2023-12-31",
+            10
+          ],
+          [
+            5,
+            "2024-01-01",
+            30
+          ],
+          [
+            5,
+            "2025-01-01",
+            60
+          ],
+          [
+            3,
+            "2023-12-31",
+            2
+          ],
+          [
+            3,
+            "2024-01-01",
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "zero-games",
+      "name": "Players with only zero-game sessions",
+      "kind": "Local practice case",
+      "description": "Players with only zero-game sessions.",
+      "input": {
+        "Activity": [
+          [
+            8,
+            1,
+            "2024-02-28",
+            0
+          ],
+          [
+            8,
+            2,
+            "2024-02-29",
+            0
+          ],
+          [
+            9,
+            1,
+            "2024-02-29",
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            8,
+            "2024-02-28",
+            0
+          ],
+          [
+            8,
+            "2024-02-29",
+            0
+          ],
+          [
+            9,
+            "2024-02-29",
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No player activity",
+      "kind": "Local practice case",
+      "description": "No player activity.",
+      "input": {
+        "Activity": []
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Activity": [
+        [
+          1,
+          2,
+          "2016-03-01",
+          5
+        ],
+        [
+          1,
+          2,
+          "2016-05-02",
+          6
+        ],
+        [
+          1,
+          3,
+          "2017-06-25",
+          1
+        ],
+        [
+          3,
+          1,
+          "2016-03-02",
+          0
+        ],
+        [
+          3,
+          4,
+          "2018-07-03",
+          5
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "player_id",
+        "event_date",
+        "games_played_so_far"
+      ],
+      "rows": [
+        [
+          1,
+          "2016-03-01",
+          5
+        ],
+        [
+          1,
+          "2016-05-02",
+          11
+        ],
+        [
+          1,
+          "2017-06-25",
+          12
+        ],
+        [
+          3,
+          "2016-03-02",
+          0
+        ],
+        [
+          3,
+          "2018-07-03",
+          5
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "orderBy": [],
+  "collection": "Added questions",
+  "testNotes": "The published example is included. Extra cases are created for this workspace; LeetCode’s private tests are not available.",
+  "examples": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            2,
+            "2016-05-02",
+            6
+          ],
+          [
+            1,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            3,
+            1,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            4,
+            "2018-07-03",
+            5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            1,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            "2016-05-02",
+            11
+          ],
+          [
+            1,
+            "2017-06-25",
+            12
+          ],
+          [
+            3,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            "2018-07-03",
+            5
+          ]
+        ]
+      }
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            2,
+            "2016-05-02",
+            6
+          ],
+          [
+            1,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            3,
+            1,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            4,
+            "2018-07-03",
+            5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            1,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            "2016-05-02",
+            11
+          ],
+          [
+            1,
+            "2017-06-25",
+            12
+          ],
+          [
+            3,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            "2018-07-03",
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Activity": [
+          [
+            3,
+            4,
+            "2018-07-03",
+            5
+          ],
+          [
+            3,
+            1,
+            "2016-03-02",
+            0
+          ],
+          [
+            1,
+            3,
+            "2017-06-25",
+            1
+          ],
+          [
+            1,
+            2,
+            "2016-05-02",
+            6
+          ],
+          [
+            1,
+            2,
+            "2016-03-01",
+            5
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            3,
+            "2016-03-02",
+            0
+          ],
+          [
+            3,
+            "2018-07-03",
+            5
+          ],
+          [
+            1,
+            "2016-03-01",
+            5
+          ],
+          [
+            1,
+            "2016-05-02",
+            11
+          ],
+          [
+            1,
+            "2017-06-25",
+            12
+          ]
+        ]
+      }
+    },
+    {
+      "id": "device-switch",
+      "name": "Running totals continue across devices",
+      "kind": "Local practice case",
+      "description": "Running totals continue across devices.",
+      "input": {
+        "Activity": [
+          [
+            1,
+            5,
+            "2024-01-05",
+            4
+          ],
+          [
+            1,
+            2,
+            "2024-01-01",
+            3
+          ],
+          [
+            1,
+            9,
+            "2024-01-03",
+            0
+          ],
+          [
+            2,
+            5,
+            "2024-01-01",
+            8
+          ],
+          [
+            2,
+            2,
+            "2024-01-05",
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            1,
+            "2024-01-01",
+            3
+          ],
+          [
+            1,
+            "2024-01-03",
+            3
+          ],
+          [
+            1,
+            "2024-01-05",
+            7
+          ],
+          [
+            2,
+            "2024-01-01",
+            8
+          ],
+          [
+            2,
+            "2024-01-05",
+            9
+          ]
+        ]
+      }
+    },
+    {
+      "id": "equal-days",
+      "name": "Different players on the same dates",
+      "kind": "Local practice case",
+      "description": "Different players on the same dates.",
+      "input": {
+        "Activity": [
+          [
+            5,
+            1,
+            "2023-12-31",
+            10
+          ],
+          [
+            3,
+            1,
+            "2023-12-31",
+            2
+          ],
+          [
+            5,
+            1,
+            "2024-01-01",
+            20
+          ],
+          [
+            3,
+            2,
+            "2024-01-01",
+            3
+          ],
+          [
+            5,
+            1,
+            "2025-01-01",
+            30
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            5,
+            "2023-12-31",
+            10
+          ],
+          [
+            5,
+            "2024-01-01",
+            30
+          ],
+          [
+            5,
+            "2025-01-01",
+            60
+          ],
+          [
+            3,
+            "2023-12-31",
+            2
+          ],
+          [
+            3,
+            "2024-01-01",
+            5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "zero-games",
+      "name": "Players with only zero-game sessions",
+      "kind": "Local practice case",
+      "description": "Players with only zero-game sessions.",
+      "input": {
+        "Activity": [
+          [
+            8,
+            1,
+            "2024-02-28",
+            0
+          ],
+          [
+            8,
+            2,
+            "2024-02-29",
+            0
+          ],
+          [
+            9,
+            1,
+            "2024-02-29",
+            0
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": [
+          [
+            8,
+            "2024-02-28",
+            0
+          ],
+          [
+            8,
+            "2024-02-29",
+            0
+          ],
+          [
+            9,
+            "2024-02-29",
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No player activity",
+      "kind": "Local practice case",
+      "description": "No player activity.",
+      "input": {
+        "Activity": []
+      },
+      "expected": {
+        "columns": [
+          "player_id",
+          "event_date",
+          "games_played_so_far"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "referenceSql": "SELECT player_id,event_date,SUM(games_played) OVER(PARTITION BY player_id ORDER BY event_date ROWS UNBOUNDED PRECEDING) AS games_played_so_far FROM Activity"
+}

@@ -2,6 +2,10 @@ node_modules
 dist
 coverage
 .vite
+.next
+next-env.d.ts
+*.tsbuildinfo
+docs
 .data
 backups
 .env.*

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.next/
+.data/
+backups/
+coverage/
+package-lock.json
+database/questions/
+*.tsbuildinfo
+next-env.d.ts

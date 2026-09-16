@@ -1,0 +1,1064 @@
+{
+  "number": 3060,
+  "slug": "user-activities-within-time-bounds",
+  "title": "User Activities within Time Bounds",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/user-activities-within-time-bounds/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/3000-3099/3060.User Activities within Time Bounds/README_EN.md",
+  "schema": [
+    {
+      "name": "Sessions",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "session_start",
+          "type": "TEXT",
+          "displayType": "datetime"
+        },
+        {
+          "name": "session_end",
+          "type": "TEXT",
+          "displayType": "datetime"
+        },
+        {
+          "name": "session_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "session_type",
+          "type": "TEXT",
+          "displayType": "enum"
+        }
+      ],
+      "note": "session_id is column of unique values for this table.\nsession_type is an ENUM (category) type of (Viewer, Streamer).\nThis table contains user id, session start, session end, session id and session type.",
+      "primaryKey": [
+        "session_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Sessions</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>user_id</td><td>int</td></tr><tr><td>session_start</td><td>datetime</td></tr><tr><td>session_end</td><td>datetime</td></tr><tr><td>session_id</td><td>int</td></tr><tr><td>session_type</td><td>enum</td></tr></tbody></table></div><p>session_id is column of unique values for this table.<br/>session_type is an ENUM (category) type of (Viewer, Streamer).<br/>This table contains user id, session start, session end, session id and session type.</p>\n<p>Write a solution to find the the <strong>users</strong> who have had <strong>at least two</strong><strong> session</strong> of the <strong>same</strong> type (either '<strong>Viewer</strong>' or '<strong>Streamer</strong>') with a <strong>maximum</strong> gap of <code>12</code> hours <strong>between</strong> sessions.</p>\n<p>Return <em>the result table ordered by </em><code>user_id</code><em> in ascending order.</em></p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example:</strong></p>\n<p>Input: <br/>Sessions table:</p><div class=\"statement-table\"><table><thead><tr><th>user_id</th><th>session_start</th><th>session_end</th><th>session_id</th><th>session_type</th></tr></thead><tbody><tr><td>101</td><td>2023-11-01 08:00:00</td><td>2023-11-01 09:00:00</td><td>1</td><td>Viewer</td></tr><tr><td>101</td><td>2023-11-01 10:00:00</td><td>2023-11-01 11:00:00</td><td>2</td><td>Streamer</td></tr><tr><td>102</td><td>2023-11-01 13:00:00</td><td>2023-11-01 14:00:00</td><td>3</td><td>Viewer</td></tr><tr><td>102</td><td>2023-11-01 15:00:00</td><td>2023-11-01 16:00:00</td><td>4</td><td>Viewer</td></tr><tr><td>101</td><td>2023-11-02 09:00:00</td><td>2023-11-02 10:00:00</td><td>5</td><td>Viewer</td></tr><tr><td>102</td><td>2023-11-02 12:00:00</td><td>2023-11-02 13:00:00</td><td>6</td><td>Streamer</td></tr><tr><td>101</td><td>2023-11-02 13:00:00</td><td>2023-11-02 14:00:00</td><td>7</td><td>Streamer</td></tr><tr><td>102</td><td>2023-11-02 16:00:00</td><td>2023-11-02 17:00:00</td><td>8</td><td>Viewer</td></tr><tr><td>103</td><td>2023-11-01 08:00:00</td><td>2023-11-01 09:00:00</td><td>9</td><td>Viewer</td></tr><tr><td>103</td><td>2023-11-02 20:00:00</td><td>2023-11-02 23:00:00</td><td>10</td><td>Viewer</td></tr><tr><td>103</td><td>2023-11-03 09:00:00</td><td>2023-11-03 10:00:00</td><td>11</td><td>Viewer</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>user_id</th></tr></thead><tbody><tr><td>102</td></tr><tr><td>103</td></tr></tbody></table></div><p>Explanation:<br/>- User ID 101 will not be included in the final output as they do not have any two sessions of the same session type.<br/>- User ID 102 will be included in the final output as they had two viewer sessions with session IDs 3 and 4, respectively, and the time gap between them was less than 12 hours.<br/>- User ID 103 participated in two viewer sessions with a gap of less than 12 hours between them, identified by session IDs 10 and 11. Therefore, user 103 will be included in the final output.<br/>Output table is ordered by user_id in increasing order.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Sessions": [
+          [
+            101,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            1,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            2,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            3,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            4,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            5,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            6,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            7,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            8,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            9,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            10,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            11,
+            "Viewer"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            102
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Sessions": [
+          [
+            103,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            11,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            10,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            9,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            8,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            7,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            6,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            5,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            4,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            3,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            2,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            1,
+            "Viewer"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            102
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Sessions": [
+          [
+            201,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            101,
+            "Viewer"
+          ],
+          [
+            201,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            102,
+            "Streamer"
+          ],
+          [
+            202,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            103,
+            "Viewer"
+          ],
+          [
+            202,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            104,
+            "Viewer"
+          ],
+          [
+            201,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            105,
+            "Viewer"
+          ],
+          [
+            202,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            106,
+            "Streamer"
+          ],
+          [
+            201,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            107,
+            "Streamer"
+          ],
+          [
+            202,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            108,
+            "Viewer"
+          ],
+          [
+            203,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            109,
+            "Viewer"
+          ],
+          [
+            203,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            110,
+            "Viewer"
+          ],
+          [
+            203,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            111,
+            "Viewer"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            202
+          ],
+          [
+            203
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Sessions": [
+          [
+            101,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            1,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            2,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            3,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            4,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            5,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            6,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            7,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            8,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            9,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            10,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            11,
+            "Viewer"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            102
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Sessions": [
+          [
+            101,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            1,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            2,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            3,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            4,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            5,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            6,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            7,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            8,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            9,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            10,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            11,
+            "Viewer"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            102
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Sessions": [
+        [
+          101,
+          "2023-11-01 08:00:00",
+          "2023-11-01 09:00:00",
+          1,
+          "Viewer"
+        ],
+        [
+          101,
+          "2023-11-01 10:00:00",
+          "2023-11-01 11:00:00",
+          2,
+          "Streamer"
+        ],
+        [
+          102,
+          "2023-11-01 13:00:00",
+          "2023-11-01 14:00:00",
+          3,
+          "Viewer"
+        ],
+        [
+          102,
+          "2023-11-01 15:00:00",
+          "2023-11-01 16:00:00",
+          4,
+          "Viewer"
+        ],
+        [
+          101,
+          "2023-11-02 09:00:00",
+          "2023-11-02 10:00:00",
+          5,
+          "Viewer"
+        ],
+        [
+          102,
+          "2023-11-02 12:00:00",
+          "2023-11-02 13:00:00",
+          6,
+          "Streamer"
+        ],
+        [
+          101,
+          "2023-11-02 13:00:00",
+          "2023-11-02 14:00:00",
+          7,
+          "Streamer"
+        ],
+        [
+          102,
+          "2023-11-02 16:00:00",
+          "2023-11-02 17:00:00",
+          8,
+          "Viewer"
+        ],
+        [
+          103,
+          "2023-11-01 08:00:00",
+          "2023-11-01 09:00:00",
+          9,
+          "Viewer"
+        ],
+        [
+          103,
+          "2023-11-02 20:00:00",
+          "2023-11-02 23:00:00",
+          10,
+          "Viewer"
+        ],
+        [
+          103,
+          "2023-11-03 09:00:00",
+          "2023-11-03 10:00:00",
+          11,
+          "Viewer"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "user_id"
+      ],
+      "rows": [
+        [
+          102
+        ],
+        [
+          103
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "SELECT DISTINCT a.user_id FROM Sessions a JOIN Sessions b\nON a.user_id=b.user_id AND a.session_type=b.session_type AND a.session_id<>b.session_id\nWHERE b.session_start>=a.session_end\nAND unixepoch(b.session_start)-unixepoch(a.session_end)<=43200 ORDER BY a.user_id",
+  "playlistIndex": 48,
+  "videos": [
+    {
+      "videoId": "mrpCNZDA0gc",
+      "playlistIndex": 48,
+      "url": "https://www.youtube.com/watch?v=mrpCNZDA0gc&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=48"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "user_id",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Sessions": [
+          [
+            101,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            1,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            2,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            3,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            4,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            5,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            6,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            7,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            8,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            9,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            10,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            11,
+            "Viewer"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            102
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Sessions": [
+          [
+            103,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            11,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            10,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            9,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            8,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            7,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            6,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            5,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            4,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            3,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            2,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            1,
+            "Viewer"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            102
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Sessions": [
+          [
+            201,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            101,
+            "Viewer"
+          ],
+          [
+            201,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            102,
+            "Streamer"
+          ],
+          [
+            202,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            103,
+            "Viewer"
+          ],
+          [
+            202,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            104,
+            "Viewer"
+          ],
+          [
+            201,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            105,
+            "Viewer"
+          ],
+          [
+            202,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            106,
+            "Streamer"
+          ],
+          [
+            201,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            107,
+            "Streamer"
+          ],
+          [
+            202,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            108,
+            "Viewer"
+          ],
+          [
+            203,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            109,
+            "Viewer"
+          ],
+          [
+            203,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            110,
+            "Viewer"
+          ],
+          [
+            203,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            111,
+            "Viewer"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            202
+          ],
+          [
+            203
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Sessions": [
+          [
+            101,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            1,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-01 10:00:00",
+            "2023-11-01 11:00:00",
+            2,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-01 13:00:00",
+            "2023-11-01 14:00:00",
+            3,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-01 15:00:00",
+            "2023-11-01 16:00:00",
+            4,
+            "Viewer"
+          ],
+          [
+            101,
+            "2023-11-02 09:00:00",
+            "2023-11-02 10:00:00",
+            5,
+            "Viewer"
+          ],
+          [
+            102,
+            "2023-11-02 12:00:00",
+            "2023-11-02 13:00:00",
+            6,
+            "Streamer"
+          ],
+          [
+            101,
+            "2023-11-02 13:00:00",
+            "2023-11-02 14:00:00",
+            7,
+            "Streamer"
+          ],
+          [
+            102,
+            "2023-11-02 16:00:00",
+            "2023-11-02 17:00:00",
+            8,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-01 08:00:00",
+            "2023-11-01 09:00:00",
+            9,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-02 20:00:00",
+            "2023-11-02 23:00:00",
+            10,
+            "Viewer"
+          ],
+          [
+            103,
+            "2023-11-03 09:00:00",
+            "2023-11-03 10:00:00",
+            11,
+            "Viewer"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id"
+        ],
+        "rows": [
+          [
+            102
+          ],
+          [
+            103
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

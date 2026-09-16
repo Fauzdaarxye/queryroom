@@ -3,6 +3,9 @@ node_modules/
 dist/
 coverage/
 .vite/
+.next/
+next-env.d.ts
+*.tsbuildinfo
 
 # Local progress, databases, and backups
 .data/

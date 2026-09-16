@@ -5,8 +5,10 @@ export const defaultLeaderboardOptions = { search: '', page: 1 };
 export function readLeaderboardOptions(search) {
   const params = new URLSearchParams(search);
   const page = Number(params.get('page'));
-  return { search: (params.get('q') || '').slice(0, 24),
-    page: Number.isSafeInteger(page) && page > 0 ? Math.min(page, 100000) : 1 };
+  return {
+    search: (params.get('q') || '').slice(0, 24),
+    page: Number.isSafeInteger(page) && page > 0 ? Math.min(page, 100000) : 1,
+  };
 }
 
 export function leaderboardQuery({ search = '', page = 1 }) {
@@ -19,8 +21,11 @@ export function leaderboardQuery({ search = '', page = 1 }) {
 // Call only with a server-owned problem and the result of a full submission.
 export function verifiedPoints(problem, submission) {
   const total = problem?.submissionCases?.length;
-  return total > 0 && submission.verdict === 'Accepted'
-    && ['mysql', 'postgresql'].includes(submission.engine)
-    && submission.total === total && submission.passed === total
-    ? difficultyPoints[problem.difficulty] || 0 : 0;
+  return total > 0 &&
+    submission.verdict === 'Accepted' &&
+    ['mysql', 'postgresql'].includes(submission.engine) &&
+    submission.total === total &&
+    submission.passed === total
+    ? difficultyPoints[problem.difficulty] || 0
+    : 0;
 }

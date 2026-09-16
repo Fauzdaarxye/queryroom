@@ -1,0 +1,694 @@
+{
+  "number": 1225,
+  "slug": "report-contiguous-dates",
+  "title": "Report Contiguous Dates",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/report-contiguous-dates/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1200-1299/1225.Report Contiguous Dates/README_EN.md",
+  "schema": [
+    {
+      "name": "Failed",
+      "columns": [
+        {
+          "name": "fail_date",
+          "type": "TEXT",
+          "displayType": "date"
+        }
+      ],
+      "note": "fail_date is the primary key (column with unique values) for this table.\nThis table contains the days of failed tasks.",
+      "primaryKey": [
+        "fail_date"
+      ]
+    },
+    {
+      "name": "Succeeded",
+      "columns": [
+        {
+          "name": "success_date",
+          "type": "TEXT",
+          "displayType": "date"
+        }
+      ],
+      "note": "success_date is the primary key (column with unique values) for this table.\nThis table contains the days of succeeded tasks.",
+      "primaryKey": [
+        "success_date"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Failed</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>fail_date</td><td>date</td></tr></tbody></table></div><p>fail_date is the primary key (column with unique values) for this table.<br/>This table contains the days of failed tasks.</p>\n<p> </p>\n<p>Table: <code>Succeeded</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>success_date</td><td>date</td></tr></tbody></table></div><p>success_date is the primary key (column with unique values) for this table.<br/>This table contains the days of succeeded tasks.</p>\n<p> </p>\n<p>A system is running one task <strong>every day</strong>. Every task is independent of the previous tasks. The tasks can fail or succeed.</p>\n<p>Write a solution to report the <code>period_state</code> for each continuous interval of days in the period from <code>2019-01-01</code> to <code>2019-12-31</code>.</p>\n<p><code>period_state</code> is <em>'</em><code>failed'</code><em> </em>if tasks in this interval failed or <code>'succeeded'</code> if tasks in this interval succeeded. Interval of days are retrieved as <code>start_date</code> and <code>end_date.</code></p>\n<p>Return the result table ordered by <code>start_date</code>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Failed table:</p><div class=\"statement-table\"><table><thead><tr><th>fail_date</th></tr></thead><tbody><tr><td>2018-12-28</td></tr><tr><td>2018-12-29</td></tr><tr><td>2019-01-04</td></tr><tr><td>2019-01-05</td></tr></tbody></table></div><p>Succeeded table:</p><div class=\"statement-table\"><table><thead><tr><th>success_date</th></tr></thead><tbody><tr><td>2018-12-30</td></tr><tr><td>2018-12-31</td></tr><tr><td>2019-01-01</td></tr><tr><td>2019-01-02</td></tr><tr><td>2019-01-03</td></tr><tr><td>2019-01-06</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>period_state</th><th>start_date</th><th>end_date</th></tr></thead><tbody><tr><td>succeeded</td><td>2019-01-01</td><td>2019-01-03</td></tr><tr><td>failed</td><td>2019-01-04</td><td>2019-01-05</td></tr><tr><td>succeeded</td><td>2019-01-06</td><td>2019-01-06</td></tr></tbody></table></div><p>Explanation: <br/>The report ignored the system state in 2018 as we care about the system in the period 2019-01-01 to 2019-12-31.<br/>From 2019-01-01 to 2019-01-03 all tasks succeeded and the system state was \"succeeded\".<br/>From 2019-01-04 to 2019-01-05 all tasks failed and the system state was \"failed\".<br/>From 2019-01-06 to 2019-01-06 all tasks succeeded and the system state was \"succeeded\".</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Failed": [
+          [
+            "2018-12-28"
+          ],
+          [
+            "2018-12-29"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2019-01-05"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2018-12-30"
+          ],
+          [
+            "2018-12-31"
+          ],
+          [
+            "2019-01-01"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-06"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "succeeded",
+            "2019-01-01",
+            "2019-01-03"
+          ],
+          [
+            "failed",
+            "2019-01-04",
+            "2019-01-05"
+          ],
+          [
+            "succeeded",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Failed": [
+          [
+            "2019-01-05"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2018-12-29"
+          ],
+          [
+            "2018-12-28"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2019-01-06"
+          ],
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-01"
+          ],
+          [
+            "2018-12-31"
+          ],
+          [
+            "2018-12-30"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "succeeded",
+            "2019-01-01",
+            "2019-01-03"
+          ],
+          [
+            "failed",
+            "2019-01-04",
+            "2019-01-05"
+          ],
+          [
+            "succeeded",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Failed": [
+          [
+            "2018-12-28"
+          ],
+          [
+            "2018-12-29"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2019-01-05"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2018-12-30"
+          ],
+          [
+            "2018-12-31"
+          ],
+          [
+            "2019-01-01"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-06"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "succeeded",
+            "2019-01-01",
+            "2019-01-03"
+          ],
+          [
+            "failed",
+            "2019-01-04",
+            "2019-01-05"
+          ],
+          [
+            "succeeded",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Failed": [
+          [
+            "2019-01-01"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-06"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2019-01-05"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "failed",
+            "2019-01-01",
+            "2019-01-02"
+          ],
+          [
+            "succeeded",
+            "2019-01-03",
+            "2019-01-05"
+          ],
+          [
+            "failed",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Failed": [
+          [
+            "2018-12-28"
+          ],
+          [
+            "2018-12-29"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2019-01-05"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2018-12-30"
+          ],
+          [
+            "2018-12-31"
+          ],
+          [
+            "2019-01-01"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-06"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "succeeded",
+            "2019-01-01",
+            "2019-01-03"
+          ],
+          [
+            "failed",
+            "2019-01-04",
+            "2019-01-05"
+          ],
+          [
+            "succeeded",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Failed": [
+        [
+          "2018-12-28"
+        ],
+        [
+          "2018-12-29"
+        ],
+        [
+          "2019-01-04"
+        ],
+        [
+          "2019-01-05"
+        ]
+      ],
+      "Succeeded": [
+        [
+          "2018-12-30"
+        ],
+        [
+          "2018-12-31"
+        ],
+        [
+          "2019-01-01"
+        ],
+        [
+          "2019-01-02"
+        ],
+        [
+          "2019-01-03"
+        ],
+        [
+          "2019-01-06"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "period_state",
+        "start_date",
+        "end_date"
+      ],
+      "rows": [
+        [
+          "succeeded",
+          "2019-01-01",
+          "2019-01-03"
+        ],
+        [
+          "failed",
+          "2019-01-04",
+          "2019-01-05"
+        ],
+        [
+          "succeeded",
+          "2019-01-06",
+          "2019-01-06"
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "WITH t AS (\n SELECT fail_date AS dt,'failed' AS state FROM Failed WHERE fail_date BETWEEN '2019-01-01' AND '2019-12-31'\n UNION ALL SELECT success_date,'succeeded' FROM Succeeded WHERE success_date BETWEEN '2019-01-01' AND '2019-12-31'\n), g AS (\n SELECT *, julianday(dt)-row_number() OVER(PARTITION BY state ORDER BY dt) AS grp FROM t\n)\nSELECT state AS period_state,MIN(dt) AS start_date,MAX(dt) AS end_date\nFROM g GROUP BY state,grp ORDER BY start_date",
+  "playlistIndex": 11,
+  "videos": [
+    {
+      "videoId": "oh1YtWsN5cw",
+      "playlistIndex": 11,
+      "url": "https://www.youtube.com/watch?v=oh1YtWsN5cw&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=11"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "start_date",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Failed": [
+          [
+            "2018-12-28"
+          ],
+          [
+            "2018-12-29"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2019-01-05"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2018-12-30"
+          ],
+          [
+            "2018-12-31"
+          ],
+          [
+            "2019-01-01"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-06"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "succeeded",
+            "2019-01-01",
+            "2019-01-03"
+          ],
+          [
+            "failed",
+            "2019-01-04",
+            "2019-01-05"
+          ],
+          [
+            "succeeded",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Failed": [
+          [
+            "2019-01-05"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2018-12-29"
+          ],
+          [
+            "2018-12-28"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2019-01-06"
+          ],
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-01"
+          ],
+          [
+            "2018-12-31"
+          ],
+          [
+            "2018-12-30"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "succeeded",
+            "2019-01-01",
+            "2019-01-03"
+          ],
+          [
+            "failed",
+            "2019-01-04",
+            "2019-01-05"
+          ],
+          [
+            "succeeded",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Failed": [
+          [
+            "2018-12-28"
+          ],
+          [
+            "2018-12-29"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2019-01-05"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2018-12-30"
+          ],
+          [
+            "2018-12-31"
+          ],
+          [
+            "2019-01-01"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-06"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "succeeded",
+            "2019-01-01",
+            "2019-01-03"
+          ],
+          [
+            "failed",
+            "2019-01-04",
+            "2019-01-05"
+          ],
+          [
+            "succeeded",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Failed": [
+          [
+            "2019-01-01"
+          ],
+          [
+            "2019-01-02"
+          ],
+          [
+            "2019-01-06"
+          ]
+        ],
+        "Succeeded": [
+          [
+            "2019-01-03"
+          ],
+          [
+            "2019-01-04"
+          ],
+          [
+            "2019-01-05"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "period_state",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            "failed",
+            "2019-01-01",
+            "2019-01-02"
+          ],
+          [
+            "succeeded",
+            "2019-01-03",
+            "2019-01-05"
+          ],
+          [
+            "failed",
+            "2019-01-06",
+            "2019-01-06"
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

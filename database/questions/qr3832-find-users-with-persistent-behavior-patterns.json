@@ -1,0 +1,1260 @@
+{
+  "number": 3832,
+  "slug": "find-users-with-persistent-behavior-patterns",
+  "title": "Find Users with Persistent Behavior Patterns",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/find-users-with-persistent-behavior-patterns/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/3800-3899/3832.Find Users with Persistent Behavior Patterns/README_EN.md",
+  "schema": [
+    {
+      "name": "activity",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "action_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "action",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "(user_id, action_date, action) is the primary key (unique value) for this table.\nEach row represents a user performing a specific action on a given date.",
+      "primaryKey": [
+        "user_id",
+        "action_date",
+        "action"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>activity</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>user_id</td><td>int</td></tr><tr><td>action_date</td><td>date</td></tr><tr><td>action</td><td>varchar</td></tr></tbody></table></div><p>(user_id, action_date, action) is the primary key (unique value) for this table.<br/>Each row represents a user performing a specific action on a given date.</p>\n<p>Write a solution to identify <strong>behaviorally stable users</strong> based on the following definition:</p>\n<ul>\n<li>A user is considered <strong>behaviorally stable</strong> if there exists a sequence of <strong>at least </strong><code>5</code><strong> consecutive days</strong> such that:\n\n    <ul>\n<li>The user performed <strong>exactly one action per day</strong> during that period.</li>\n<li>The <strong>action is the same</strong> on all those consecutive days.</li>\n</ul>\n</li>\n<li>If a user has multiple qualifying sequences, only consider the sequence with the <strong>maximum length</strong>.</li>\n</ul>\n<p>Return <em>the result table ordered by</em> <code>streak_length</code> <em>in <strong>descending</strong> order</em>,<em> then by </em><code>user_id</code> <em>in <strong>ascending</strong> order</em>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example:</strong></p>\n<div>\n<p><strong>Input:</strong></p>\n<p>activity table:</p>\n<div class=\"statement-table\"><table><thead><tr><th>user_id</th><th>action_date</th><th>action</th></tr></thead><tbody><tr><td>1</td><td>2024-01-01</td><td>login</td></tr><tr><td>1</td><td>2024-01-02</td><td>login</td></tr><tr><td>1</td><td>2024-01-03</td><td>login</td></tr><tr><td>1</td><td>2024-01-04</td><td>login</td></tr><tr><td>1</td><td>2024-01-05</td><td>login</td></tr><tr><td>1</td><td>2024-01-06</td><td>logout</td></tr><tr><td>2</td><td>2024-01-01</td><td>click</td></tr><tr><td>2</td><td>2024-01-02</td><td>click</td></tr><tr><td>2</td><td>2024-01-03</td><td>click</td></tr><tr><td>2</td><td>2024-01-04</td><td>click</td></tr><tr><td>3</td><td>2024-01-01</td><td>view</td></tr><tr><td>3</td><td>2024-01-02</td><td>view</td></tr><tr><td>3</td><td>2024-01-03</td><td>view</td></tr><tr><td>3</td><td>2024-01-04</td><td>view</td></tr><tr><td>3</td><td>2024-01-05</td><td>view</td></tr><tr><td>3</td><td>2024-01-06</td><td>view</td></tr><tr><td>3</td><td>2024-01-07</td><td>view</td></tr></tbody></table></div>\n<p><strong>Output:</strong></p>\n<div class=\"statement-table\"><table><thead><tr><th>user_id</th><th>action</th><th>streak_length</th><th>start_date</th><th>end_date</th></tr></thead><tbody><tr><td>3</td><td>view</td><td>7</td><td>2024-01-01</td><td>2024-01-07</td></tr><tr><td>1</td><td>login</td><td>5</td><td>2024-01-01</td><td>2024-01-05</td></tr></tbody></table></div>\n<p><strong>Explanation:</strong></p>\n<ul>\n<li><strong>User 1</strong>:\n\n    <ul>\n<li>Performed <code>login</code> from 2024-01-01 to 2024-01-05 on consecutive days</li>\n<li>Each day has exactly one action, and the action is the same</li>\n<li>Streak length = 5 (meets minimum requirement)</li>\n<li>The action changes on 2024-01-06, ending the streak</li>\n</ul>\n</li>\n<li><strong>User 2</strong>:\n    <ul>\n<li>Performed <code>click</code> for only 4 consecutive days</li>\n<li>Does not meet the minimum streak length of 5</li>\n<li>Excluded from the result</li>\n</ul>\n</li>\n<li><strong>User 3</strong>:\n    <ul>\n<li>Performed <code>view</code> for 7 consecutive days</li>\n<li>This is the longest valid sequence for this user</li>\n<li>Included in the result</li>\n</ul>\n</li>\n</ul>\n<p>The Results table is ordered by streak_length in descending order, then by user_id in ascending order</p>\n</div>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "activity": [
+          [
+            1,
+            "2024-01-01",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            2,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            3,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-07",
+            "view"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            3,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            1,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "activity": [
+          [
+            3,
+            "2024-01-07",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            2,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            1,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            1,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-01",
+            "login"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            3,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            1,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "activity": [
+          [
+            101,
+            "2024-01-01",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            102,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            102,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            102,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            102,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            103,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-07",
+            "view"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            103,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            101,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "activity": [
+          [
+            1,
+            "2024-01-01",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            2,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            3,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-07",
+            "view"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            3,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            1,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "activity": [
+          [
+            1,
+            "2024-01-01",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            2,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            3,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-07",
+            "view"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            3,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            1,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "activity": [
+        [
+          1,
+          "2024-01-01",
+          "login"
+        ],
+        [
+          1,
+          "2024-01-02",
+          "login"
+        ],
+        [
+          1,
+          "2024-01-03",
+          "login"
+        ],
+        [
+          1,
+          "2024-01-04",
+          "login"
+        ],
+        [
+          1,
+          "2024-01-05",
+          "login"
+        ],
+        [
+          1,
+          "2024-01-06",
+          "logout"
+        ],
+        [
+          2,
+          "2024-01-01",
+          "click"
+        ],
+        [
+          2,
+          "2024-01-02",
+          "click"
+        ],
+        [
+          2,
+          "2024-01-03",
+          "click"
+        ],
+        [
+          2,
+          "2024-01-04",
+          "click"
+        ],
+        [
+          3,
+          "2024-01-01",
+          "view"
+        ],
+        [
+          3,
+          "2024-01-02",
+          "view"
+        ],
+        [
+          3,
+          "2024-01-03",
+          "view"
+        ],
+        [
+          3,
+          "2024-01-04",
+          "view"
+        ],
+        [
+          3,
+          "2024-01-05",
+          "view"
+        ],
+        [
+          3,
+          "2024-01-06",
+          "view"
+        ],
+        [
+          3,
+          "2024-01-07",
+          "view"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "user_id",
+        "action",
+        "streak_length",
+        "start_date",
+        "end_date"
+      ],
+      "rows": [
+        [
+          3,
+          "view",
+          7,
+          "2024-01-01",
+          "2024-01-07"
+        ],
+        [
+          1,
+          "login",
+          5,
+          "2024-01-01",
+          "2024-01-05"
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "WITH daily AS (\n SELECT user_id,action_date,MIN(action) AS action FROM activity GROUP BY user_id,action_date HAVING COUNT(*)=1\n), groups AS (\n SELECT *,julianday(action_date)-row_number() OVER(PARTITION BY user_id,action ORDER BY action_date) AS grp FROM daily\n), streaks AS (\n SELECT user_id,action,COUNT(*) AS streak_length,MIN(action_date) AS start_date,MAX(action_date) AS end_date\n FROM groups GROUP BY user_id,action,grp HAVING COUNT(*)>=5\n), ranked AS (\n SELECT *,ROW_NUMBER() OVER(PARTITION BY user_id ORDER BY streak_length DESC,start_date,action) AS rn FROM streaks\n)\nSELECT user_id,action,streak_length,start_date,end_date FROM ranked WHERE rn=1 ORDER BY streak_length DESC,user_id",
+  "playlistIndex": 50,
+  "videos": [
+    {
+      "videoId": "ev16mF_l0PY",
+      "playlistIndex": 50,
+      "url": "https://www.youtube.com/watch?v=ev16mF_l0PY&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=50"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "streak_length",
+      "direction": "desc"
+    },
+    {
+      "column": "user_id",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "activity": [
+          [
+            1,
+            "2024-01-01",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            2,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            3,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-07",
+            "view"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            3,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            1,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "activity": [
+          [
+            3,
+            "2024-01-07",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            2,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            1,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            1,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-01",
+            "login"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            3,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            1,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "activity": [
+          [
+            101,
+            "2024-01-01",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            101,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            102,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            102,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            102,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            102,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            103,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            103,
+            "2024-01-07",
+            "view"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            103,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            101,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "activity": [
+          [
+            1,
+            "2024-01-01",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-02",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-03",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-04",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-05",
+            "login"
+          ],
+          [
+            1,
+            "2024-01-06",
+            "logout"
+          ],
+          [
+            2,
+            "2024-01-01",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-02",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-03",
+            "click"
+          ],
+          [
+            2,
+            "2024-01-04",
+            "click"
+          ],
+          [
+            3,
+            "2024-01-01",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-02",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-03",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-04",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-05",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-06",
+            "view"
+          ],
+          [
+            3,
+            "2024-01-07",
+            "view"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "user_id",
+          "action",
+          "streak_length",
+          "start_date",
+          "end_date"
+        ],
+        "rows": [
+          [
+            3,
+            "view",
+            7,
+            "2024-01-01",
+            "2024-01-07"
+          ],
+          [
+            1,
+            "login",
+            5,
+            "2024-01-01",
+            "2024-01-05"
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

@@ -1,0 +1,732 @@
+{
+  "number": 2238,
+  "slug": "number-of-times-a-driver-was-a-passenger",
+  "title": "Number of Times a Driver Was a Passenger",
+  "difficulty": "Medium",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/number-of-times-a-driver-was-a-passenger/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/2200-2299/2238.Number of Times a Driver Was a Passenger/README_EN.md",
+  "schema": [
+    {
+      "name": "Rides",
+      "columns": [
+        {
+          "name": "ride_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "driver_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "passenger_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "ride_id is the column with unique values for this table.\nEach row of this table contains the ID of the driver and the ID of the passenger that rode in ride_id.\nNote that driver_id != passenger_id.",
+      "primaryKey": [
+        "ride_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "<p>Table: <code>Rides</code></p>\n\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>ride_id</td><td>int</td></tr><tr><td>driver_id</td><td>int</td></tr><tr><td>passenger_id</td><td>int</td></tr></tbody></table></div><p>ride_id is the column with unique values for this table.<br/>Each row of this table contains the ID of the driver and the ID of the passenger that rode in ride_id.<br/>Note that driver_id != passenger_id.</p>\n\n<p> </p>\n\n<p>Write a solution to report the ID of each driver and the number of times they were a passenger.</p>\n\n<p>Return the result table in <strong>any order</strong>.</p>\n\n<p>The result format is in the following example.</p>\n\n<p> </p>\n<p><strong>Example 1:</strong></p>\n\n<p>Input: <br/>Rides table:</p><div class=\"statement-table\"><table><thead><tr><th>ride_id</th><th>driver_id</th><th>passenger_id</th></tr></thead><tbody><tr><td>1</td><td>7</td><td>1</td></tr><tr><td>2</td><td>7</td><td>2</td></tr><tr><td>3</td><td>11</td><td>1</td></tr><tr><td>4</td><td>11</td><td>7</td></tr><tr><td>5</td><td>11</td><td>7</td></tr><tr><td>6</td><td>11</td><td>3</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>driver_id</th><th>cnt</th></tr></thead><tbody><tr><td>7</td><td>2</td></tr><tr><td>11</td><td>0</td></tr></tbody></table></div><p>Explanation: <br/>There are two drivers in all the given rides: 7 and 11.<br/>The driver with ID = 7 was a passenger two times.<br/>The driver with ID = 11 was never a passenger.</p>",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Rides": [
+          [
+            1,
+            7,
+            1
+          ],
+          [
+            2,
+            7,
+            2
+          ],
+          [
+            3,
+            11,
+            1
+          ],
+          [
+            4,
+            11,
+            7
+          ],
+          [
+            5,
+            11,
+            7
+          ],
+          [
+            6,
+            11,
+            3
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            7,
+            2
+          ],
+          [
+            11,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Rides": [
+          [
+            6,
+            11,
+            3
+          ],
+          [
+            5,
+            11,
+            7
+          ],
+          [
+            4,
+            11,
+            7
+          ],
+          [
+            3,
+            11,
+            1
+          ],
+          [
+            2,
+            7,
+            2
+          ],
+          [
+            1,
+            7,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            11,
+            0
+          ],
+          [
+            7,
+            2
+          ]
+        ]
+      }
+    },
+    {
+      "id": "repeated-rides",
+      "name": "Repeated rides must not multiply the passenger count",
+      "kind": "Local practice case",
+      "description": "Repeated rides must not multiply the passenger count.",
+      "input": {
+        "Rides": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            2
+          ],
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            4,
+            2,
+            1
+          ],
+          [
+            5,
+            3,
+            1
+          ],
+          [
+            6,
+            3,
+            9
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "never-passengers",
+      "name": "Include drivers who never rode as passengers",
+      "kind": "Local practice case",
+      "description": "Include drivers who never rode as passengers.",
+      "input": {
+        "Rides": [
+          [
+            1,
+            7,
+            100
+          ],
+          [
+            2,
+            7,
+            101
+          ],
+          [
+            3,
+            8,
+            100
+          ],
+          [
+            4,
+            9,
+            102
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            7,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            9,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "driver-cycle",
+      "name": "Each driver rides as another driver passenger",
+      "kind": "Local practice case",
+      "description": "Each driver rides as another driver passenger.",
+      "input": {
+        "Rides": [
+          [
+            3,
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            2,
+            3
+          ],
+          [
+            4,
+            2,
+            99
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No rides",
+      "kind": "Local practice case",
+      "description": "No rides.",
+      "input": {
+        "Rides": []
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Rides": [
+        [
+          1,
+          7,
+          1
+        ],
+        [
+          2,
+          7,
+          2
+        ],
+        [
+          3,
+          11,
+          1
+        ],
+        [
+          4,
+          11,
+          7
+        ],
+        [
+          5,
+          11,
+          7
+        ],
+        [
+          6,
+          11,
+          3
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "driver_id",
+        "cnt"
+      ],
+      "rows": [
+        [
+          7,
+          2
+        ],
+        [
+          11,
+          0
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "orderBy": [],
+  "collection": "Added questions",
+  "testNotes": "The published example is included. Extra cases are created for this workspace; LeetCode’s private tests are not available.",
+  "examples": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Rides": [
+          [
+            1,
+            7,
+            1
+          ],
+          [
+            2,
+            7,
+            2
+          ],
+          [
+            3,
+            11,
+            1
+          ],
+          [
+            4,
+            11,
+            7
+          ],
+          [
+            5,
+            11,
+            7
+          ],
+          [
+            6,
+            11,
+            3
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            7,
+            2
+          ],
+          [
+            11,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "The published example from the question. Dates are shown in ISO format.",
+      "input": {
+        "Rides": [
+          [
+            1,
+            7,
+            1
+          ],
+          [
+            2,
+            7,
+            2
+          ],
+          [
+            3,
+            11,
+            1
+          ],
+          [
+            4,
+            11,
+            7
+          ],
+          [
+            5,
+            11,
+            7
+          ],
+          [
+            6,
+            11,
+            3
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            7,
+            2
+          ],
+          [
+            11,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Reordered input",
+      "kind": "Local practice case",
+      "description": "The published rows in reverse input order.",
+      "input": {
+        "Rides": [
+          [
+            6,
+            11,
+            3
+          ],
+          [
+            5,
+            11,
+            7
+          ],
+          [
+            4,
+            11,
+            7
+          ],
+          [
+            3,
+            11,
+            1
+          ],
+          [
+            2,
+            7,
+            2
+          ],
+          [
+            1,
+            7,
+            1
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            11,
+            0
+          ],
+          [
+            7,
+            2
+          ]
+        ]
+      }
+    },
+    {
+      "id": "repeated-rides",
+      "name": "Repeated rides must not multiply the passenger count",
+      "kind": "Local practice case",
+      "description": "Repeated rides must not multiply the passenger count.",
+      "input": {
+        "Rides": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            2
+          ],
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            4,
+            2,
+            1
+          ],
+          [
+            5,
+            3,
+            1
+          ],
+          [
+            6,
+            3,
+            9
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            1,
+            3
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "never-passengers",
+      "name": "Include drivers who never rode as passengers",
+      "kind": "Local practice case",
+      "description": "Include drivers who never rode as passengers.",
+      "input": {
+        "Rides": [
+          [
+            1,
+            7,
+            100
+          ],
+          [
+            2,
+            7,
+            101
+          ],
+          [
+            3,
+            8,
+            100
+          ],
+          [
+            4,
+            9,
+            102
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            7,
+            0
+          ],
+          [
+            8,
+            0
+          ],
+          [
+            9,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "driver-cycle",
+      "name": "Each driver rides as another driver passenger",
+      "kind": "Local practice case",
+      "description": "Each driver rides as another driver passenger.",
+      "input": {
+        "Rides": [
+          [
+            3,
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            2,
+            3
+          ],
+          [
+            4,
+            2,
+            99
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": [
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "empty",
+      "name": "No rides",
+      "kind": "Local practice case",
+      "description": "No rides.",
+      "input": {
+        "Rides": []
+      },
+      "expected": {
+        "columns": [
+          "driver_id",
+          "cnt"
+        ],
+        "rows": []
+      }
+    }
+  ],
+  "referenceSql": "SELECT d.driver_id,COUNT(p.ride_id) AS cnt FROM (SELECT DISTINCT driver_id FROM Rides) d LEFT JOIN Rides p ON d.driver_id=p.passenger_id GROUP BY d.driver_id"
+}

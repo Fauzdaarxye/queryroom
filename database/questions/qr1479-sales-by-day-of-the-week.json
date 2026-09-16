@@ -1,0 +1,1675 @@
+{
+  "number": 1479,
+  "slug": "sales-by-day-of-the-week",
+  "title": "Sales by Day of the Week",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/sales-by-day-of-the-week/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1400-1499/1479.Sales by Day of the Week/README_EN.md",
+  "schema": [
+    {
+      "name": "Orders",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "customer_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "order_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "item_id",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "(ordered_id, item_id) is the primary key (combination of columns with unique values) for this table.\nThis table contains information on the orders placed.\norder_date is the date item_id was ordered by the customer with id customer_id."
+    },
+    {
+      "name": "Items",
+      "columns": [
+        {
+          "name": "item_id",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "item_name",
+          "type": "TEXT",
+          "displayType": "varchar"
+        },
+        {
+          "name": "item_category",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "item_id is the primary key (column with unique values) for this table.\nitem_name is the name of the item.\nitem_category is the category of the item.",
+      "primaryKey": [
+        "item_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Orders</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>order_id</td><td>int</td></tr><tr><td>customer_id</td><td>int</td></tr><tr><td>order_date</td><td>date</td></tr><tr><td>item_id</td><td>varchar</td></tr><tr><td>quantity</td><td>int</td></tr></tbody></table></div><p>(ordered_id, item_id) is the primary key (combination of columns with unique values) for this table.<br/>This table contains information on the orders placed.<br/>order_date is the date item_id was ordered by the customer with id customer_id.</p>\n<p> </p>\n<p>Table: <code>Items</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>item_id</td><td>varchar</td></tr><tr><td>item_name</td><td>varchar</td></tr><tr><td>item_category</td><td>varchar</td></tr></tbody></table></div><p>item_id is the primary key (column with unique values) for this table.<br/>item_name is the name of the item.<br/>item_category is the category of the item.</p>\n<p> </p>\n<p>You are the business owner and would like to obtain a sales report for category items and the day of the week.</p>\n<p>Write a solution to report how many units in each category have been ordered on each <strong>day of the week</strong>.</p>\n<p>Return the result table <strong>ordered</strong> by <code>category</code>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Orders table:</p><div class=\"statement-table\"><table><thead><tr><th>order_id</th><th>customer_id</th><th>order_date</th><th>item_id</th><th>quantity</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>2020-06-01</td><td>1</td><td>10</td></tr><tr><td>2</td><td>1</td><td>2020-06-08</td><td>2</td><td>10</td></tr><tr><td>3</td><td>2</td><td>2020-06-02</td><td>1</td><td>5</td></tr><tr><td>4</td><td>3</td><td>2020-06-03</td><td>3</td><td>5</td></tr><tr><td>5</td><td>4</td><td>2020-06-04</td><td>4</td><td>1</td></tr><tr><td>6</td><td>4</td><td>2020-06-05</td><td>5</td><td>5</td></tr><tr><td>7</td><td>5</td><td>2020-06-05</td><td>1</td><td>10</td></tr><tr><td>8</td><td>5</td><td>2020-06-14</td><td>4</td><td>5</td></tr><tr><td>9</td><td>5</td><td>2020-06-21</td><td>3</td><td>5</td></tr></tbody></table></div><p>Items table:</p><div class=\"statement-table\"><table><thead><tr><th>item_id</th><th>item_name</th><th>item_category</th></tr></thead><tbody><tr><td>1</td><td>LC Alg. Book</td><td>Book</td></tr><tr><td>2</td><td>LC DB. Book</td><td>Book</td></tr><tr><td>3</td><td>LC SmarthPhone</td><td>Phone</td></tr><tr><td>4</td><td>LC Phone 2020</td><td>Phone</td></tr><tr><td>5</td><td>LC SmartGlass</td><td>Glasses</td></tr><tr><td>6</td><td>LC T-Shirt XL</td><td>T-Shirt</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>Category</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th><th>Sunday</th></tr></thead><tbody><tr><td>Book</td><td>20</td><td>5</td><td>0</td><td>0</td><td>10</td><td>0</td><td>0</td></tr><tr><td>Glasses</td><td>0</td><td>0</td><td>0</td><td>0</td><td>5</td><td>0</td><td>0</td></tr><tr><td>Phone</td><td>0</td><td>0</td><td>5</td><td>1</td><td>0</td><td>0</td><td>10</td></tr><tr><td>T-Shirt</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div><p>Explanation: <br/>On Monday (2020-06-01, 2020-06-08) were sold a total of 20 units (10 + 10) in the category Book (ids: 1, 2).<br/>On Tuesday (2020-06-02) were sold a total of 5 units in the category Book (ids: 1, 2).<br/>On Wednesday (2020-06-03) were sold a total of 5 units in the category Phone (ids: 3, 4).<br/>On Thursday (2020-06-04) were sold a total of 1 unit in the category Phone (ids: 3, 4).<br/>On Friday (2020-06-05) were sold 10 units in the category Book (ids: 1, 2) and 5 units in Glasses (ids: 5).<br/>On Saturday there are no items sold.<br/>On Sunday (2020-06-14, 2020-06-21) were sold a total of 10 units (5 +5) in the category Phone (ids: 3, 4).<br/>There are no sales of T-shirts.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            "2020-06-01",
+            "1",
+            10
+          ],
+          [
+            2,
+            1,
+            "2020-06-08",
+            "2",
+            10
+          ],
+          [
+            3,
+            2,
+            "2020-06-02",
+            "1",
+            5
+          ],
+          [
+            4,
+            3,
+            "2020-06-03",
+            "3",
+            5
+          ],
+          [
+            5,
+            4,
+            "2020-06-04",
+            "4",
+            1
+          ],
+          [
+            6,
+            4,
+            "2020-06-05",
+            "5",
+            5
+          ],
+          [
+            7,
+            5,
+            "2020-06-05",
+            "1",
+            10
+          ],
+          [
+            8,
+            5,
+            "2020-06-14",
+            "4",
+            5
+          ],
+          [
+            9,
+            5,
+            "2020-06-21",
+            "3",
+            5
+          ]
+        ],
+        "Items": [
+          [
+            "1",
+            "LC Alg. Book",
+            "Book"
+          ],
+          [
+            "2",
+            "LC DB. Book",
+            "Book"
+          ],
+          [
+            "3",
+            "LC SmarthPhone",
+            "Phone"
+          ],
+          [
+            "4",
+            "LC Phone 2020",
+            "Phone"
+          ],
+          [
+            "5",
+            "LC SmartGlass",
+            "Glasses"
+          ],
+          [
+            "6",
+            "LC T-Shirt XL",
+            "T-Shirt"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "Category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book",
+            20,
+            5,
+            0,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            "Glasses",
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0
+          ],
+          [
+            "Phone",
+            0,
+            0,
+            5,
+            1,
+            0,
+            0,
+            10
+          ],
+          [
+            "T-Shirt",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Orders": [
+          [
+            9,
+            5,
+            "2020-06-21",
+            "3",
+            5
+          ],
+          [
+            8,
+            5,
+            "2020-06-14",
+            "4",
+            5
+          ],
+          [
+            7,
+            5,
+            "2020-06-05",
+            "1",
+            10
+          ],
+          [
+            6,
+            4,
+            "2020-06-05",
+            "5",
+            5
+          ],
+          [
+            5,
+            4,
+            "2020-06-04",
+            "4",
+            1
+          ],
+          [
+            4,
+            3,
+            "2020-06-03",
+            "3",
+            5
+          ],
+          [
+            3,
+            2,
+            "2020-06-02",
+            "1",
+            5
+          ],
+          [
+            2,
+            1,
+            "2020-06-08",
+            "2",
+            10
+          ],
+          [
+            1,
+            1,
+            "2020-06-01",
+            "1",
+            10
+          ]
+        ],
+        "Items": [
+          [
+            "6",
+            "LC T-Shirt XL",
+            "T-Shirt"
+          ],
+          [
+            "5",
+            "LC SmartGlass",
+            "Glasses"
+          ],
+          [
+            "4",
+            "LC Phone 2020",
+            "Phone"
+          ],
+          [
+            "3",
+            "LC SmarthPhone",
+            "Phone"
+          ],
+          [
+            "2",
+            "LC DB. Book",
+            "Book"
+          ],
+          [
+            "1",
+            "LC Alg. Book",
+            "Book"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book",
+            20,
+            5,
+            0,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            "Glasses",
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0
+          ],
+          [
+            "Phone",
+            0,
+            0,
+            5,
+            1,
+            0,
+            0,
+            10
+          ],
+          [
+            "T-Shirt",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Orders": [
+          [
+            101,
+            101,
+            "2020-06-01",
+            "Local-1",
+            10
+          ],
+          [
+            102,
+            101,
+            "2020-06-08",
+            "Local-2",
+            10
+          ],
+          [
+            103,
+            102,
+            "2020-06-02",
+            "Local-1",
+            5
+          ],
+          [
+            104,
+            103,
+            "2020-06-03",
+            "Local-3",
+            5
+          ],
+          [
+            105,
+            104,
+            "2020-06-04",
+            "Local-4",
+            1
+          ],
+          [
+            106,
+            104,
+            "2020-06-05",
+            "Local-5",
+            5
+          ],
+          [
+            107,
+            105,
+            "2020-06-05",
+            "Local-1",
+            10
+          ],
+          [
+            108,
+            105,
+            "2020-06-14",
+            "Local-4",
+            5
+          ],
+          [
+            109,
+            105,
+            "2020-06-21",
+            "Local-3",
+            5
+          ]
+        ],
+        "Items": [
+          [
+            "Local-1",
+            "LC Alg. Book",
+            "Book Lab"
+          ],
+          [
+            "Local-2",
+            "LC DB. Book",
+            "Book Lab"
+          ],
+          [
+            "Local-3",
+            "LC SmarthPhone",
+            "Phone Lab"
+          ],
+          [
+            "Local-4",
+            "LC Phone 2020",
+            "Phone Lab"
+          ],
+          [
+            "Local-5",
+            "LC SmartGlass",
+            "Glasses Lab"
+          ],
+          [
+            "Local-6",
+            "LC T-Shirt XL",
+            "T-Shirt Lab"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book Lab",
+            20,
+            5,
+            0,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            "Glasses Lab",
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0
+          ],
+          [
+            "Phone Lab",
+            0,
+            0,
+            5,
+            1,
+            0,
+            0,
+            10
+          ],
+          [
+            "T-Shirt Lab",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            "2020-06-01",
+            "1",
+            14
+          ],
+          [
+            2,
+            1,
+            "2020-06-08",
+            "2",
+            14
+          ],
+          [
+            3,
+            2,
+            "2020-06-02",
+            "1",
+            7
+          ],
+          [
+            4,
+            3,
+            "2020-06-03",
+            "3",
+            7
+          ],
+          [
+            5,
+            4,
+            "2020-06-04",
+            "4",
+            2
+          ],
+          [
+            6,
+            4,
+            "2020-06-05",
+            "5",
+            7
+          ],
+          [
+            7,
+            5,
+            "2020-06-05",
+            "1",
+            14
+          ],
+          [
+            8,
+            5,
+            "2020-06-14",
+            "4",
+            7
+          ],
+          [
+            9,
+            5,
+            "2020-06-21",
+            "3",
+            7
+          ]
+        ],
+        "Items": [
+          [
+            "1",
+            "LC Alg. Book",
+            "Book"
+          ],
+          [
+            "2",
+            "LC DB. Book",
+            "Book"
+          ],
+          [
+            "3",
+            "LC SmarthPhone",
+            "Phone"
+          ],
+          [
+            "4",
+            "LC Phone 2020",
+            "Phone"
+          ],
+          [
+            "5",
+            "LC SmartGlass",
+            "Glasses"
+          ],
+          [
+            "6",
+            "LC T-Shirt XL",
+            "T-Shirt"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book",
+            28,
+            7,
+            0,
+            0,
+            14,
+            0,
+            0
+          ],
+          [
+            "Glasses",
+            0,
+            0,
+            0,
+            0,
+            7,
+            0,
+            0
+          ],
+          [
+            "Phone",
+            0,
+            0,
+            7,
+            2,
+            0,
+            0,
+            14
+          ],
+          [
+            "T-Shirt",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            "2020-06-01",
+            "1",
+            10
+          ],
+          [
+            2,
+            1,
+            "2020-06-08",
+            "2",
+            10
+          ],
+          [
+            3,
+            2,
+            "2020-06-02",
+            "1",
+            5
+          ],
+          [
+            4,
+            3,
+            "2020-06-03",
+            "3",
+            5
+          ],
+          [
+            5,
+            4,
+            "2020-06-04",
+            "4",
+            1
+          ],
+          [
+            6,
+            4,
+            "2020-06-05",
+            "5",
+            5
+          ],
+          [
+            7,
+            5,
+            "2020-06-05",
+            "1",
+            10
+          ],
+          [
+            8,
+            5,
+            "2020-06-14",
+            "4",
+            5
+          ],
+          [
+            9,
+            5,
+            "2020-06-21",
+            "3",
+            5
+          ]
+        ],
+        "Items": [
+          [
+            "1",
+            "LC Alg. Book",
+            "Book"
+          ],
+          [
+            "2",
+            "LC DB. Book",
+            "Book"
+          ],
+          [
+            "3",
+            "LC SmarthPhone",
+            "Phone"
+          ],
+          [
+            "4",
+            "LC Phone 2020",
+            "Phone"
+          ],
+          [
+            "5",
+            "LC SmartGlass",
+            "Glasses"
+          ],
+          [
+            "6",
+            "LC T-Shirt XL",
+            "T-Shirt"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "Category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book",
+            20,
+            5,
+            0,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            "Glasses",
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0
+          ],
+          [
+            "Phone",
+            0,
+            0,
+            5,
+            1,
+            0,
+            0,
+            10
+          ],
+          [
+            "T-Shirt",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Orders": [
+        [
+          1,
+          1,
+          "2020-06-01",
+          "1",
+          10
+        ],
+        [
+          2,
+          1,
+          "2020-06-08",
+          "2",
+          10
+        ],
+        [
+          3,
+          2,
+          "2020-06-02",
+          "1",
+          5
+        ],
+        [
+          4,
+          3,
+          "2020-06-03",
+          "3",
+          5
+        ],
+        [
+          5,
+          4,
+          "2020-06-04",
+          "4",
+          1
+        ],
+        [
+          6,
+          4,
+          "2020-06-05",
+          "5",
+          5
+        ],
+        [
+          7,
+          5,
+          "2020-06-05",
+          "1",
+          10
+        ],
+        [
+          8,
+          5,
+          "2020-06-14",
+          "4",
+          5
+        ],
+        [
+          9,
+          5,
+          "2020-06-21",
+          "3",
+          5
+        ]
+      ],
+      "Items": [
+        [
+          "1",
+          "LC Alg. Book",
+          "Book"
+        ],
+        [
+          "2",
+          "LC DB. Book",
+          "Book"
+        ],
+        [
+          "3",
+          "LC SmarthPhone",
+          "Phone"
+        ],
+        [
+          "4",
+          "LC Phone 2020",
+          "Phone"
+        ],
+        [
+          "5",
+          "LC SmartGlass",
+          "Glasses"
+        ],
+        [
+          "6",
+          "LC T-Shirt XL",
+          "T-Shirt"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "Category",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "rows": [
+        [
+          "Book",
+          20,
+          5,
+          0,
+          0,
+          10,
+          0,
+          0
+        ],
+        [
+          "Glasses",
+          0,
+          0,
+          0,
+          0,
+          5,
+          0,
+          0
+        ],
+        [
+          "Phone",
+          0,
+          0,
+          5,
+          1,
+          0,
+          0,
+          10
+        ],
+        [
+          "T-Shirt",
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "/* Write your MySQL query statement below */\nSELECT\n  item_category AS category,\n  SUM(IIF(DAY_OF_WEEK(DATE(order_date)) = 2, quantity, 0)) AS Monday,\n  SUM(IIF(DAY_OF_WEEK(DATE(order_date)) = 3, quantity, 0)) AS Tuesday,\n  SUM(IIF(DAY_OF_WEEK(DATE(order_date)) = 4, quantity, 0)) AS Wednesday,\n  SUM(IIF(DAY_OF_WEEK(DATE(order_date)) = 5, quantity, 0)) AS Thursday,\n  SUM(IIF(DAY_OF_WEEK(DATE(order_date)) = 6, quantity, 0)) AS Friday,\n  SUM(IIF(DAY_OF_WEEK(DATE(order_date)) = 7, quantity, 0)) AS Saturday,\n  SUM(IIF(DAY_OF_WEEK(DATE(order_date)) = 1, quantity, 0)) AS Sunday\nFROM Orders AS o\nRIGHT JOIN Items AS i\n  ON o.item_id = i.item_id\nGROUP BY\n  category\nORDER BY\n  category",
+  "playlistIndex": 2,
+  "videos": [
+    {
+      "videoId": "HtSLEIf9CHI",
+      "playlistIndex": 2,
+      "url": "https://www.youtube.com/watch?v=HtSLEIf9CHI&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=2"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "Category",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            "2020-06-01",
+            "1",
+            10
+          ],
+          [
+            2,
+            1,
+            "2020-06-08",
+            "2",
+            10
+          ],
+          [
+            3,
+            2,
+            "2020-06-02",
+            "1",
+            5
+          ],
+          [
+            4,
+            3,
+            "2020-06-03",
+            "3",
+            5
+          ],
+          [
+            5,
+            4,
+            "2020-06-04",
+            "4",
+            1
+          ],
+          [
+            6,
+            4,
+            "2020-06-05",
+            "5",
+            5
+          ],
+          [
+            7,
+            5,
+            "2020-06-05",
+            "1",
+            10
+          ],
+          [
+            8,
+            5,
+            "2020-06-14",
+            "4",
+            5
+          ],
+          [
+            9,
+            5,
+            "2020-06-21",
+            "3",
+            5
+          ]
+        ],
+        "Items": [
+          [
+            "1",
+            "LC Alg. Book",
+            "Book"
+          ],
+          [
+            "2",
+            "LC DB. Book",
+            "Book"
+          ],
+          [
+            "3",
+            "LC SmarthPhone",
+            "Phone"
+          ],
+          [
+            "4",
+            "LC Phone 2020",
+            "Phone"
+          ],
+          [
+            "5",
+            "LC SmartGlass",
+            "Glasses"
+          ],
+          [
+            "6",
+            "LC T-Shirt XL",
+            "T-Shirt"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "Category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book",
+            20,
+            5,
+            0,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            "Glasses",
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0
+          ],
+          [
+            "Phone",
+            0,
+            0,
+            5,
+            1,
+            0,
+            0,
+            10
+          ],
+          [
+            "T-Shirt",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Orders": [
+          [
+            9,
+            5,
+            "2020-06-21",
+            "3",
+            5
+          ],
+          [
+            8,
+            5,
+            "2020-06-14",
+            "4",
+            5
+          ],
+          [
+            7,
+            5,
+            "2020-06-05",
+            "1",
+            10
+          ],
+          [
+            6,
+            4,
+            "2020-06-05",
+            "5",
+            5
+          ],
+          [
+            5,
+            4,
+            "2020-06-04",
+            "4",
+            1
+          ],
+          [
+            4,
+            3,
+            "2020-06-03",
+            "3",
+            5
+          ],
+          [
+            3,
+            2,
+            "2020-06-02",
+            "1",
+            5
+          ],
+          [
+            2,
+            1,
+            "2020-06-08",
+            "2",
+            10
+          ],
+          [
+            1,
+            1,
+            "2020-06-01",
+            "1",
+            10
+          ]
+        ],
+        "Items": [
+          [
+            "6",
+            "LC T-Shirt XL",
+            "T-Shirt"
+          ],
+          [
+            "5",
+            "LC SmartGlass",
+            "Glasses"
+          ],
+          [
+            "4",
+            "LC Phone 2020",
+            "Phone"
+          ],
+          [
+            "3",
+            "LC SmarthPhone",
+            "Phone"
+          ],
+          [
+            "2",
+            "LC DB. Book",
+            "Book"
+          ],
+          [
+            "1",
+            "LC Alg. Book",
+            "Book"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book",
+            20,
+            5,
+            0,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            "Glasses",
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0
+          ],
+          [
+            "Phone",
+            0,
+            0,
+            5,
+            1,
+            0,
+            0,
+            10
+          ],
+          [
+            "T-Shirt",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Orders": [
+          [
+            101,
+            101,
+            "2020-06-01",
+            "Local-1",
+            10
+          ],
+          [
+            102,
+            101,
+            "2020-06-08",
+            "Local-2",
+            10
+          ],
+          [
+            103,
+            102,
+            "2020-06-02",
+            "Local-1",
+            5
+          ],
+          [
+            104,
+            103,
+            "2020-06-03",
+            "Local-3",
+            5
+          ],
+          [
+            105,
+            104,
+            "2020-06-04",
+            "Local-4",
+            1
+          ],
+          [
+            106,
+            104,
+            "2020-06-05",
+            "Local-5",
+            5
+          ],
+          [
+            107,
+            105,
+            "2020-06-05",
+            "Local-1",
+            10
+          ],
+          [
+            108,
+            105,
+            "2020-06-14",
+            "Local-4",
+            5
+          ],
+          [
+            109,
+            105,
+            "2020-06-21",
+            "Local-3",
+            5
+          ]
+        ],
+        "Items": [
+          [
+            "Local-1",
+            "LC Alg. Book",
+            "Book Lab"
+          ],
+          [
+            "Local-2",
+            "LC DB. Book",
+            "Book Lab"
+          ],
+          [
+            "Local-3",
+            "LC SmarthPhone",
+            "Phone Lab"
+          ],
+          [
+            "Local-4",
+            "LC Phone 2020",
+            "Phone Lab"
+          ],
+          [
+            "Local-5",
+            "LC SmartGlass",
+            "Glasses Lab"
+          ],
+          [
+            "Local-6",
+            "LC T-Shirt XL",
+            "T-Shirt Lab"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book Lab",
+            20,
+            5,
+            0,
+            0,
+            10,
+            0,
+            0
+          ],
+          [
+            "Glasses Lab",
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0
+          ],
+          [
+            "Phone Lab",
+            0,
+            0,
+            5,
+            1,
+            0,
+            0,
+            10
+          ],
+          [
+            "T-Shirt Lab",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Orders": [
+          [
+            1,
+            1,
+            "2020-06-01",
+            "1",
+            14
+          ],
+          [
+            2,
+            1,
+            "2020-06-08",
+            "2",
+            14
+          ],
+          [
+            3,
+            2,
+            "2020-06-02",
+            "1",
+            7
+          ],
+          [
+            4,
+            3,
+            "2020-06-03",
+            "3",
+            7
+          ],
+          [
+            5,
+            4,
+            "2020-06-04",
+            "4",
+            2
+          ],
+          [
+            6,
+            4,
+            "2020-06-05",
+            "5",
+            7
+          ],
+          [
+            7,
+            5,
+            "2020-06-05",
+            "1",
+            14
+          ],
+          [
+            8,
+            5,
+            "2020-06-14",
+            "4",
+            7
+          ],
+          [
+            9,
+            5,
+            "2020-06-21",
+            "3",
+            7
+          ]
+        ],
+        "Items": [
+          [
+            "1",
+            "LC Alg. Book",
+            "Book"
+          ],
+          [
+            "2",
+            "LC DB. Book",
+            "Book"
+          ],
+          [
+            "3",
+            "LC SmarthPhone",
+            "Phone"
+          ],
+          [
+            "4",
+            "LC Phone 2020",
+            "Phone"
+          ],
+          [
+            "5",
+            "LC SmartGlass",
+            "Glasses"
+          ],
+          [
+            "6",
+            "LC T-Shirt XL",
+            "T-Shirt"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "category",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "rows": [
+          [
+            "Book",
+            28,
+            7,
+            0,
+            0,
+            14,
+            0,
+            0
+          ],
+          [
+            "Glasses",
+            0,
+            0,
+            0,
+            0,
+            7,
+            0,
+            0
+          ],
+          [
+            "Phone",
+            0,
+            0,
+            7,
+            2,
+            0,
+            0,
+            14
+          ],
+          [
+            "T-Shirt",
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

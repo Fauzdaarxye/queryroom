@@ -1,0 +1,1262 @@
+{
+  "number": 1159,
+  "slug": "market-analysis-ii",
+  "title": "Market Analysis II",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/market-analysis-ii/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1100-1199/1159.Market Analysis II/README_EN.md",
+  "schema": [
+    {
+      "name": "Users",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "join_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "favorite_brand",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "user_id is the primary key (column with unique values) of this table.\nThis table has the info of the users of an online shopping website where users can sell and buy items.",
+      "primaryKey": [
+        "user_id"
+      ]
+    },
+    {
+      "name": "Orders",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "order_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "item_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "buyer_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "seller_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "order_id is the primary key (column with unique values) of this table.\nitem_id is a foreign key (reference column) to the Items table.\nbuyer_id and seller_id are foreign keys to the Users table.",
+      "primaryKey": [
+        "order_id"
+      ]
+    },
+    {
+      "name": "Items",
+      "columns": [
+        {
+          "name": "item_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "item_brand",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "item_id is the primary key (column with unique values) of this table.",
+      "primaryKey": [
+        "item_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Users</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>user_id</td><td>int</td></tr><tr><td>join_date</td><td>date</td></tr><tr><td>favorite_brand</td><td>varchar</td></tr></tbody></table></div><p>user_id is the primary key (column with unique values) of this table.<br/>This table has the info of the users of an online shopping website where users can sell and buy items.</p>\n<p> </p>\n<p>Table: <code>Orders</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>order_id</td><td>int</td></tr><tr><td>order_date</td><td>date</td></tr><tr><td>item_id</td><td>int</td></tr><tr><td>buyer_id</td><td>int</td></tr><tr><td>seller_id</td><td>int</td></tr></tbody></table></div><p>order_id is the primary key (column with unique values) of this table.<br/>item_id is a foreign key (reference column) to the Items table.<br/>buyer_id and seller_id are foreign keys to the Users table.</p>\n<p> </p>\n<p>Table: <code>Items</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>item_id</td><td>int</td></tr><tr><td>item_brand</td><td>varchar</td></tr></tbody></table></div><p>item_id is the primary key (column with unique values) of this table.</p>\n<p> </p>\n<p>Write a solution to find for each user whether the brand of the second item (by date) they sold is their favorite brand. If a user sold less than two items, report the answer for that user as no. It is guaranteed that no seller sells more than one item in a day.</p>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Users table:</p><div class=\"statement-table\"><table><thead><tr><th>user_id</th><th>join_date</th><th>favorite_brand</th></tr></thead><tbody><tr><td>1</td><td>2019-01-01</td><td>Lenovo</td></tr><tr><td>2</td><td>2019-02-09</td><td>Samsung</td></tr><tr><td>3</td><td>2019-01-19</td><td>LG</td></tr><tr><td>4</td><td>2019-05-21</td><td>HP</td></tr></tbody></table></div><p>Orders table:</p><div class=\"statement-table\"><table><thead><tr><th>order_id</th><th>order_date</th><th>item_id</th><th>buyer_id</th><th>seller_id</th></tr></thead><tbody><tr><td>1</td><td>2019-08-01</td><td>4</td><td>1</td><td>2</td></tr><tr><td>2</td><td>2019-08-02</td><td>2</td><td>1</td><td>3</td></tr><tr><td>3</td><td>2019-08-03</td><td>3</td><td>2</td><td>3</td></tr><tr><td>4</td><td>2019-08-04</td><td>1</td><td>4</td><td>2</td></tr><tr><td>5</td><td>2019-08-04</td><td>1</td><td>3</td><td>4</td></tr><tr><td>6</td><td>2019-08-05</td><td>2</td><td>2</td><td>4</td></tr></tbody></table></div><p>Items table:</p><div class=\"statement-table\"><table><thead><tr><th>item_id</th><th>item_brand</th></tr></thead><tbody><tr><td>1</td><td>Samsung</td></tr><tr><td>2</td><td>Lenovo</td></tr><tr><td>3</td><td>LG</td></tr><tr><td>4</td><td>HP</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>seller_id</th><th>2nd_item_fav_brand</th></tr></thead><tbody><tr><td>1</td><td>no</td></tr><tr><td>2</td><td>yes</td></tr><tr><td>3</td><td>yes</td></tr><tr><td>4</td><td>no</td></tr></tbody></table></div><p>Explanation: <br/>The answer for the user with id 1 is no because they sold nothing.<br/>The answer for the users with id 2 and 3 is yes because the brands of their second sold items are their favorite brands.<br/>The answer for the user with id 4 is no because the brand of their second sold item is not their favorite brand.</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Users": [
+          [
+            1,
+            "2019-01-01",
+            "Lenovo"
+          ],
+          [
+            2,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            3,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            4,
+            "2019-05-21",
+            "HP"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2019-08-01",
+            4,
+            1,
+            2
+          ],
+          [
+            2,
+            "2019-08-02",
+            2,
+            1,
+            3
+          ],
+          [
+            3,
+            "2019-08-03",
+            3,
+            2,
+            3
+          ],
+          [
+            4,
+            "2019-08-04",
+            1,
+            4,
+            2
+          ],
+          [
+            5,
+            "2019-08-04",
+            1,
+            3,
+            4
+          ],
+          [
+            6,
+            "2019-08-05",
+            2,
+            2,
+            4
+          ]
+        ],
+        "Items": [
+          [
+            1,
+            "Samsung"
+          ],
+          [
+            2,
+            "Lenovo"
+          ],
+          [
+            3,
+            "LG"
+          ],
+          [
+            4,
+            "HP"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            1,
+            "no"
+          ],
+          [
+            2,
+            "yes"
+          ],
+          [
+            3,
+            "yes"
+          ],
+          [
+            4,
+            "no"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Users": [
+          [
+            4,
+            "2019-05-21",
+            "HP"
+          ],
+          [
+            3,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            2,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            1,
+            "2019-01-01",
+            "Lenovo"
+          ]
+        ],
+        "Orders": [
+          [
+            6,
+            "2019-08-05",
+            2,
+            2,
+            4
+          ],
+          [
+            5,
+            "2019-08-04",
+            1,
+            3,
+            4
+          ],
+          [
+            4,
+            "2019-08-04",
+            1,
+            4,
+            2
+          ],
+          [
+            3,
+            "2019-08-03",
+            3,
+            2,
+            3
+          ],
+          [
+            2,
+            "2019-08-02",
+            2,
+            1,
+            3
+          ],
+          [
+            1,
+            "2019-08-01",
+            4,
+            1,
+            2
+          ]
+        ],
+        "Items": [
+          [
+            4,
+            "HP"
+          ],
+          [
+            3,
+            "LG"
+          ],
+          [
+            2,
+            "Lenovo"
+          ],
+          [
+            1,
+            "Samsung"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            4,
+            "no"
+          ],
+          [
+            3,
+            "yes"
+          ],
+          [
+            2,
+            "yes"
+          ],
+          [
+            1,
+            "no"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Users": [
+          [
+            101,
+            "2019-01-01",
+            "Lenovo"
+          ],
+          [
+            102,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            103,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            104,
+            "2019-05-21",
+            "HP"
+          ]
+        ],
+        "Orders": [
+          [
+            101,
+            "2019-08-01",
+            104,
+            101,
+            102
+          ],
+          [
+            102,
+            "2019-08-02",
+            102,
+            101,
+            103
+          ],
+          [
+            103,
+            "2019-08-03",
+            103,
+            102,
+            103
+          ],
+          [
+            104,
+            "2019-08-04",
+            101,
+            104,
+            102
+          ],
+          [
+            105,
+            "2019-08-04",
+            101,
+            103,
+            104
+          ],
+          [
+            106,
+            "2019-08-05",
+            102,
+            102,
+            104
+          ]
+        ],
+        "Items": [
+          [
+            101,
+            "Samsung"
+          ],
+          [
+            102,
+            "Lenovo"
+          ],
+          [
+            103,
+            "LG"
+          ],
+          [
+            104,
+            "HP"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            101,
+            "no"
+          ],
+          [
+            102,
+            "yes"
+          ],
+          [
+            103,
+            "yes"
+          ],
+          [
+            104,
+            "no"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Users": [
+          [
+            1,
+            "2019-01-01",
+            "Lenovo"
+          ],
+          [
+            2,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            3,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            4,
+            "2019-05-21",
+            "HP"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2019-08-01",
+            4,
+            1,
+            2
+          ],
+          [
+            2,
+            "2019-08-02",
+            2,
+            1,
+            3
+          ],
+          [
+            3,
+            "2019-08-03",
+            3,
+            2,
+            3
+          ],
+          [
+            4,
+            "2019-08-04",
+            1,
+            4,
+            2
+          ],
+          [
+            5,
+            "2019-08-04",
+            1,
+            3,
+            4
+          ],
+          [
+            6,
+            "2019-08-05",
+            2,
+            2,
+            4
+          ]
+        ],
+        "Items": [
+          [
+            1,
+            "Samsung"
+          ],
+          [
+            2,
+            "Lenovo"
+          ],
+          [
+            3,
+            "LG"
+          ],
+          [
+            4,
+            "HP"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            1,
+            "no"
+          ],
+          [
+            2,
+            "yes"
+          ],
+          [
+            3,
+            "yes"
+          ],
+          [
+            4,
+            "no"
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Users": [
+          [
+            1,
+            "2019-01-01",
+            "Lenovo"
+          ],
+          [
+            2,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            3,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            4,
+            "2019-05-21",
+            "HP"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2019-08-01",
+            4,
+            1,
+            2
+          ],
+          [
+            2,
+            "2019-08-02",
+            2,
+            1,
+            3
+          ],
+          [
+            3,
+            "2019-08-03",
+            3,
+            2,
+            3
+          ],
+          [
+            4,
+            "2019-08-04",
+            1,
+            4,
+            2
+          ],
+          [
+            5,
+            "2019-08-04",
+            1,
+            3,
+            4
+          ],
+          [
+            6,
+            "2019-08-05",
+            2,
+            2,
+            4
+          ]
+        ],
+        "Items": [
+          [
+            1,
+            "Samsung"
+          ],
+          [
+            2,
+            "Lenovo"
+          ],
+          [
+            3,
+            "LG"
+          ],
+          [
+            4,
+            "HP"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            1,
+            "no"
+          ],
+          [
+            2,
+            "yes"
+          ],
+          [
+            3,
+            "yes"
+          ],
+          [
+            4,
+            "no"
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Users": [
+        [
+          1,
+          "2019-01-01",
+          "Lenovo"
+        ],
+        [
+          2,
+          "2019-02-09",
+          "Samsung"
+        ],
+        [
+          3,
+          "2019-01-19",
+          "LG"
+        ],
+        [
+          4,
+          "2019-05-21",
+          "HP"
+        ]
+      ],
+      "Orders": [
+        [
+          1,
+          "2019-08-01",
+          4,
+          1,
+          2
+        ],
+        [
+          2,
+          "2019-08-02",
+          2,
+          1,
+          3
+        ],
+        [
+          3,
+          "2019-08-03",
+          3,
+          2,
+          3
+        ],
+        [
+          4,
+          "2019-08-04",
+          1,
+          4,
+          2
+        ],
+        [
+          5,
+          "2019-08-04",
+          1,
+          3,
+          4
+        ],
+        [
+          6,
+          "2019-08-05",
+          2,
+          2,
+          4
+        ]
+      ],
+      "Items": [
+        [
+          1,
+          "Samsung"
+        ],
+        [
+          2,
+          "Lenovo"
+        ],
+        [
+          3,
+          "LG"
+        ],
+        [
+          4,
+          "HP"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "seller_id",
+        "2nd_item_fav_brand"
+      ],
+      "rows": [
+        [
+          1,
+          "no"
+        ],
+        [
+          2,
+          "yes"
+        ],
+        [
+          3,
+          "yes"
+        ],
+        [
+          4,
+          "no"
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "/* Write your MySQL query statement below */\nSELECT\n  u.user_id AS seller_id,\n  CASE WHEN u.favorite_brand = i.item_brand THEN 'yes' ELSE 'no' END AS \"2nd_item_fav_brand\"\nFROM users AS u\nLEFT JOIN (\n  SELECT\n    order_date,\n    item_id,\n    seller_id,\n    RANK() OVER (PARTITION BY seller_id ORDER BY order_date) AS rk\n  FROM orders\n) AS o\n  ON u.user_id = o.seller_id AND o.rk = 2\nLEFT JOIN items AS i\n  ON o.item_id = i.item_id",
+  "playlistIndex": 14,
+  "videos": [
+    {
+      "videoId": "WX1ZMgorNl0",
+      "playlistIndex": 14,
+      "url": "https://www.youtube.com/watch?v=WX1ZMgorNl0&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=14"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Users": [
+          [
+            1,
+            "2019-01-01",
+            "Lenovo"
+          ],
+          [
+            2,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            3,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            4,
+            "2019-05-21",
+            "HP"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2019-08-01",
+            4,
+            1,
+            2
+          ],
+          [
+            2,
+            "2019-08-02",
+            2,
+            1,
+            3
+          ],
+          [
+            3,
+            "2019-08-03",
+            3,
+            2,
+            3
+          ],
+          [
+            4,
+            "2019-08-04",
+            1,
+            4,
+            2
+          ],
+          [
+            5,
+            "2019-08-04",
+            1,
+            3,
+            4
+          ],
+          [
+            6,
+            "2019-08-05",
+            2,
+            2,
+            4
+          ]
+        ],
+        "Items": [
+          [
+            1,
+            "Samsung"
+          ],
+          [
+            2,
+            "Lenovo"
+          ],
+          [
+            3,
+            "LG"
+          ],
+          [
+            4,
+            "HP"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            1,
+            "no"
+          ],
+          [
+            2,
+            "yes"
+          ],
+          [
+            3,
+            "yes"
+          ],
+          [
+            4,
+            "no"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Users": [
+          [
+            4,
+            "2019-05-21",
+            "HP"
+          ],
+          [
+            3,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            2,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            1,
+            "2019-01-01",
+            "Lenovo"
+          ]
+        ],
+        "Orders": [
+          [
+            6,
+            "2019-08-05",
+            2,
+            2,
+            4
+          ],
+          [
+            5,
+            "2019-08-04",
+            1,
+            3,
+            4
+          ],
+          [
+            4,
+            "2019-08-04",
+            1,
+            4,
+            2
+          ],
+          [
+            3,
+            "2019-08-03",
+            3,
+            2,
+            3
+          ],
+          [
+            2,
+            "2019-08-02",
+            2,
+            1,
+            3
+          ],
+          [
+            1,
+            "2019-08-01",
+            4,
+            1,
+            2
+          ]
+        ],
+        "Items": [
+          [
+            4,
+            "HP"
+          ],
+          [
+            3,
+            "LG"
+          ],
+          [
+            2,
+            "Lenovo"
+          ],
+          [
+            1,
+            "Samsung"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            4,
+            "no"
+          ],
+          [
+            3,
+            "yes"
+          ],
+          [
+            2,
+            "yes"
+          ],
+          [
+            1,
+            "no"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Users": [
+          [
+            101,
+            "2019-01-01",
+            "Lenovo"
+          ],
+          [
+            102,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            103,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            104,
+            "2019-05-21",
+            "HP"
+          ]
+        ],
+        "Orders": [
+          [
+            101,
+            "2019-08-01",
+            104,
+            101,
+            102
+          ],
+          [
+            102,
+            "2019-08-02",
+            102,
+            101,
+            103
+          ],
+          [
+            103,
+            "2019-08-03",
+            103,
+            102,
+            103
+          ],
+          [
+            104,
+            "2019-08-04",
+            101,
+            104,
+            102
+          ],
+          [
+            105,
+            "2019-08-04",
+            101,
+            103,
+            104
+          ],
+          [
+            106,
+            "2019-08-05",
+            102,
+            102,
+            104
+          ]
+        ],
+        "Items": [
+          [
+            101,
+            "Samsung"
+          ],
+          [
+            102,
+            "Lenovo"
+          ],
+          [
+            103,
+            "LG"
+          ],
+          [
+            104,
+            "HP"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            101,
+            "no"
+          ],
+          [
+            102,
+            "yes"
+          ],
+          [
+            103,
+            "yes"
+          ],
+          [
+            104,
+            "no"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Users": [
+          [
+            1,
+            "2019-01-01",
+            "Lenovo"
+          ],
+          [
+            2,
+            "2019-02-09",
+            "Samsung"
+          ],
+          [
+            3,
+            "2019-01-19",
+            "LG"
+          ],
+          [
+            4,
+            "2019-05-21",
+            "HP"
+          ]
+        ],
+        "Orders": [
+          [
+            1,
+            "2019-08-01",
+            4,
+            1,
+            2
+          ],
+          [
+            2,
+            "2019-08-02",
+            2,
+            1,
+            3
+          ],
+          [
+            3,
+            "2019-08-03",
+            3,
+            2,
+            3
+          ],
+          [
+            4,
+            "2019-08-04",
+            1,
+            4,
+            2
+          ],
+          [
+            5,
+            "2019-08-04",
+            1,
+            3,
+            4
+          ],
+          [
+            6,
+            "2019-08-05",
+            2,
+            2,
+            4
+          ]
+        ],
+        "Items": [
+          [
+            1,
+            "Samsung"
+          ],
+          [
+            2,
+            "Lenovo"
+          ],
+          [
+            3,
+            "LG"
+          ],
+          [
+            4,
+            "HP"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "seller_id",
+          "2nd_item_fav_brand"
+        ],
+        "rows": [
+          [
+            1,
+            "no"
+          ],
+          [
+            2,
+            "yes"
+          ],
+          [
+            3,
+            "yes"
+          ],
+          [
+            4,
+            "no"
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

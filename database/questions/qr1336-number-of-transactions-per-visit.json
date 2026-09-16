@@ -1,0 +1,1117 @@
+{
+  "number": 1336,
+  "slug": "number-of-transactions-per-visit",
+  "title": "Number of Transactions per Visit",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/number-of-transactions-per-visit/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/1300-1399/1336.Number of Transactions per Visit/README_EN.md",
+  "schema": [
+    {
+      "name": "Visits",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "visit_date",
+          "type": "TEXT",
+          "displayType": "date"
+        }
+      ],
+      "note": "(user_id, visit_date) is the primary key (combination of columns with unique values) for this table.\nEach row of this table indicates that user_id has visited the bank in visit_date.",
+      "primaryKey": [
+        "user_id",
+        "visit_date"
+      ]
+    },
+    {
+      "name": "Transactions",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "transaction_date",
+          "type": "TEXT",
+          "displayType": "date"
+        },
+        {
+          "name": "amount",
+          "type": "INTEGER",
+          "displayType": "int"
+        }
+      ],
+      "note": "This table may contain duplicates rows.\nEach row of this table indicates that user_id has done a transaction of amount in transaction_date.\nIt is guaranteed that the user has visited the bank in the transaction_date.(i.e The Visits table contains (user_id, transaction_date) in one row)"
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Visits</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>user_id</td><td>int</td></tr><tr><td>visit_date</td><td>date</td></tr></tbody></table></div><p>(user_id, visit_date) is the primary key (combination of columns with unique values) for this table.<br/>Each row of this table indicates that user_id has visited the bank in visit_date.</p>\n<p> </p>\n<p>Table: <code>Transactions</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>user_id</td><td>int</td></tr><tr><td>transaction_date</td><td>date</td></tr><tr><td>amount</td><td>int</td></tr></tbody></table></div><p>This table may contain duplicates rows.<br/>Each row of this table indicates that user_id has done a transaction of amount in transaction_date.<br/>It is guaranteed that the user has visited the bank in the transaction_date.(i.e The Visits table contains (user_id, transaction_date) in one row)</p>\n<p> </p>\n<p>A bank wants to draw a chart of the number of transactions bank visitors did in one visit to the bank and the corresponding number of visitors who have done this number of transaction in one visit.</p>\n<p>Write a solution to find how many users visited the bank and didn't do any transactions, how many visited the bank and did one transaction, and so on.</p>\n<p>The result table will contain two columns:</p>\n<ul>\n<li><code>transactions_count</code> which is the number of transactions done in one visit.</li>\n<li><code>visits_count</code> which is the corresponding number of users who did <code>transactions_count</code> in one visit to the bank.</li>\n</ul>\n<p><code>transactions_count</code> should take all values from <code>0</code> to <code>max(transactions_count)</code> done by one or more users.</p>\n<p>Return the result table ordered by <code>transactions_count</code>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<img alt=\"Problem example illustration\" loading=\"lazy\" src=\"/problem-assets/1336-chart.png\"/>\n<p>Input: <br/>Visits table:</p><div class=\"statement-table\"><table><thead><tr><th>user_id</th><th>visit_date</th></tr></thead><tbody><tr><td>1</td><td>2020-01-01</td></tr><tr><td>2</td><td>2020-01-02</td></tr><tr><td>12</td><td>2020-01-01</td></tr><tr><td>19</td><td>2020-01-03</td></tr><tr><td>1</td><td>2020-01-02</td></tr><tr><td>2</td><td>2020-01-03</td></tr><tr><td>1</td><td>2020-01-04</td></tr><tr><td>7</td><td>2020-01-11</td></tr><tr><td>9</td><td>2020-01-25</td></tr><tr><td>8</td><td>2020-01-28</td></tr></tbody></table></div><p>Transactions table:</p><div class=\"statement-table\"><table><thead><tr><th>user_id</th><th>transaction_date</th><th>amount</th></tr></thead><tbody><tr><td>1</td><td>2020-01-02</td><td>120</td></tr><tr><td>2</td><td>2020-01-03</td><td>22</td></tr><tr><td>7</td><td>2020-01-11</td><td>232</td></tr><tr><td>1</td><td>2020-01-04</td><td>7</td></tr><tr><td>9</td><td>2020-01-25</td><td>33</td></tr><tr><td>9</td><td>2020-01-25</td><td>66</td></tr><tr><td>8</td><td>2020-01-28</td><td>1</td></tr><tr><td>9</td><td>2020-01-25</td><td>99</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>transactions_count</th><th>visits_count</th></tr></thead><tbody><tr><td>0</td><td>4</td></tr><tr><td>1</td><td>5</td></tr><tr><td>2</td><td>0</td></tr><tr><td>3</td><td>1</td></tr></tbody></table></div><p>Explanation: The chart drawn for this example is shown above.<br/>* For transactions_count = 0, The visits (1, \"2020-01-01\"), (2, \"2020-01-02\"), (12, \"2020-01-01\") and (19, \"2020-01-03\") did no transactions so visits_count = 4.<br/>* For transactions_count = 1, The visits (2, \"2020-01-03\"), (7, \"2020-01-11\"), (8, \"2020-01-28\"), (1, \"2020-01-02\") and (1, \"2020-01-04\") did one transaction so visits_count = 5.<br/>* For transactions_count = 2, No customers visited the bank and did two transactions so visits_count = 0.<br/>* For transactions_count = 3, The visit (9, \"2020-01-25\") did three transactions so visits_count = 1.<br/>* For transactions_count &gt;= 4, No customers visited the bank and did more than three transactions so we will stop at transactions_count = 3</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Visits": [
+          [
+            1,
+            "2020-01-01"
+          ],
+          [
+            2,
+            "2020-01-02"
+          ],
+          [
+            12,
+            "2020-01-01"
+          ],
+          [
+            19,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-02"
+          ],
+          [
+            2,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-04"
+          ],
+          [
+            7,
+            "2020-01-11"
+          ],
+          [
+            9,
+            "2020-01-25"
+          ],
+          [
+            8,
+            "2020-01-28"
+          ]
+        ],
+        "Transactions": [
+          [
+            1,
+            "2020-01-02",
+            120
+          ],
+          [
+            2,
+            "2020-01-03",
+            22
+          ],
+          [
+            7,
+            "2020-01-11",
+            232
+          ],
+          [
+            1,
+            "2020-01-04",
+            7
+          ],
+          [
+            9,
+            "2020-01-25",
+            33
+          ],
+          [
+            9,
+            "2020-01-25",
+            66
+          ],
+          [
+            8,
+            "2020-01-28",
+            1
+          ],
+          [
+            9,
+            "2020-01-25",
+            99
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Visits": [
+          [
+            8,
+            "2020-01-28"
+          ],
+          [
+            9,
+            "2020-01-25"
+          ],
+          [
+            7,
+            "2020-01-11"
+          ],
+          [
+            1,
+            "2020-01-04"
+          ],
+          [
+            2,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-02"
+          ],
+          [
+            19,
+            "2020-01-03"
+          ],
+          [
+            12,
+            "2020-01-01"
+          ],
+          [
+            2,
+            "2020-01-02"
+          ],
+          [
+            1,
+            "2020-01-01"
+          ]
+        ],
+        "Transactions": [
+          [
+            9,
+            "2020-01-25",
+            99
+          ],
+          [
+            8,
+            "2020-01-28",
+            1
+          ],
+          [
+            9,
+            "2020-01-25",
+            66
+          ],
+          [
+            9,
+            "2020-01-25",
+            33
+          ],
+          [
+            1,
+            "2020-01-04",
+            7
+          ],
+          [
+            7,
+            "2020-01-11",
+            232
+          ],
+          [
+            2,
+            "2020-01-03",
+            22
+          ],
+          [
+            1,
+            "2020-01-02",
+            120
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Visits": [
+          [
+            101,
+            "2020-01-01"
+          ],
+          [
+            102,
+            "2020-01-02"
+          ],
+          [
+            112,
+            "2020-01-01"
+          ],
+          [
+            119,
+            "2020-01-03"
+          ],
+          [
+            101,
+            "2020-01-02"
+          ],
+          [
+            102,
+            "2020-01-03"
+          ],
+          [
+            101,
+            "2020-01-04"
+          ],
+          [
+            107,
+            "2020-01-11"
+          ],
+          [
+            109,
+            "2020-01-25"
+          ],
+          [
+            108,
+            "2020-01-28"
+          ]
+        ],
+        "Transactions": [
+          [
+            101,
+            "2020-01-02",
+            120
+          ],
+          [
+            102,
+            "2020-01-03",
+            22
+          ],
+          [
+            107,
+            "2020-01-11",
+            232
+          ],
+          [
+            101,
+            "2020-01-04",
+            7
+          ],
+          [
+            109,
+            "2020-01-25",
+            33
+          ],
+          [
+            109,
+            "2020-01-25",
+            66
+          ],
+          [
+            108,
+            "2020-01-28",
+            1
+          ],
+          [
+            109,
+            "2020-01-25",
+            99
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Visits": [
+          [
+            1,
+            "2020-01-01"
+          ],
+          [
+            2,
+            "2020-01-01"
+          ],
+          [
+            3,
+            "2020-01-02"
+          ]
+        ],
+        "Transactions": [
+          [
+            2,
+            "2020-01-01",
+            10
+          ],
+          [
+            3,
+            "2020-01-02",
+            20
+          ],
+          [
+            3,
+            "2020-01-02",
+            30
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Visits": [
+          [
+            1,
+            "2020-01-01"
+          ],
+          [
+            2,
+            "2020-01-02"
+          ],
+          [
+            12,
+            "2020-01-01"
+          ],
+          [
+            19,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-02"
+          ],
+          [
+            2,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-04"
+          ],
+          [
+            7,
+            "2020-01-11"
+          ],
+          [
+            9,
+            "2020-01-25"
+          ],
+          [
+            8,
+            "2020-01-28"
+          ]
+        ],
+        "Transactions": [
+          [
+            1,
+            "2020-01-02",
+            120
+          ],
+          [
+            2,
+            "2020-01-03",
+            22
+          ],
+          [
+            7,
+            "2020-01-11",
+            232
+          ],
+          [
+            1,
+            "2020-01-04",
+            7
+          ],
+          [
+            9,
+            "2020-01-25",
+            33
+          ],
+          [
+            9,
+            "2020-01-25",
+            66
+          ],
+          [
+            8,
+            "2020-01-28",
+            1
+          ],
+          [
+            9,
+            "2020-01-25",
+            99
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Visits": [
+        [
+          1,
+          "2020-01-01"
+        ],
+        [
+          2,
+          "2020-01-02"
+        ],
+        [
+          12,
+          "2020-01-01"
+        ],
+        [
+          19,
+          "2020-01-03"
+        ],
+        [
+          1,
+          "2020-01-02"
+        ],
+        [
+          2,
+          "2020-01-03"
+        ],
+        [
+          1,
+          "2020-01-04"
+        ],
+        [
+          7,
+          "2020-01-11"
+        ],
+        [
+          9,
+          "2020-01-25"
+        ],
+        [
+          8,
+          "2020-01-28"
+        ]
+      ],
+      "Transactions": [
+        [
+          1,
+          "2020-01-02",
+          120
+        ],
+        [
+          2,
+          "2020-01-03",
+          22
+        ],
+        [
+          7,
+          "2020-01-11",
+          232
+        ],
+        [
+          1,
+          "2020-01-04",
+          7
+        ],
+        [
+          9,
+          "2020-01-25",
+          33
+        ],
+        [
+          9,
+          "2020-01-25",
+          66
+        ],
+        [
+          8,
+          "2020-01-28",
+          1
+        ],
+        [
+          9,
+          "2020-01-25",
+          99
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "transactions_count",
+        "visits_count"
+      ],
+      "rows": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    }
+  },
+  "orderMatters": true,
+  "referenceSql": "/* Write your MySQL query statement below */\nWITH RECURSIVE S AS (\n  SELECT\n    0 AS n\n  UNION\n  SELECT\n    n + 1\n  FROM S\n  WHERE\n    n < (\n      SELECT\n        MAX(cnt)\n      FROM (\n        SELECT\n          COUNT(1) AS cnt\n        FROM Transactions\n        GROUP BY\n          user_id,\n          transaction_date\n      ) AS t\n    )\n), T AS (\n  SELECT\n    v.user_id,\n    visit_date,\n    COALESCE(cnt, 0) AS cnt\n  FROM Visits AS v\n  LEFT JOIN (\n    SELECT\n      user_id,\n      transaction_date,\n      COUNT(1) AS cnt\n    FROM Transactions\n    GROUP BY\n      1,\n      2\n  ) AS t\n    ON v.user_id = t.user_id AND v.visit_date = t.transaction_date\n)\nSELECT\n  n AS transactions_count,\n  COUNT(user_id) AS visits_count\nFROM S AS s\nLEFT JOIN T AS t\n  ON s.n = t.cnt\nGROUP BY\n  n\nORDER BY\n  n",
+  "playlistIndex": 37,
+  "videos": [
+    {
+      "videoId": "aCb49Ilv_1E",
+      "playlistIndex": 37,
+      "url": "https://www.youtube.com/watch?v=aCb49Ilv_1E&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=37"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [
+    {
+      "column": "transactions_count",
+      "direction": "asc"
+    }
+  ],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Visits": [
+          [
+            1,
+            "2020-01-01"
+          ],
+          [
+            2,
+            "2020-01-02"
+          ],
+          [
+            12,
+            "2020-01-01"
+          ],
+          [
+            19,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-02"
+          ],
+          [
+            2,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-04"
+          ],
+          [
+            7,
+            "2020-01-11"
+          ],
+          [
+            9,
+            "2020-01-25"
+          ],
+          [
+            8,
+            "2020-01-28"
+          ]
+        ],
+        "Transactions": [
+          [
+            1,
+            "2020-01-02",
+            120
+          ],
+          [
+            2,
+            "2020-01-03",
+            22
+          ],
+          [
+            7,
+            "2020-01-11",
+            232
+          ],
+          [
+            1,
+            "2020-01-04",
+            7
+          ],
+          [
+            9,
+            "2020-01-25",
+            33
+          ],
+          [
+            9,
+            "2020-01-25",
+            66
+          ],
+          [
+            8,
+            "2020-01-28",
+            1
+          ],
+          [
+            9,
+            "2020-01-25",
+            99
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Visits": [
+          [
+            8,
+            "2020-01-28"
+          ],
+          [
+            9,
+            "2020-01-25"
+          ],
+          [
+            7,
+            "2020-01-11"
+          ],
+          [
+            1,
+            "2020-01-04"
+          ],
+          [
+            2,
+            "2020-01-03"
+          ],
+          [
+            1,
+            "2020-01-02"
+          ],
+          [
+            19,
+            "2020-01-03"
+          ],
+          [
+            12,
+            "2020-01-01"
+          ],
+          [
+            2,
+            "2020-01-02"
+          ],
+          [
+            1,
+            "2020-01-01"
+          ]
+        ],
+        "Transactions": [
+          [
+            9,
+            "2020-01-25",
+            99
+          ],
+          [
+            8,
+            "2020-01-28",
+            1
+          ],
+          [
+            9,
+            "2020-01-25",
+            66
+          ],
+          [
+            9,
+            "2020-01-25",
+            33
+          ],
+          [
+            1,
+            "2020-01-04",
+            7
+          ],
+          [
+            7,
+            "2020-01-11",
+            232
+          ],
+          [
+            2,
+            "2020-01-03",
+            22
+          ],
+          [
+            1,
+            "2020-01-02",
+            120
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Visits": [
+          [
+            101,
+            "2020-01-01"
+          ],
+          [
+            102,
+            "2020-01-02"
+          ],
+          [
+            112,
+            "2020-01-01"
+          ],
+          [
+            119,
+            "2020-01-03"
+          ],
+          [
+            101,
+            "2020-01-02"
+          ],
+          [
+            102,
+            "2020-01-03"
+          ],
+          [
+            101,
+            "2020-01-04"
+          ],
+          [
+            107,
+            "2020-01-11"
+          ],
+          [
+            109,
+            "2020-01-25"
+          ],
+          [
+            108,
+            "2020-01-28"
+          ]
+        ],
+        "Transactions": [
+          [
+            101,
+            "2020-01-02",
+            120
+          ],
+          [
+            102,
+            "2020-01-03",
+            22
+          ],
+          [
+            107,
+            "2020-01-11",
+            232
+          ],
+          [
+            101,
+            "2020-01-04",
+            7
+          ],
+          [
+            109,
+            "2020-01-25",
+            33
+          ],
+          [
+            109,
+            "2020-01-25",
+            66
+          ],
+          [
+            108,
+            "2020-01-28",
+            1
+          ],
+          [
+            109,
+            "2020-01-25",
+            99
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            3,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Visits": [
+          [
+            1,
+            "2020-01-01"
+          ],
+          [
+            2,
+            "2020-01-01"
+          ],
+          [
+            3,
+            "2020-01-02"
+          ]
+        ],
+        "Transactions": [
+          [
+            2,
+            "2020-01-01",
+            10
+          ],
+          [
+            3,
+            "2020-01-02",
+            20
+          ],
+          [
+            3,
+            "2020-01-02",
+            30
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "transactions_count",
+          "visits_count"
+        ],
+        "rows": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}

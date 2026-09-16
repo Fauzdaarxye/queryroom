@@ -1,0 +1,1608 @@
+{
+  "number": 262,
+  "slug": "trips-and-users",
+  "title": "Trips and Users",
+  "difficulty": "Hard",
+  "category": "Database",
+  "source": "https://leetcode.com/problems/trips-and-users/description/",
+  "reference": "https://github.com/doocs/leetcode/blob/main/solution/0200-0299/0262.Trips and Users/README_EN.md",
+  "schema": [
+    {
+      "name": "Trips",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "client_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "driver_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "city_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "status",
+          "type": "TEXT",
+          "displayType": "enum"
+        },
+        {
+          "name": "request_at",
+          "type": "TEXT",
+          "displayType": "varchar"
+        }
+      ],
+      "note": "id is the primary key (column with unique values) for this table.\nThe table holds all taxi trips. Each trip has a unique id, while client_id and driver_id are foreign keys to the users_id at the Users table.\nStatus is an ENUM (category) type of ('completed', 'cancelled_by_driver', 'cancelled_by_client').",
+      "primaryKey": [
+        "id"
+      ]
+    },
+    {
+      "name": "Users",
+      "columns": [
+        {
+          "name": "users_id",
+          "type": "INTEGER",
+          "displayType": "int"
+        },
+        {
+          "name": "banned",
+          "type": "TEXT",
+          "displayType": "enum"
+        },
+        {
+          "name": "role",
+          "type": "TEXT",
+          "displayType": "enum"
+        }
+      ],
+      "note": "users_id is the primary key (column with unique values) for this table.\nThe table holds all users. Each user has a unique users_id, and role is an ENUM type of ('client', 'driver', 'partner').\nbanned is an ENUM (category) type of ('Yes', 'No').",
+      "primaryKey": [
+        "users_id"
+      ]
+    }
+  ],
+  "starter": "-- Write your SQL query below\n\n",
+  "statementHtml": "\n<p>Table: <code>Trips</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>id</td><td>int</td></tr><tr><td>client_id</td><td>int</td></tr><tr><td>driver_id</td><td>int</td></tr><tr><td>city_id</td><td>int</td></tr><tr><td>status</td><td>enum</td></tr><tr><td>request_at</td><td>varchar</td></tr></tbody></table></div><p>id is the primary key (column with unique values) for this table.<br/>The table holds all taxi trips. Each trip has a unique id, while client_id and driver_id are foreign keys to the users_id at the Users table.<br/>Status is an ENUM (category) type of ('completed', 'cancelled_by_driver', 'cancelled_by_client').</p>\n<p> </p>\n<p>Table: <code>Users</code></p>\n<div class=\"statement-table\"><table><thead><tr><th>Column Name</th><th>Type</th></tr></thead><tbody><tr><td>users_id</td><td>int</td></tr><tr><td>banned</td><td>enum</td></tr><tr><td>role</td><td>enum</td></tr></tbody></table></div><p>users_id is the primary key (column with unique values) for this table.<br/>The table holds all users. Each user has a unique users_id, and role is an ENUM type of ('client', 'driver', 'partner').<br/>banned is an ENUM (category) type of ('Yes', 'No').</p>\n<p> </p>\n<p>The <strong>cancellation rate</strong> is computed by dividing the number of canceled (by client or driver) requests with unbanned users by the total number of requests with unbanned users on that day.</p>\n<p>Write a solution to find the <strong>cancellation rate</strong> of requests with unbanned users (<strong>both client and driver must not be banned</strong>) each day between <code>\"2013-10-01\"</code> and <code>\"2013-10-03\"</code> with <strong>at least</strong> one trip. Round <code>Cancellation Rate</code> to <strong>two decimal</strong> points.</p>\n<p>Return the result table in <strong>any order</strong>.</p>\n<p>The result format is in the following example.</p>\n<p> </p>\n<p><strong>Example 1:</strong></p>\n<p>Input: <br/>Trips table:</p><div class=\"statement-table\"><table><thead><tr><th>id</th><th>client_id</th><th>driver_id</th><th>city_id</th><th>status</th><th>request_at</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>10</td><td>1</td><td>completed</td><td>2013-10-01</td></tr><tr><td>2</td><td>2</td><td>11</td><td>1</td><td>cancelled_by_driver</td><td>2013-10-01</td></tr><tr><td>3</td><td>3</td><td>12</td><td>6</td><td>completed</td><td>2013-10-01</td></tr><tr><td>4</td><td>4</td><td>13</td><td>6</td><td>cancelled_by_client</td><td>2013-10-01</td></tr><tr><td>5</td><td>1</td><td>10</td><td>1</td><td>completed</td><td>2013-10-02</td></tr><tr><td>6</td><td>2</td><td>11</td><td>6</td><td>completed</td><td>2013-10-02</td></tr><tr><td>7</td><td>3</td><td>12</td><td>6</td><td>completed</td><td>2013-10-02</td></tr><tr><td>8</td><td>2</td><td>12</td><td>12</td><td>completed</td><td>2013-10-03</td></tr><tr><td>9</td><td>3</td><td>10</td><td>12</td><td>completed</td><td>2013-10-03</td></tr><tr><td>10</td><td>4</td><td>13</td><td>12</td><td>cancelled_by_driver</td><td>2013-10-03</td></tr></tbody></table></div><p>Users table:</p><div class=\"statement-table\"><table><thead><tr><th>users_id</th><th>banned</th><th>role</th></tr></thead><tbody><tr><td>1</td><td>No</td><td>client</td></tr><tr><td>2</td><td>Yes</td><td>client</td></tr><tr><td>3</td><td>No</td><td>client</td></tr><tr><td>4</td><td>No</td><td>client</td></tr><tr><td>10</td><td>No</td><td>driver</td></tr><tr><td>11</td><td>No</td><td>driver</td></tr><tr><td>12</td><td>No</td><td>driver</td></tr><tr><td>13</td><td>No</td><td>driver</td></tr></tbody></table></div><p>Output:</p><div class=\"statement-table\"><table><thead><tr><th>Day</th><th>Cancellation Rate</th></tr></thead><tbody><tr><td>2013-10-01</td><td>0.33</td></tr><tr><td>2013-10-02</td><td>0.00</td></tr><tr><td>2013-10-03</td><td>0.50</td></tr></tbody></table></div><p>Explanation: <br/>On 2013-10-01:<br/>  - There were 4 requests in total, 2 of which were canceled.<br/>  - However, the request with Id=2 was made by a banned client (User_Id=2), so it is ignored in the calculation.<br/>  - Hence there are 3 unbanned requests in total, 1 of which was canceled.<br/>  - The Cancellation Rate is (1 / 3) = 0.33<br/>On 2013-10-02:<br/>  - There were 3 requests in total, 0 of which were canceled.<br/>  - The request with Id=6 was made by a banned client, so it is ignored.<br/>  - Hence there are 2 unbanned requests in total, 0 of which were canceled.<br/>  - The Cancellation Rate is (0 / 2) = 0.00<br/>On 2013-10-03:<br/>  - There were 3 requests in total, 1 of which was canceled.<br/>  - The request with Id=8 was made by a banned client, so it is ignored.<br/>  - Hence there are 2 unbanned request in total, 1 of which were canceled.<br/>  - The Cancellation Rate is (1 / 2) = 0.50</p>\n",
+  "practiceCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Trips": [
+          [
+            1,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            2,
+            2,
+            11,
+            1,
+            "cancelled_by_driver",
+            "2013-10-01"
+          ],
+          [
+            3,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            4,
+            4,
+            13,
+            6,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            5,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            6,
+            2,
+            11,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            7,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            8,
+            2,
+            12,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            9,
+            3,
+            10,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            10,
+            4,
+            13,
+            12,
+            "cancelled_by_driver",
+            "2013-10-03"
+          ]
+        ],
+        "Users": [
+          [
+            1,
+            "No",
+            "client"
+          ],
+          [
+            2,
+            "Yes",
+            "client"
+          ],
+          [
+            3,
+            "No",
+            "client"
+          ],
+          [
+            4,
+            "No",
+            "client"
+          ],
+          [
+            10,
+            "No",
+            "driver"
+          ],
+          [
+            11,
+            "No",
+            "driver"
+          ],
+          [
+            12,
+            "No",
+            "driver"
+          ],
+          [
+            13,
+            "No",
+            "driver"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Trips": [
+          [
+            10,
+            4,
+            13,
+            12,
+            "cancelled_by_driver",
+            "2013-10-03"
+          ],
+          [
+            9,
+            3,
+            10,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            8,
+            2,
+            12,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            7,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            6,
+            2,
+            11,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            5,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            4,
+            4,
+            13,
+            6,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            3,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            2,
+            2,
+            11,
+            1,
+            "cancelled_by_driver",
+            "2013-10-01"
+          ],
+          [
+            1,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-01"
+          ]
+        ],
+        "Users": [
+          [
+            13,
+            "No",
+            "driver"
+          ],
+          [
+            12,
+            "No",
+            "driver"
+          ],
+          [
+            11,
+            "No",
+            "driver"
+          ],
+          [
+            10,
+            "No",
+            "driver"
+          ],
+          [
+            4,
+            "No",
+            "client"
+          ],
+          [
+            3,
+            "No",
+            "client"
+          ],
+          [
+            2,
+            "Yes",
+            "client"
+          ],
+          [
+            1,
+            "No",
+            "client"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Trips": [
+          [
+            101,
+            101,
+            110,
+            101,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            102,
+            102,
+            111,
+            101,
+            "cancelled_by_driver",
+            "2013-10-01"
+          ],
+          [
+            103,
+            103,
+            112,
+            106,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            104,
+            104,
+            113,
+            106,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            105,
+            101,
+            110,
+            101,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            106,
+            102,
+            111,
+            106,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            107,
+            103,
+            112,
+            106,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            108,
+            102,
+            112,
+            112,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            109,
+            103,
+            110,
+            112,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            110,
+            104,
+            113,
+            112,
+            "cancelled_by_driver",
+            "2013-10-03"
+          ]
+        ],
+        "Users": [
+          [
+            101,
+            "No",
+            "client"
+          ],
+          [
+            102,
+            "Yes",
+            "client"
+          ],
+          [
+            103,
+            "No",
+            "client"
+          ],
+          [
+            104,
+            "No",
+            "client"
+          ],
+          [
+            110,
+            "No",
+            "driver"
+          ],
+          [
+            111,
+            "No",
+            "driver"
+          ],
+          [
+            112,
+            "No",
+            "driver"
+          ],
+          [
+            113,
+            "No",
+            "driver"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Trips": [
+          [
+            1,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            2,
+            2,
+            11,
+            1,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            3,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            4,
+            4,
+            13,
+            6,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            5,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            6,
+            2,
+            11,
+            6,
+            "cancelled_by_client",
+            "2013-10-02"
+          ],
+          [
+            7,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            8,
+            2,
+            12,
+            12,
+            "cancelled_by_client",
+            "2013-10-03"
+          ],
+          [
+            9,
+            3,
+            10,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            10,
+            4,
+            13,
+            12,
+            "cancelled_by_client",
+            "2013-10-03"
+          ]
+        ],
+        "Users": [
+          [
+            1,
+            "No",
+            "client"
+          ],
+          [
+            2,
+            "Yes",
+            "client"
+          ],
+          [
+            3,
+            "No",
+            "client"
+          ],
+          [
+            4,
+            "No",
+            "client"
+          ],
+          [
+            10,
+            "No",
+            "driver"
+          ],
+          [
+            11,
+            "No",
+            "driver"
+          ],
+          [
+            12,
+            "No",
+            "driver"
+          ],
+          [
+            13,
+            "No",
+            "driver"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "input": {
+        "Trips": [
+          [
+            1,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            2,
+            2,
+            11,
+            1,
+            "cancelled_by_driver",
+            "2013-10-01"
+          ],
+          [
+            3,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            4,
+            4,
+            13,
+            6,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            5,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            6,
+            2,
+            11,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            7,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            8,
+            2,
+            12,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            9,
+            3,
+            10,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            10,
+            4,
+            13,
+            12,
+            "cancelled_by_driver",
+            "2013-10-03"
+          ]
+        ],
+        "Users": [
+          [
+            1,
+            "No",
+            "client"
+          ],
+          [
+            2,
+            "Yes",
+            "client"
+          ],
+          [
+            3,
+            "No",
+            "client"
+          ],
+          [
+            4,
+            "No",
+            "client"
+          ],
+          [
+            10,
+            "No",
+            "driver"
+          ],
+          [
+            11,
+            "No",
+            "driver"
+          ],
+          [
+            12,
+            "No",
+            "driver"
+          ],
+          [
+            13,
+            "No",
+            "driver"
+          ]
+        ]
+      },
+      "output": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    }
+  ],
+  "example": {
+    "input": {
+      "Trips": [
+        [
+          1,
+          1,
+          10,
+          1,
+          "completed",
+          "2013-10-01"
+        ],
+        [
+          2,
+          2,
+          11,
+          1,
+          "cancelled_by_driver",
+          "2013-10-01"
+        ],
+        [
+          3,
+          3,
+          12,
+          6,
+          "completed",
+          "2013-10-01"
+        ],
+        [
+          4,
+          4,
+          13,
+          6,
+          "cancelled_by_client",
+          "2013-10-01"
+        ],
+        [
+          5,
+          1,
+          10,
+          1,
+          "completed",
+          "2013-10-02"
+        ],
+        [
+          6,
+          2,
+          11,
+          6,
+          "completed",
+          "2013-10-02"
+        ],
+        [
+          7,
+          3,
+          12,
+          6,
+          "completed",
+          "2013-10-02"
+        ],
+        [
+          8,
+          2,
+          12,
+          12,
+          "completed",
+          "2013-10-03"
+        ],
+        [
+          9,
+          3,
+          10,
+          12,
+          "completed",
+          "2013-10-03"
+        ],
+        [
+          10,
+          4,
+          13,
+          12,
+          "cancelled_by_driver",
+          "2013-10-03"
+        ]
+      ],
+      "Users": [
+        [
+          1,
+          "No",
+          "client"
+        ],
+        [
+          2,
+          "Yes",
+          "client"
+        ],
+        [
+          3,
+          "No",
+          "client"
+        ],
+        [
+          4,
+          "No",
+          "client"
+        ],
+        [
+          10,
+          "No",
+          "driver"
+        ],
+        [
+          11,
+          "No",
+          "driver"
+        ],
+        [
+          12,
+          "No",
+          "driver"
+        ],
+        [
+          13,
+          "No",
+          "driver"
+        ]
+      ]
+    },
+    "output": {
+      "columns": [
+        "Day",
+        "Cancellation Rate"
+      ],
+      "rows": [
+        [
+          "2013-10-01",
+          0.33
+        ],
+        [
+          "2013-10-02",
+          0
+        ],
+        [
+          "2013-10-03",
+          0.5
+        ]
+      ]
+    }
+  },
+  "orderMatters": false,
+  "referenceSql": "/* Write your MySQL query statement below */\nSELECT\n  request_at AS Day,\n  ROUND(AVG(status <> 'completed'), 2) AS \"Cancellation Rate\"\nFROM Trips AS t\nJOIN Users AS u1\n  ON (\n    t.client_id = u1.users_id AND u1.banned = 'No'\n  )\nJOIN Users AS u2\n  ON (\n    t.driver_id = u2.users_id AND u2.banned = 'No'\n  )\nWHERE\n  request_at BETWEEN '2013-10-01' AND '2013-10-03'\nGROUP BY\n  request_at",
+  "playlistIndex": 22,
+  "videos": [
+    {
+      "videoId": "AFEDK-g2HDc",
+      "playlistIndex": 22,
+      "url": "https://www.youtube.com/watch?v=AFEDK-g2HDc&list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA&index=22"
+    }
+  ],
+  "playlist": "Leetcode SQL Hard",
+  "playlistUrl": "https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA",
+  "orderBy": [],
+  "submissionCases": [
+    {
+      "id": "example",
+      "name": "Example 1",
+      "kind": "Published example",
+      "description": "An example from the question.",
+      "input": {
+        "Trips": [
+          [
+            1,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            2,
+            2,
+            11,
+            1,
+            "cancelled_by_driver",
+            "2013-10-01"
+          ],
+          [
+            3,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            4,
+            4,
+            13,
+            6,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            5,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            6,
+            2,
+            11,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            7,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            8,
+            2,
+            12,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            9,
+            3,
+            10,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            10,
+            4,
+            13,
+            12,
+            "cancelled_by_driver",
+            "2013-10-03"
+          ]
+        ],
+        "Users": [
+          [
+            1,
+            "No",
+            "client"
+          ],
+          [
+            2,
+            "Yes",
+            "client"
+          ],
+          [
+            3,
+            "No",
+            "client"
+          ],
+          [
+            4,
+            "No",
+            "client"
+          ],
+          [
+            10,
+            "No",
+            "driver"
+          ],
+          [
+            11,
+            "No",
+            "driver"
+          ],
+          [
+            12,
+            "No",
+            "driver"
+          ],
+          [
+            13,
+            "No",
+            "driver"
+          ]
+        ]
+      },
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reordered",
+      "name": "Different input order",
+      "description": "The same example rows in a different insertion order. Input order must not determine your answer.",
+      "input": {
+        "Trips": [
+          [
+            10,
+            4,
+            13,
+            12,
+            "cancelled_by_driver",
+            "2013-10-03"
+          ],
+          [
+            9,
+            3,
+            10,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            8,
+            2,
+            12,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            7,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            6,
+            2,
+            11,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            5,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            4,
+            4,
+            13,
+            6,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            3,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            2,
+            2,
+            11,
+            1,
+            "cancelled_by_driver",
+            "2013-10-01"
+          ],
+          [
+            1,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-01"
+          ]
+        ],
+        "Users": [
+          [
+            13,
+            "No",
+            "driver"
+          ],
+          [
+            12,
+            "No",
+            "driver"
+          ],
+          [
+            11,
+            "No",
+            "driver"
+          ],
+          [
+            10,
+            "No",
+            "driver"
+          ],
+          [
+            4,
+            "No",
+            "client"
+          ],
+          [
+            3,
+            "No",
+            "client"
+          ],
+          [
+            2,
+            "Yes",
+            "client"
+          ],
+          [
+            1,
+            "No",
+            "client"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "new-identifiers",
+      "name": "Different IDs and labels",
+      "description": "Consistently changed identifiers and labels check that your query works beyond the sample values.",
+      "input": {
+        "Trips": [
+          [
+            101,
+            101,
+            110,
+            101,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            102,
+            102,
+            111,
+            101,
+            "cancelled_by_driver",
+            "2013-10-01"
+          ],
+          [
+            103,
+            103,
+            112,
+            106,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            104,
+            104,
+            113,
+            106,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            105,
+            101,
+            110,
+            101,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            106,
+            102,
+            111,
+            106,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            107,
+            103,
+            112,
+            106,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            108,
+            102,
+            112,
+            112,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            109,
+            103,
+            110,
+            112,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            110,
+            104,
+            113,
+            112,
+            "cancelled_by_driver",
+            "2013-10-03"
+          ]
+        ],
+        "Users": [
+          [
+            101,
+            "No",
+            "client"
+          ],
+          [
+            102,
+            "Yes",
+            "client"
+          ],
+          [
+            103,
+            "No",
+            "client"
+          ],
+          [
+            104,
+            "No",
+            "client"
+          ],
+          [
+            110,
+            "No",
+            "driver"
+          ],
+          [
+            111,
+            "No",
+            "driver"
+          ],
+          [
+            112,
+            "No",
+            "driver"
+          ],
+          [
+            113,
+            "No",
+            "driver"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    },
+    {
+      "id": "varied-data",
+      "name": "Additional practice data",
+      "description": "A variation of the example with different values or an additional edge case.",
+      "input": {
+        "Trips": [
+          [
+            1,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            2,
+            2,
+            11,
+            1,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            3,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-01"
+          ],
+          [
+            4,
+            4,
+            13,
+            6,
+            "cancelled_by_client",
+            "2013-10-01"
+          ],
+          [
+            5,
+            1,
+            10,
+            1,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            6,
+            2,
+            11,
+            6,
+            "cancelled_by_client",
+            "2013-10-02"
+          ],
+          [
+            7,
+            3,
+            12,
+            6,
+            "completed",
+            "2013-10-02"
+          ],
+          [
+            8,
+            2,
+            12,
+            12,
+            "cancelled_by_client",
+            "2013-10-03"
+          ],
+          [
+            9,
+            3,
+            10,
+            12,
+            "completed",
+            "2013-10-03"
+          ],
+          [
+            10,
+            4,
+            13,
+            12,
+            "cancelled_by_client",
+            "2013-10-03"
+          ]
+        ],
+        "Users": [
+          [
+            1,
+            "No",
+            "client"
+          ],
+          [
+            2,
+            "Yes",
+            "client"
+          ],
+          [
+            3,
+            "No",
+            "client"
+          ],
+          [
+            4,
+            "No",
+            "client"
+          ],
+          [
+            10,
+            "No",
+            "driver"
+          ],
+          [
+            11,
+            "No",
+            "driver"
+          ],
+          [
+            12,
+            "No",
+            "driver"
+          ],
+          [
+            13,
+            "No",
+            "driver"
+          ]
+        ]
+      },
+      "kind": "Local practice case",
+      "expected": {
+        "columns": [
+          "Day",
+          "Cancellation Rate"
+        ],
+        "rows": [
+          [
+            "2013-10-01",
+            0.33
+          ],
+          [
+            "2013-10-02",
+            0
+          ],
+          [
+            "2013-10-03",
+            0.5
+          ]
+        ]
+      }
+    }
+  ],
+  "testNotes": "Published examples plus local variations of input order, identifiers, labels, and data. These are practice tests, not LeetCode’s private tests."
+}
