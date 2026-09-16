@@ -10,10 +10,10 @@ import {
   verifyGoogleIdentity,
   googleConfig,
 } from '../backend/auth/google-auth.mjs';
-import { createAccountApi } from '../backend/api/account-api.mjs';
+import { createAccountApi } from '../backend/api/account-api.ts';
 import { adminConnection, engineConfig } from '../database/connections/engines.mjs';
-import { runQuery } from '../backend/sql/runner.mjs';
-import { problems } from '../backend/problems/index.mjs';
+import { runQuery } from '../backend/sql/runner.ts';
+import { problems } from './support/catalog.mjs';
 
 test('Google sign-in, account isolation, progress and sign-out', { timeout: 30000 }, async (t) => {
   const schema = `qr_auth_${randomBytes(8).toString('hex')}`;

@@ -54,6 +54,7 @@ services:
       QUERYROOM_ENGINE_MODE: external
       QUERYROOM_AUTO_ORIGIN: 'true'
       QUERYROOM_TRUST_PROXY: 'true'
+      QUERYROOM_ADMIN_EMAILS: ${QUERYROOM_ADMIN_EMAILS:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-https://queryroom.duckdns.org/api/auth/google/callback}

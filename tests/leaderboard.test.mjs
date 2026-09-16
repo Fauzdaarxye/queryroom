@@ -4,12 +4,12 @@ import http from 'node:http';
 import { once } from 'node:events';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { createAccountStore } from '../database/repositories/account-store.mjs';
-import { createAccountApi } from '../backend/api/account-api.mjs';
-import { createQueryApi } from '../backend/api/query-api.mjs';
+import { createAccountApi } from '../backend/api/account-api.ts';
+import { createQueryApi } from '../backend/api/query-api.ts';
 import { createGoogleAuth } from '../backend/auth/google-auth.mjs';
 import { engineConfig, adminConnection } from '../database/connections/engines.mjs';
-import { problems } from '../backend/problems/index.mjs';
-import { runQuery } from '../backend/sql/runner.mjs';
+import { problems } from './support/catalog.mjs';
+import { runQuery } from '../backend/sql/runner.ts';
 import { backfillLeaderboard } from '../backend/services/leaderboard-backfill.mjs';
 import {
   verifiedPoints,

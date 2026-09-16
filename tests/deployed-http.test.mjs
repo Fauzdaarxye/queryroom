@@ -197,7 +197,7 @@ test(
       env.POSTGRES_PASSWORD_FILE = path.join(secretDirectory, 'postgres_password');
       async function start() {
         let output = '';
-        child = spawn(process.execPath, ['backend/index.mjs'], {
+        child = spawn(process.execPath, ['--import', 'tsx', 'backend/index.ts'], {
           env,
           stdio: ['ignore', 'pipe', 'pipe'],
         });

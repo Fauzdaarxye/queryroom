@@ -7,7 +7,7 @@ import {
   libraryQuery,
   practiceOverview,
   hasQuestionWork,
-} from '../shared/questions.mjs';
+} from '../shared/questions.ts';
 import { resolvePage } from '../shared/navigation.mjs';
 
 const questions = Array.from({ length: 25 }, (_, i) => ({

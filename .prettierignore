@@ -5,6 +5,8 @@ dist/
 backups/
 coverage/
 package-lock.json
-database/questions/
+database/seeds/
 *.tsbuildinfo
 next-env.d.ts
+**/.next/
+**/next-env.d.ts

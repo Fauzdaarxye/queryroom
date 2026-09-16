@@ -1,6 +1,6 @@
 # Deployment and operations
 
-A SQL practice app with **79 questions and 1,032 test cases**, supporting MySQL and PostgreSQL. The dashboard shows progress, a recommended or unfinished question, difficulty collections, and recent activity. The separate question library offers search, difficulty and status filters, bookmarks, sorting, and pagination. Accepted submissions also mark questions solved.
+A Next.js and TypeScript SQL practice app with **79 questions and 1,032 test cases**, supporting MySQL and PostgreSQL. The dashboard shows progress, a recommended or unfinished question, difficulty collections, and recent activity. The separate question library offers search, difficulty and status filters, bookmarks, sorting, and pagination. Accepted submissions also mark questions solved.
 
 ## Run with Docker
 
@@ -79,7 +79,7 @@ The corresponding JavaScript origins are `https://queryroom.duckdns.org` and `ht
 
 Create a private `.env` using `.env.example` as a guide. Keep existing database/password settings if the file already exists:
 
-**Put the actual secret in `.env`, not `.env.example`.** The example file is only a template and is not loaded by the server. Restart `npm run dev` after saving `.env`; startup reports whether Google sign-in is configured, without displaying credentials.
+**Put the actual secret in `.env`, not `.env.example`.** The example file is only a template and is not loaded by the server. Restart `npm run dev` after saving `.env`; the server loads Google sign-in settings without displaying credentials.
 
 ```dotenv
 CADDY_SITE=queryroom.duckdns.org
@@ -87,11 +87,47 @@ GOOGLE_CLIENT_ID=992227236229-ec3g0vp18kuajbjv6dumlilld5ljtcpq.apps.googleuserco
 GOOGLE_CLIENT_SECRET=your-secret-from-google
 ```
 
-`.env` is ignored by Git and copied only into the Docker server image, outside the frontend build and public files. Node loads it for local development and container startup; Docker Compose also passes OAuth settings to the server. `GOOGLE_CLIENT_SECRET_FILE` is supported when supplying a mounted secret directly to the server. Never place a client secret in a `VITE_` variable or frontend code.
+`.env` is ignored by Git and copied only into the Docker server image, outside the frontend build and public files. Node loads it for local development and container startup; Docker Compose also passes OAuth settings to the server. `GOOGLE_CLIENT_SECRET_FILE` is supported when supplying a mounted secret directly to the server. Never place a client secret in a `NEXT_PUBLIC_` variable or frontend code.
 
 Local development defaults to the localhost callback on its `PORT` (4317 by default). Compose defaults to the production DuckDNS callback above. For another deployment address, set `GOOGLE_REDIRECT_URI` to its exact HTTPS callback and register it with Google. Restart `npm run dev` after changing local settings; on the server, run `docker compose up --build -d` after changing deployment settings or code.
 
 Authentication uses a one-time state bound to an HttpOnly browser cookie, PKCE, and a nonce. Google's signed identity token is checked for issuer, audience, expiry, signature, nonce, and verified email. Users are identified by their stable Google subject ID. Login sessions use random, server-side tokens with a 30-day expiry; HTTPS cookies are Secure and host-only. Account writes require a CSRF token, the expected account ID, and the configured origin. Signing out revokes that browser's session.
+
+## Admin: add and edit questions
+
+Set the following in the EC2 project's `.env`, then rebuild. This local project's `.env` is already configured:
+
+```dotenv
+QUERYROOM_ADMIN_EMAILS=mohitsinghrajput801103@gmail.com
+```
+
+Sign in with that verified Google account, complete its profile, and open **Account menu → Admin workspace** (`/admin`). Other accounts cannot access the admin API. Additional admins can be listed as comma-separated Google email addresses. An empty value disables admin access. Restart after changing this setting.
+
+1. Choose **Add question** and paste a LeetCode URL, question text, or both. The importer saves a private draft, importing the public statement and inferring schemas/examples when available. If a source is unavailable or restricted, paste the statement yourself. A URL cannot provide LeetCode's private tests.
+2. Review the title, difficulty, statement, table definitions, and examples. Schema and test editors accept structured JSON, with Add table / Add case helpers. Use `INTEGER`, `REAL`, or `TEXT`; date columns also need `displayType: "date"` or `"datetime"`.
+3. Add distinct edge cases. Each case has an ID, table input rows, and `visible: true` for selectable practice cases. Provide expected outputs for known examples. Missing outputs are calculated during validation. Include ties, boundaries, and other cases permitted by the statement.
+4. Enter private reference SQL for **both MySQL and PostgreSQL**. Save the draft, then **Validate**. Every case must agree with its expected output on both engines. Inspect generated outputs in the Tests tab. Reference correctness still requires your review; passing tests cannot prove every possible input.
+5. **Publish** the validated revision. It appears in the practice library without a build or deployment. Refresh an already-open learner page to load the updated catalog. Draft changes never replace the live revision until published.
+
+Stable `qr` IDs and slugs preserve progress and saved links. Imported LeetCode questions use `qr` plus the source number; manually pasted questions get a unique `qr` ID. Slugs and IDs cannot change after creation. Each edit creates a revision, clears validation for that draft, and records an audit entry. Stale saves and publication of unvalidated changes are rejected. A submission uses the revision loaded at its start, including its tests and difficulty.
+
+The private `queryroom_catalog` PostgreSQL schema stores questions, revisions, test cases, reference solutions, and audit records. Public APIs omit reference solutions and unpublished drafts. The SQL runner uses isolated child processes and disposable database workspaces with read-only SQL users; those users cannot read account or catalog records.
+
+## Upgrade an existing EC2 installation
+
+Keep the existing `.env`, Compose project name, and named volumes. Before upgrading, take a PostgreSQL backup containing accounts, progress, and (on subsequent upgrades) the catalog:
+
+```sh
+mkdir -p backups
+docker compose exec -T postgres pg_dump -U queryroom_admin -d queryroom -Fc > backups/queryroom-before-upgrade.dump
+docker compose up --build -d
+docker compose ps
+docker compose logs --tail=80 app
+```
+
+The first startup automatically imports all 79 existing questions and 1,032 tests. Existing users, profiles, sessions, progress, leaderboard awards, and database credentials are retained. Guest IndexedDB data and browser keys are unchanged; keep the same public origin to retain browser progress. Do not run `docker compose down -v`.
+
+The app still listens on **4317 inside Docker**. Users access Caddy on **80/443**. `curl http://localhost:4317` on EC2 is not expected to work because the app port is intentionally private; use `curl http://localhost` or `docker compose exec app node -e "fetch('http://127.0.0.1:4317/api/health').then(r=>r.json()).then(console.log)"`.
 
 ## Personal progress
 
@@ -107,7 +143,7 @@ Old shared `queryroom_state` records and `.data/progress.json` are left untouche
 
 ## Request and query limits
 
-The server runs at most four SQL requests concurrently per app process. Extra requests receive HTTP 429 with `Retry-After: 1`; the slot is released after success or failure. Each query still runs with read-only database credentials and a three-second statement timeout. Results are capped at 5,000 rows and 1 MB of row data per test, with a 4 MB cumulative result budget per submission. Submissions stop after exceeding an output limit.
+The server runs at most four SQL requests concurrently per app process. One additional admin validation can run at a time. Extra practice requests receive HTTP 429 with `Retry-After: 1`; the slot is released after success or failure. Each query still runs with read-only database credentials and a three-second statement timeout. Results are capped at 5,000 rows and 1 MB of row data per test, with a 4 MB cumulative result budget per submission. Submissions stop after exceeding an output limit.
 
 Malformed request URLs return HTTP 400 without interrupting the server. Pages and API responses block framing and plugins, prevent MIME sniffing, and limit cross-origin referrer information. The account dropdown contains account details, Profile, and Sign out. Dashboard, Questions, and Leaderboard remain in the main header navigation.
 
@@ -125,17 +161,19 @@ npm run dev
 For validation and a production build:
 
 ```sh
+npm run typecheck
 npm test
-npm run build
 npm start
 ```
 
-Local mode opens at **http://localhost:4317**. Docker does not require these tools installed on the host.
+`npm test` builds the app first, then runs the regression suite against temporary test workspaces. Local mode opens at **http://localhost:4317**. Docker does not require these tools installed on the host.
 
-Application code is organized into `frontend/`, `backend/`, `database/`, and `shared/`. See [Architecture](architecture.md) for the folder map and the question-editing workflow. `scripts/` contains Docker initialization and test utilities.
+`frontend/app/` is the Next.js App Router entry point. The existing interactive workspace is in typed React components under `frontend/src/`. `backend/index.ts` serves Next.js and the existing HTTP endpoints, while `database/catalog/`, `backend/catalog/`, and `backend/api/` contain the typed catalog, importer, validator, and admin API. `shared/` contains common contracts and validation. Stable authentication and database adapters remain small JavaScript modules supported by the TypeScript project. The catalog uses parameterized PostgreSQL queries and versioned SQL migrations; no ORM is required.
+
+Questions, fixtures, and reference solutions are database records, not application source files. `database/seeds/catalog-v1.json.gz` is a **200 KB immutable migration snapshot** of the original 79 questions, not a live content file. Its checksum and counts are in `database/seeds/catalog-manifest.json`. `database/migrations/001_catalog.sql` creates the catalog tables. First startup imports the snapshot transactionally under a database lock; subsequent startups preserve all admin edits and new questions. Test-only independent checkers live under `tests/support/` and are excluded from the Docker image.
 
 ## Question sources
 
 Questions link to their original [LeetCode](https://leetcode.com/) pages. Public statement references: [doocs/leetcode](https://github.com/doocs/leetcode). The imported collection includes the [SQL Hard playlist](https://www.youtube.com/playlist?list=PLtfxzVLWb-B9M7Rx5BrZwZqSBP2_IzRMA). Extra practice tests are local fixtures, not LeetCode's private tests.
 
-Docker configuration and app tests are checked locally. The image build and EC2 startup have not been run on this preparation machine because Docker Engine is unavailable.
+Verified locally: TypeScript checks, the Next.js production build, 233 regression tests, the admin publish workflow, and the Docker image. A separate Docker Compose stack also passed health checks, Caddy routing, production page/asset checks, and full MySQL/PostgreSQL submissions. The production app runs with a read-only filesystem. EC2 itself has not been tested in this verification.

@@ -8,7 +8,15 @@ import { verifiedPoints, leaderboardPageSize } from '../../shared/leaderboard.mj
 const accountSchema = readFileSync(new URL('../schema/accounts.sql', import.meta.url), 'utf8');
 
 export const hashToken = (token) => createHash('sha256').update(token).digest('hex');
+const adminEmails = () =>
+  new Set(
+    (process.env.QUERYROOM_ADMIN_EMAILS || '')
+      .split(',')
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean),
+  );
 const publicUser = (row) => ({
+  role: adminEmails().has(row.email.toLowerCase()) ? 'admin' : 'user',
   id: row.id,
   name: row.full_name || row.name,
   email: row.email,

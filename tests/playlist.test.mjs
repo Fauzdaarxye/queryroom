@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { problems, publicProblem } from '../backend/problems/index.mjs';
-import { validateInput, runQuery as internalRunQuery } from '../backend/sql/runner.mjs';
+import { problems, publicProblem } from './support/catalog.mjs';
+import { validateInput, runQuery as internalRunQuery } from '../backend/sql/runner.ts';
 import { compareResult } from '../backend/sql/compare.mjs';
 import { referenceResult } from '../backend/sql/reference-database.mjs';
 

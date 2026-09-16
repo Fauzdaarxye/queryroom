@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
-import { runQuery } from '../backend/sql/runner.mjs';
-import { problems } from '../backend/problems/index.mjs';
+import { runQuery } from '../backend/sql/runner.ts';
+import { problems } from './support/catalog.mjs';
 import { createNativeWorkspace, cleanupNative } from '../database/connections/native-workspace.mjs';
 import { adminConnection, engineStatus } from '../database/connections/engines.mjs';
 import { playlistQuery } from './playlist-queries.mjs';

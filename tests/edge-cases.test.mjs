@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
-import { problems, publicProblem } from '../backend/problems/index.mjs';
+import { problems, publicProblem } from './support/catalog.mjs';
 import { validateInput } from '../shared/input.mjs';
 import { compareResult } from '../backend/sql/compare.mjs';
 import { createNativeWorkspace, cleanupNative } from '../database/connections/native-workspace.mjs';
 import { playlistQuery } from './playlist-queries.mjs';
-import { additionalQueries } from '../backend/problems/additional-checkers.mjs';
+import { additionalQueries } from './support/additional-checkers.mjs';
 
 const byNumber = (number) => [...problems.values()].find((p) => p.number === number);
 const edge = (number, index) =>

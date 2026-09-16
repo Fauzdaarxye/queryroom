@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { problems, publicProblem } from '../backend/problems/index.mjs';
-import { additionalProblems } from '../backend/problems/additional.mjs';
-import { additionalQueries } from '../backend/problems/additional-checkers.mjs';
-import { runQuery, validateInput } from '../backend/sql/runner.mjs';
+import { problems, publicProblem } from './support/catalog.mjs';
+import { additionalProblems } from './support/catalog.mjs';
+import { additionalQueries } from './support/additional-checkers.mjs';
+import { runQuery, validateInput } from '../backend/sql/runner.ts';
 import { compareResult } from '../backend/sql/compare.mjs';
 
 const requested = [
@@ -163,10 +163,16 @@ test('a custom product tie is evaluated on both engines', async () => {
       customInput,
     });
     assert.equal(result.verdict, 'Accepted', JSON.stringify(result));
-    assert.deepEqual(result.results[0].expected.rows, [
-      [99, 8, 'Notebook'],
-      [99, 12, 'Pencil'],
-    ]);
+    assert.equal(
+      compareResult(p, result.results[0].expected, {
+        columns: ['customer_id', 'product_id', 'product_name'],
+        rows: [
+          [99, 8, 'Notebook'],
+          [99, 12, 'Pencil'],
+        ],
+      }).passed,
+      true,
+    );
   }
 });
 
